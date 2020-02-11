@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "ML_Tetris", "ML_Tetris.pyproj", "{1911DAFF-6AF9-40F8-8369-F89127D4DA15}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1911DAFF-6AF9-40F8-8369-F89127D4DA15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1911DAFF-6AF9-40F8-8369-F89127D4DA15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {187E4635-2104-49A3-B76D-1199734D2B97}
+	EndGlobalSection
+EndGlobal
