@@ -7,9 +7,11 @@ import sys
 import math
 import copy
 import numpy
-import matplotlib.pyplot as plt
 import pygame.locals as keys
 import pyautogui
+from tetris_gui import *
+from tetris_module import *
+from tetris_utils import *
 
 # Define settings and constants
 pyautogui.PAUSE = 0.03
@@ -31,70 +33,7 @@ MOVEDOWNFREQ = 0.05         ### frequenza di discesa
 XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
 
-# Define Color triplets in RGB
-WHITE = (255, 255, 255)
-GRAY = (185, 185, 185)
-BLACK = (0, 0, 0)
-RED = (155, 0, 0)
-LIGHTRED = (175, 20, 20)
-GREEN = (0, 155, 0)
-LIGHTGREEN = (20, 175, 20)
-BLUE = (0, 0, 155)
-LIGHTBLUE = (20, 20, 175)
-YELLOW = (155, 155, 0)
-LIGHTYELLOW = (175, 175, 20)
-CYAN = (0, 185, 185)
-LIGHTCYAN = (0, 255, 255)
-MAGENTA = (185, 0, 185)
-LIGHTMAGENTA = (255, 0, 255)
 
-# impostazione delle variabili costatnti per le componenti del gioco
-BORDERCOLOR = BLUE
-BGCOLOR = BLACK
-TEXTCOLOR = WHITE
-TEXTSHADOWCOLOR = GRAY
-COLORS = (GRAY, BLUE, GRAY, GREEN, RED, YELLOW, CYAN, MAGENTA)
-LIGHTCOLORS = (WHITE, LIGHTBLUE, WHITE, LIGHTGREEN, LIGHTRED, LIGHTYELLOW,
-               LIGHTCYAN, LIGHTMAGENTA)
-
-# set dimensioni del Template
-TEMPLATEWIDTH = 5
-TEMPLATEHEIGHT = 5
-
-S_SHAPE_TEMPLATE = [['00000', '00000', '00110', '01100', '00000'],
-                    ['00000', '00100', '00110', '00010', '00000']]
-
-Z_SHAPE_TEMPLATE = [['00000', '00000', '01100', '00110', '00000'],
-                    ['00000', '00100', '01100', '01000', '00000']]
-
-I_SHAPE_TEMPLATE = [['00100', '00100', '00100', '00100', '00000'],
-                    ['00000', '00000', '11110', '00000', '00000']]
-
-O_SHAPE_TEMPLATE = [['00000', '00000', '01100', '01100', '00000']]
-
-J_SHAPE_TEMPLATE = [['00000', '01000', '01110', '00000',
-                     '00000'], ['00000', '00110', '00100', '00100', '00000'],
-                    ['00000', '00000', '01110', '00010',
-                     '00000'], ['00000', '00100', '00100', '01100', '00000']]
-L_SHAPE_TEMPLATE = [['00000', '00010', '01110', '00000',
-                     '00000'], ['00000', '00100', '00100', '00110', '00000'],
-                    ['00000', '00000', '01110', '01000',
-                     '00000'], ['00000', '01100', '00100', '00100', '00000']]
-
-T_SHAPE_TEMPLATE = [['00000', '00100', '01110', '00000',
-                     '00000'], ['00000', '00100', '00110', '00100', '00000'],
-                    ['00000', '00000', '01110', '00100',
-                     '00000'], ['00000', '00100', '01100', '00100', '00000']]
-
-PIECES = {
-    'S': S_SHAPE_TEMPLATE,
-    'Z': Z_SHAPE_TEMPLATE,
-    'J': J_SHAPE_TEMPLATE,
-    'L': L_SHAPE_TEMPLATE,
-    'I': I_SHAPE_TEMPLATE,
-    'O': O_SHAPE_TEMPLATE,
-    'T': T_SHAPE_TEMPLATE
-}
 
 # Define learning parameters
 alpha = 0.01
@@ -839,31 +778,8 @@ if __name__ == '__main__':
         if games_completed >= MAX_GAMES:
             # Plot the game score over time
             pygame.mixer.music.stop()
-
-            plt.figure(1)
-            plt.subplot(211)
-            plt.plot(game_index_array, scoreArray, 'k-')
-            plt.xlabel('Game Number')
-            plt.ylabel('Game Score')
-            plt.title('Learning Curve')
-            plt.xlim(1, max(game_index_array))
-            plt.ylim(0, max(scoreArray) * 1.1)
-
-            # Plot the weights over time
-            plt.subplot(212)
-            plt.xlabel('Game Number')
-            plt.ylabel('Weights')
-            plt.title('Learning Curve')
-            ax = plt.gca()
-            ax.set_yscale('log')
-            plt.plot(game_index_array, weight0Array, label="Aggregate Height")
-            plt.plot(game_index_array, weight1Array, label="Unevenness")
-            plt.plot(game_index_array, weight2Array, label="Maximum Height")
-            plt.plot(game_index_array, weight3Array, label="Number of Holes")
-            plt.legend(loc='lower left')
-            plt.xlim(0, max(game_index_array))
-            plt.ylim(0.0001, 100)
-            plt.show()
+            plot_results(scoreArray, game_index_array, weight0Array)
+           
             break
 
 
