@@ -251,6 +251,11 @@ def run_game(weights, explore_change):
             if not is_valid_position(board, falling_piece, adj_y=1):
                 # falling piece has landed, set it on the board
                 add_to_board(board, falling_piece)
+
+                #count = count_full_lines(board)
+                #if count>0:
+                #    print("count = ",count)
+
                 lines, board = remove_complete_lines(board)
                 score += lines * lines
                 level, fall_freq = get_level_and_fall_freq(score)
@@ -645,6 +650,21 @@ def get_parameters(board):
 
     return height_sum, diff_sum, max_height, holes
 
+def count_full_lines(board):
+    # Count the number of lines
+    count = 0
+    for i in range(0, BOARDHEIGHT):
+        check = True
+        for j in range(0, BOARDWIDTH):
+            if board[j][i] == '0':
+                #print("Find hole in = ",(i+1,j+1))
+                check = False
+                break
+            #else:
+            #    print("Cot Find hole in = ",(i+1,j+1))
+        if check:
+            count+=1
+    return count
 
 def get_expected_score(test_board, weights):
     ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
@@ -796,8 +816,8 @@ if __name__ == '__main__':
     time.sleep(3)
 
     try:
-        pygame.mixer.music.load(MEDIAPATH+'DiscoTetris.mp3')
-        pygame.mixer.music.play(-1)
+        #pygame.mixer.music.load(MEDIAPATH+'DiscoTetris.mp3')
+        #pygame.mixer.music.play(-1)
         print("Music loaded")
     except:
         print("Music not loaded")
