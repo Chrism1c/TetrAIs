@@ -26,6 +26,15 @@
     </Compile>
     <Compile Include="ML_Tetris - BKUP.py" />
     <Compile Include="ML_Tetris_Genetic.py" />
+    <Compile Include="tetris_utils.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tetris_gui.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tetris_module.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Tetris_AI_LS.py">
       <SubType>Code</SubType>
     </Compile>
