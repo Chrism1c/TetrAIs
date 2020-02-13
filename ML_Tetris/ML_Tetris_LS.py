@@ -17,7 +17,7 @@ from tetris_utils import *
 pyautogui.PAUSE = 0.03
 pyautogui.FAILSAFE = True
 
-GlobalScore = 0
+DeepLines = 0
 pause = False
 APPNAME = "DiscoTetris"
 MEDIAPATH = "Media/"
@@ -34,14 +34,10 @@ MOVEDOWNFREQ = 0.05         ### frequenza di discesa
 XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
 
-#shape = random.choice(list(PIECES.keys()))
-#GlobalNextPiece = {'shape': shape,'rotation': random.randint(0,len(PIECES[shape]) - 1),'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),'y': -2,'color': random.randint(1,len(COLORS) - 1)}
-
-
 # Define learning parameters
 alpha = 0.01
 gamma = 0.9
-MAX_GAMES = 10
+MAX_GAMES = 1
 explore_change = 0.5
 #weights = [-1, -1, -1, -30]  # Initial weight vector
 #weights = [-0.0009, -0.0292, -0.7492, -99.2209]  # Best weight record
@@ -92,8 +88,6 @@ def run_game():
     current_move = [0, 0]  # Relative Rotation, lateral movement
     falling_piece = get_new_piece()
     next_piece = get_new_piece()
-
-    #GlobalNextPiece = next_piece
 
     while True:  # game loop
 
@@ -203,12 +197,10 @@ def run_game():
                 # falling piece has landed, set it on the board
                 add_to_board(board, falling_piece)
 
-                #count = count_full_lines(board)
-                #if count>0:
-                #    print("count = ",count)
 
                 lines, board = remove_complete_lines(board)
-                score += lines * lines
+                score += lines #* lines
+
                 level, fall_freq = get_level_and_fall_freq(score)
                 falling_piece = None
             else:
@@ -425,9 +417,9 @@ def draw_box(boxx, boxy, color, pixelx=None, pixely=None):
         return
     if pixelx is None and pixely is None:
         pixelx, pixely = convert_to_pixel_coords(boxx, boxy)
-    pygame.draw.rect(DISPLAYSURF, random_color(), #COLORS[color],
+    pygame.draw.rect(DISPLAYSURF,  COLORS[color], #random_color(),
                      (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
-    pygame.draw.rect(DISPLAYSURF, random_color(), #LIGHTCOLORS[color],
+    pygame.draw.rect(DISPLAYSURF,  LIGHTCOLORS[color], #random_color(),
                      (pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
 
 def draw_board(board):
@@ -447,12 +439,11 @@ def draw_board(board):
             draw_box(x, y, board[x][y])
 
 def draw_status(score, level, best_move):
-    global GlobalScore
-    GlobalScore = score
+
     ### Scrive le informazioni di gioco sullo schermo
     # draw the score text
     randCol = random_color()
-    score_surf = BASICFONT.render('Score: %s' % score, True, randCol)#TEXTCOLOR)
+    score_surf = BASICFONT.render('# Lines: %s' % score, True, randCol)#TEXTCOLOR)
     score_rect = score_surf.get_rect()
     score_rect.topleft = (WINDOWWIDTH - 150, 20)
     DISPLAYSURF.blit(score_surf, score_rect)
@@ -508,9 +499,72 @@ def draw_next_piece(piece):
 ###################################### METRICS FUNCTIONS ###################################################
 
 
+#def get_parametersOld(board):
+#    ### Calcola le metriche sulla board corrente
+#    # This function will calculate different parameters of the current board
+
+#    # Initialize some stuff
+#    heights = [0]*BOARDWIDTH
+#    diffs = [0]*(BOARDWIDTH-1)
+#    holes = 0
+#    diff_sum = 0
+#    numTetraminoes = 0
+#    standardDvHeights = 0
+#    abs_diffCol = 0
+#    max_diffCol = 0
+
+#    # Calculate the maximum height of each column
+#    for i in range(0, BOARDWIDTH):  # Select a column
+#        for j in range(0, BOARDHEIGHT):  # Search down starting from the top of the board
+#            #print((i,j))
+#            if int(board[i][j]) > 0:  # Is the cell occupied?
+#                heights[i] = BOARDHEIGHT - j  # Store the height value
+#                break
+
+#    # Calculate the difference in heights
+#    for i in range(0, len(diffs)):
+#        diffs[i] = heights[i + 1] - heights[i]
+#    #print("diffs ",diffs)
+
+#    # Calculate the maximum height
+#    max_height = max(heights)
+
+#    # Count the number of holes
+#    for i in range(0, BOARDWIDTH):
+#        occupied = 0  # Set the 'Occupied' flag to 0 for each new column
+#        for j in range(0, BOARDHEIGHT):  # Scan from top to bottom
+#            if int(board[i][j]) > 0:
+#                occupied = 1  # If a block is found, set the 'Occupied' flag to 1
+#            if int(board[i][j]) == 0 and occupied == 1:
+#                holes += 1  # If a hole is found, add one to the count
+
+#    height_sum = sum(heights)
+#    for i in diffs:
+#        diff_sum += abs(i)
+
+
+#    #numero di tetramini piazzati
+#    countTetra = 0
+#    for i in range(0, BOARDWIDTH):
+#        for j in range(0, BOARDHEIGHT):
+#            if board[i][j] != '0':
+#                countTetra += 1
+
+
+#    roofRY = roofRelativeY(heights)
+
+#    #holes
+#    numTetraminoes = countTetra // 4
+#    #max_height
+#    standardDvHeights = standard_deviation_heights(heights)
+#    abs_diffCol = sum([abs(x) for x in roofRY])
+#    max_diffCol = roofRY[len(roofRY) - 1]
+
+#    return fullLines, holes, numTetraminoes, max_height, standardDvHeights, abs_diffCol, max_diffCol
+
 def get_parameters(board):
-    ### Calcola le metriche "MaxAltezza", "Buchi", "Somma altezze Colonne", diff_sum,
-    # This function will calculate different parameters of the current board
+    global DeepLines
+    ### Calcola le metriche sulla board corrente
 
     # Initialize some stuff
     heights = [0]*BOARDWIDTH
@@ -522,52 +576,37 @@ def get_parameters(board):
     abs_diffCol = 0
     max_diffCol = 0
 
-    #print("-------------------***************/////////////////////////")
-    #for i in range(10):
-    #    print(board[i])
-    #    print("\n")
+    DeepLines = count_full_lines(board)
 
-    # Calculate the maximum height of each column
+    # Calculate all tougether to optimize calculation
+    countTetra = 0
+    max_height = 0
+    height_sum = 0
     for i in range(0, BOARDWIDTH):  # Select a column
+        occupied = 0  # Set the 'Occupied' flag to 0 for each new column
+        Hflag = False
         for j in range(0, BOARDHEIGHT):  # Search down starting from the top of the board
-            #print((i,j))
             if int(board[i][j]) > 0:  # Is the cell occupied?
-                heights[i] = BOARDHEIGHT - j  # Store the height value
-                break
+                countTetra+=1
+                occupied = 1  # If a block is found, set the 'Occupied' flag to 1
+                if not Hflag:
+                    heights[i] = BOARDHEIGHT - j  # Store the height value
+                    height_sum += heights[i]
+                    if max_height < heights[i]:
+                        max_height = heights[i]
+                    Hflag = True
+            if int(board[i][j]) == 0 and occupied == 1:
+                holes += 1  # If a hole is found, add one to the count         
 
     # Calculate the difference in heights
     for i in range(0, len(diffs)):
         diffs[i] = heights[i + 1] - heights[i]
-    #print("diffs ",diffs)
 
-    # Calculate the maximum height
-    max_height = max(heights)
-
-    # Count the number of holes
-    for i in range(0, BOARDWIDTH):
-        occupied = 0  # Set the 'Occupied' flag to 0 for each new column
-        for j in range(0, BOARDHEIGHT):  # Scan from top to bottom
-            if int(board[i][j]) > 0:
-                occupied = 1  # If a block is found, set the 'Occupied' flag to 1
-            if int(board[i][j]) == 0 and occupied == 1:
-                holes += 1  # If a hole is found, add one to the count
-
-    height_sum = sum(heights)
     for i in diffs:
         diff_sum += abs(i)
-
-
-    #numero di tetramini piazzati
-    countTetra = 0
-    for i in range(0, BOARDWIDTH):
-        for j in range(0, BOARDHEIGHT):
-            if board[i][j] != '0':
-                countTetra += 1
-
-
     roofRY = roofRelativeY(heights)
 
-    fullLines = GlobalScore
+    fullLines = DeepLines
     #holes
     numTetraminoes = countTetra // 4
     #max_height
@@ -575,18 +614,7 @@ def get_parameters(board):
     abs_diffCol = sum([abs(x) for x in roofRY])
     max_diffCol = roofRY[len(roofRY) - 1]
 
-
-    #print("================== 7 metrics ==================")
-    #print("fullLines ",fullLines)
-    #print("holes ",holes)
-    #print("numTetraminoes ",numTetraminoes)
-    #print("max_height ",max_height)
-    #print("standardDvHeights ",standardDvHeights)
-    #print("abs_diffCol ",abs_diffCol)
-    #print("max_diffCol ",max_diffCol)
-
     return fullLines, holes, numTetraminoes, max_height, standardDvHeights, abs_diffCol, max_diffCol
-
 
 #numero di tetramini piazzati, dato che conta il numero di blocchi presenti
 #ho diviso per 4 il totale in modo da avere il vero numero di tetramini
@@ -619,7 +647,6 @@ def standard_deviation_heights(heights):
         return math.sqrt(sum([y ** 2 for y in heights]) / len(heights) - (sum(heights) / len(heights)) ** 2)
 
 
-
 def count_full_lines(board):
     # Count the number of lines
     count = 0
@@ -636,11 +663,23 @@ def count_full_lines(board):
             count+=1
     return count
 
+def maxHeight(board):
+    max = 0
+    heights = [0]*BOARDWIDTH
+    # Calculate the maximum height of each column
+    for i in range(0, BOARDWIDTH):  # Select a column
+        for j in range(0, BOARDHEIGHT):  # Search down starting from the top of the board
+            if int(board[i][j]) > 0:  # Is the cell occupied?
+                heights[i] = BOARDHEIGHT - j  # Store the height value
+                if max < heights[i]:
+                    max = heights[i]
+                break
+    return max
+
 ###################################### SIMULATION FUNCTIONS ###################################################
 
 def get_expected_score(test_board):
     ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica 
-
     fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
     #A = weights[0]
     #B = weights[1]
@@ -651,11 +690,13 @@ def get_expected_score(test_board):
     #G = weights[6]
 
     #test_score = float(A * height_sum + B * diff_sum + C * max_height + D * holes)
-    #test_score = float((fullLines * A) - (vHoles * B) - (vBlocks * C) - ((maxHeight ** 10) * 0.2) - (stdDY * E) - (absDy * F) - (maxDy * G))
-    test_score = float((fullLines * 1.8) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5) * 0.2) - (stdDY * 0.01) - (absDy * 0.2) - (maxDy * 0.3))
+    #test_score = float((fullLines * A) - (vHoles * B) - (vBlocks * C) - ((maxHeight ** 1.5) * 0.02) - (stdDY * E) - (absDy * F) - (maxDy * G))
+    test_score = float((fullLines * 1.8) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5)*0.002) - (stdDY * 0.01) - (absDy * 0.2) - (maxDy * 0.3))
+    #test_score = float((fullLines) - ((maxHeight ** 2)))
+    
     # score = fullLines * 1.8 - vHoles * 1.0 - vBlocks * 0.5 - maxHeight ** 1.5 * 0.02 - stdY * 0.0 - stdDY * 0.01 - absDy * 0.2 - maxDy * 0.3
 
-    return test_score
+    return test_score, fullLines
 
 
 def simulate_board(test_board, test_piece, move):
@@ -694,15 +735,18 @@ def simulate_board(test_board, test_piece, move):
     # Place the piece on the virtual board
     if is_valid_position(test_board, test_piece, adj_x=0, adj_y=0):
         add_to_board(test_board, test_piece)
-        test_lines_removed, test_board = remove_complete_lines(test_board)
+        #test_lines_removed, test_board = remove_complete_lines(test_board)
 
     #fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
     
     return test_board
 
 
-def find_best_moveLS_step2(board, piece):
+### LV1 only analysis
+def find_best_moveLS_LV1only(board, piece):
     ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
+    start = time.perf_counter()
+
     strategy = None
     for rot in range(0, len(PIECES[piece['shape']])):
         for sideways in range(-5, 6):
@@ -712,13 +756,20 @@ def find_best_moveLS_step2(board, piece):
             test_board = simulate_board(test_board, test_piece, move)
             if test_board is not None:
                 test_score = get_expected_score(test_board)
-                #print("if",test_score,">>>",local_best)
                 if not strategy or strategy[2] < test_score:
                     strategy = (rot, sideways, test_score)
-    return strategy[2]
 
-def find_best_moveLS(board, piece, NextPiece):
+    finish = time.perf_counter()
+    print(f'Finished in {round(finish-start, 2)} second(s) with LV1Only')
+
+    return [strategy[0],strategy[1]]
+
+
+### LV1
+def find_best_moveLS_step1(board, piece, NextPiece):
     ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
+    start = time.perf_counter()
+
     strategy = None #(0,0,-99999)
     for rot in range(0, len(PIECES[piece['shape']])):
         for sideways in range(-5, 6):
@@ -738,7 +789,81 @@ def find_best_moveLS(board, piece, NextPiece):
                     strategy = (rot,sideways,NextScore)
                 #else:
                 #    print(" no")
+    finish = time.perf_counter()
+    print(f'Finished in {round(finish-start, 2)} second(s)')
+
     return [strategy[0],strategy[1]]
+
+### LV2 afetr LV1
+def find_best_moveLS_step2(board, piece):
+    ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
+    strategy = None
+    for rot in range(0, len(PIECES[piece['shape']])):
+        for sideways in range(-5, 6):
+            move = [rot, sideways]
+            test_board = copy.deepcopy(board)
+            test_piece = copy.deepcopy(piece)
+            test_board = simulate_board(test_board, test_piece, move)
+            if test_board is not None:
+                test_score = get_expected_score(test_board)
+                #print("if",test_score,">>>",local_best)
+                if not strategy or strategy[2] < test_score:
+                    strategy = (rot, sideways, test_score)
+    return strategy[2]
+
+### FULL LV1+LV2 choise
+def find_best_moveLS_full(board, piece, NextPiece):
+    ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
+    start = time.perf_counter() # salvo il tempo di partenza
+
+    best_rot = 0
+    best_sideways = 0
+    best_score = - 99
+
+    NextScore = (0,0, -99) # rot,sideways, score
+    bestLines = -1
+    nextLines = -1
+
+    # rot =  1-'O':    2-'I': 2-'Z':    4-'J': 4-'L': 4-'T'
+
+    for rot in range(0, len(PIECES[piece['shape']])):                       # per le rotazioni possibili su lpezzo corrente
+        for sideways in range(-5, 6):                                       # per i drop possibili sulla board
+            move = [rot, sideways]                                          # salvo la coppia corrente
+            test_board = copy.deepcopy(board)                               # duplico la board corrente
+            test_piece = copy.deepcopy(piece)                               # duplico il pezzo corrente
+            test_board = simulate_board(test_board, test_piece, move)       # simulo il pezzo e la mossa sulla board test
+            # Check NEXT
+            if test_board is not None:                                      # se la simulazione è andata a buon fine
+                ## Chose the best after next                                # effettuo il calcolo con il pezzo successivo
+                for rot2 in range(0, len(PIECES[NextPiece['shape']])):  
+                    for sideways2 in range(-5, 6):
+                        move2 = [rot2, sideways2]
+                        test_board2 = copy.deepcopy(test_board)
+                        test_piece2 = copy.deepcopy(NextPiece)
+                        test_board2 = simulate_board(test_board2, test_piece2, move2)
+                        if test_board2 is not None:
+                            test_score2, nextLines = get_expected_score(test_board2)
+                            #print("if", '{:05.2f}'.format(NextScore[2])," < ",'{:05.2f}'.format(test_score2)," rot=",rot," sideways=",sideways," rot2=",rot2," sideways2=",sideways2," scoreLV1=", '{:05.2f}'.format(best_score)," scoreLV2=",'{:05.2f}'.format(test_score2), end="")
+                            #print("if", '{:05.2f}'.format(NextScore[2])," < ",'{:05.2f}'.format(test_score2)," sideways=",sideways," sideways2=",sideways2," scoreLV1=", '{:05.2f}'.format(best_score)," scoreLV2=",'{:05.2f}'.format(test_score2), end="")
+                            if NextScore[2] < test_score2:
+                                NextScore = [rot2, sideways2, test_score2]  # aggiorno il best local score (LV2)
+                            #else:
+                            #    print(" no")
+                            #print(get_parameters(test_board2))
+                # Confront LV2 Scores
+                #print("if", '{:05.2f}'.format(best_score)," < ",'{:05.2f}'.format(NextScore[2]), end="")
+                if best_score < NextScore[2]:         # confronto 
+                    best_score = NextScore[2]         # aggiorno il best local score (LV1+LV2)
+                    best_sideways = sideways          # aggiorno il best sideway (LV1)
+                    best_rot = rot                     # aggiorno il best rot (LV1)
+
+    finish = time.perf_counter()
+    print(f'Finished in {round(finish-start, 2)} second(s) with full')
+
+    return [best_rot,best_sideways]
+
+
+
 
 def make_move(move):
     # This function will make the indicated move, with the first digit
@@ -763,18 +888,25 @@ def make_move(move):
 
 def LS(board, piece, NextPiece):
     ### Funzione algoritmo AI Local Search
-    move = find_best_moveLS(board, piece, NextPiece)                  ### Trova la mossa migliore da effettuare
+
+    mH = maxHeight(board)
+    print("maxHeight -- ",mH)
+
+    #if mH>=15:
+    move = find_best_moveLS_full(board, piece, NextPiece)                  ### Trova la mossa migliore da effettuare
+    #else:
+       # move = find_best_moveLS_LV1only(board, piece)                  ### Trova la mossa migliore da effettuare
     
-    # Stampa delle metriche sulla mossa scelta
-    # fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(board)
+    #stampa delle metriche sulla mossa scelta
+    fulllines, vholes, vblocks, maxheight, stddy, absdy, maxdy = get_parameters(board)
     #print("================== 7 metrics ==================")
-    #print("fullLines ",fullLines)
-    #print("holes ",vHoles)
-    #print("numTetraminoes ",vBlocks)
-    #print("max_height ",maxHeight)
-    #print("standardDvHeights ",stdDY)
-    #print("abs_diffCol ",absDy)
-    #print("max_diffCol ",maxDy)
+    #print("fulllines ",fulllines)
+    #print("holes ",vholes)
+    #print("numtetraminoes ",vblocks)
+    #print("max_height ",maxheight)
+    #print("standarddvheights ",stddy)
+    #print("abs_diffcol ",absdy)
+    #print("max_diffcol ",maxdy)
 
     # Slow down to help debug alaysis
     #time.sleep(2)
@@ -816,6 +948,7 @@ if __name__ == '__main__':
         print("Music not loaded")
 
     while True:  # game loop
+
         games_completed += 1
         newScore, weights = run_game()
         print("Game Number ", games_completed, " achieved a score of: ", newScore)
@@ -832,9 +965,6 @@ if __name__ == '__main__':
         weight6Array.append(-weights[6])
         show_text_screen('Game Over')
 
-        #print("Finale GlobalScore = ",GlobalScore)
-        GlobalScore = 0
-        #print("Cleared GlobalScore = ",GlobalScore)
         #time.sleep(2)
 
         if games_completed >= MAX_GAMES:
