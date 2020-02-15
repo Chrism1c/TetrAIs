@@ -1,4 +1,3 @@
-
 # Import dell librerie
 import random
 import time
@@ -305,24 +304,6 @@ def get_level_and_fall_freq(score):
     fall_freq = 0.07 * math.exp(
         (1 - level) / 3)  # 0.27 - (level * 0.02) default
     return level, fall_freq
-
-
-def get_new_piece():
-    ### restituisce un pezzo random con colorazione random
-    # return a random new piece in a random rotation and color
-    shape = random.choice(list(PIECES.keys()))
-    new_piece = {
-        'shape': shape,
-        'rotation': random.randint(0,
-                                   len(PIECES[shape]) - 1),
-        'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
-        'y': -2,  # start it above the board (i.e. less than 0)
-        'color': random.randint(1,len(COLORS) - 1)
-        
-        #// Implementare assegnazione statica dei colori in base alla forma
-
-    }
-    return new_piece
 
 # (DISCO MODE - ON)   SELEZIONA UN COLORE COMPLEATAMENTE A MotherFucker RANDOM
 def random_color():
