@@ -10,7 +10,7 @@ import numpy
 import pygame.locals as keys
 import pyautogui
 from tetris_gui import *
-from tetris_module import *
+from tetris_model import *
 from tetris_utils import *
 
 # Define settings and constants

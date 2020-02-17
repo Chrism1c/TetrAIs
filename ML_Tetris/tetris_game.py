@@ -1,3 +1,4 @@
+
 # Import dell librerie
 import random
 import time
@@ -8,9 +9,11 @@ import copy
 import numpy
 import pygame.locals as keys
 import pyautogui
-from tetris_gui import *
-from tetris_module import *
-from tetris_utils import *
+#from tetris_utils import *
+#from tetris_model import *
+#from tetris_plot import *
+
+#from tetris_ls import *
 
 # Define settings and constants
 pyautogui.PAUSE = 0.03
@@ -20,7 +23,7 @@ DeepLines = 0
 pause = False
 APPNAME = "DiscoTetris"
 MEDIAPATH = "Media/"
-FPS = 50                    ### framerate del gioco (PAL 50FPS)
+FPS = 50                  ### framerate del gioco (PAL 50FPS)
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480          
 BOXSIZE = 20                ### Dimensione singolo blocco                       
@@ -28,8 +31,8 @@ BOARDWIDTH = 10
 BOARDHEIGHT = 20                                                                        
 BLANK = '0'
 MOVESIDEWAYSFREQ = 0.075    ### frequenza di movimento laterale
-MOVEDOWNFREQ = 0.05         ### frequenza di discesa
-
+#MOVEDOWNFREQ = 0.05         ### frequenza di discesa
+MOVEDOWNFREQ = 1
 XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
 
@@ -49,9 +52,140 @@ weights = [1.8,1.0,0.5,0.02,0.01,0.2,0.3]
 # weights = [-0.0015, -0.00046, -0.0101, -99.9841] #400 Score
 # weights = [-0.0009, -0.0292, -0.7492, -99.2209] #489 Score
 
+# Define Color triplets in RGB
+WHITE = (255, 255, 255)
+GRAY = (185, 185, 185)
+BLACK = (0, 0, 0)
+RED = (155, 0, 0)
+LIGHTRED = (175, 20, 20)
+GREEN = (0, 155, 0)
+LIGHTGREEN = (20, 175, 20)
+BLUE = (0, 0, 155)
+LIGHTBLUE = (20, 20, 175)
+YELLOW = (255, 255, 0)
+LIGHTYELLOW = (175, 175, 20)
+CYAN = (0, 185, 185)
+LIGHTCYAN = (0, 255, 255)
+MAGENTA = (185, 0, 185)
+LIGHTMAGENTA = (255, 0, 255)
+ORANGE = (255, 128, 0)
+PURPLE = (128 ,0 ,255)
+
+# Define costants for teh gui
+BORDERCOLOR = WHITE
+BGCOLOR = BLACK
+TEXTCOLOR = WHITE
+TEXTSHADOWCOLOR = GRAY
+#COLORS = (GRAY, BLUE, GREEN, RED, YELLOW, CYAN, MAGENTA, ORANGE, PURPLE)
+COLORS = {
+    1: GRAY, 
+    2: BLUE, 
+    3: GREEN, 
+    4: RED, 
+    5: YELLOW, 
+    6: CYAN, 
+    7: MAGENTA, 
+    8: ORANGE, 
+    9: PURPLE}
+LIGHTCOLORS = (WHITE, LIGHTBLUE, WHITE, LIGHTGREEN, LIGHTRED, LIGHTYELLOW,
+               LIGHTCYAN, LIGHTMAGENTA)
+
+# set dimensioni del Template
+TEMPLATEWIDTH = 5
+TEMPLATEHEIGHT = 5
+BOARDWIDTH = 10
+
+S_SHAPE_TEMPLATE = [['00000', '00000', '00110', '01100', '00000'],
+                    ['00000', '00100', '00110', '00010', '00000']]
+
+Z_SHAPE_TEMPLATE = [['00000', '00000', '01100', '00110', '00000'],
+                    ['00000', '00100', '01100', '01000', '00000']]
+
+I_SHAPE_TEMPLATE = [['00100', '00100', '00100', '00100', '00000'],
+                    ['00000', '00000', '11110', '00000', '00000']]
+
+O_SHAPE_TEMPLATE = [['00000', '00000', '01100', '01100', '00000']]
+
+J_SHAPE_TEMPLATE = [['00000', '01000', '01110', '00000', '00000'], 
+                    ['00000', '00110', '00100', '00100', '00000'],
+                    ['00000', '00000', '01110', '00010', '00000'], 
+                    ['00000', '00100', '00100', '01100', '00000']]
+
+L_SHAPE_TEMPLATE = [['00000', '00010', '01110', '00000', '00000'], 
+                    ['00000', '00100', '00100', '00110', '00000'],
+                    ['00000', '00000', '01110', '01000', '00000'], 
+                    ['00000', '01100', '00100', '00100', '00000']]
+
+T_SHAPE_TEMPLATE = [['00000', '00100', '01110', '00000', '00000'], 
+                    ['00000', '00100', '00110', '00100', '00000'],
+                    ['00000', '00000', '01110', '00100', '00000'], 
+                    ['00000', '00100', '01100', '00100', '00000']]
+
+PIECES = {
+    'S': S_SHAPE_TEMPLATE,
+    'Z': Z_SHAPE_TEMPLATE,
+    'J': J_SHAPE_TEMPLATE,
+    'L': L_SHAPE_TEMPLATE,
+    'I': I_SHAPE_TEMPLATE,
+    'O': O_SHAPE_TEMPLATE,
+    'T': T_SHAPE_TEMPLATE
+}
+
+PIECES_COLORS = {
+    'S': 3,#GREEN
+    'Z': 4,#RED
+    'J': 2,#BLUE
+    'L': 8,#ORANGE
+    'I': 6,#CYAN
+    'O': 5,#YELLOW
+    'T': 9 #PURPLE
+}
+
+def get_new_piece():
+    ### restituisce un pezzo random con colorazione random
+    # return a random new piece in a random rotation and color
+    shape = random.choice(list(PIECES.keys()))
+    new_piece = {
+        'shape': shape,
+        'rotation': random.randint(0,len(PIECES[shape]) - 1),
+        'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+        'y': -2,  # start it above the board (i.e. less than 0)
+        #'color': random.randint(1,len(COLORS) - 1)
+        'color': PIECES_COLORS[shape]
+    }
+    return new_piece
+
+import matplotlib.pyplot as plt
+
+def plot_results(scoreArray, game_index_array, w0, w1, w2, w3):
+    plt.figure(1)
+    plt.subplot(211)
+    plt.plot(game_index_array, scoreArray, 'k-')
+    plt.xlabel('Game Number')
+    plt.ylabel('Game Score')
+    plt.title('Learning Curve')
+    plt.xlim(1, max(game_index_array))
+    plt.ylim(0, max(scoreArray) * 1.1)
+
+    # Plot the weights over time
+    plt.subplot(212)
+    plt.xlabel('Game Number')
+    plt.ylabel('Weights')
+    plt.title('Learning Curve')
+    ax = plt.gca()
+    ax.set_yscale('log')
+    plt.plot(game_index_array, w0, label="Aggregate Height")
+    plt.plot(game_index_array, w1, label="Unevenness")
+    plt.plot(game_index_array, w2, label="Maximum Height")
+    plt.plot(game_index_array, w3, label="Number of Holes")
+    plt.legend(loc='lower left')
+    plt.xlim(0, max(game_index_array))
+    plt.ylim(0.0001, 100)
+    plt.show()
+
  ##########################################################  GAME FUNCTIONS  #############################################################
 
-def run_game():
+def run_game(AI):
     global pause
     """Runs a full game of tetris, learning and updating the policy as the game progresses.
 
@@ -101,10 +235,35 @@ def run_game():
                 return score, weights
 
             ### AI "THINK" HERE ###
-            current_move = LS(board, falling_piece, next_piece) ### Ottiene la mossa dall'IA
+            if AI == 0:
+                continue # l'utente fa la sua mossa
+            elif AI == 1:
+                current_move = LS(board, falling_piece, next_piece) ### Ottiene la mossa dall'IA
+            elif AI == 2:
+                print("AI NON ANCORA IMPLEMENTATA")
+                quit() #IA DA IMPLEMENTARE
+            elif AI == 3:
+                print("AI NON ANCORA IMPLEMENTATA")
+                quit() #IA DA IMPLEMENTARE
+            elif AI == 4:
+                print("AI NON ANCORA IMPLEMENTATA")
+                quit() #IA DA IMPLEMENTARE
+            elif AI == 5:
+                print("AI NON ANCORA IMPLEMENTATA")
+                quit() #IA DA IMPLEMENTARE
+            elif AI == 6:
+                print("AI NON ANCORA IMPLEMENTATA")
+                quit() #IA DA IMPLEMENTARE
+            elif AI == 7:
+                print("AI NON ANCORA IMPLEMENTATA")
+                quit() #IA DA IMPLEMENTARE
+            elif AI == 8:
+                print("AI NON ANCORA IMPLEMENTATA")
+                quit() #IA DA IMPLEMENTARE
 
-        check_for_quit()                                            ### Verifica se è stato premuto ESC per chiudere il gioco
-        current_move = make_move(current_move)                      ### Effettua la mossa con pyautoGui
+        check_for_quit()
+        if AI:                                            ### Verifica se è stato premuto ESC per chiudere il gioco
+            current_move = make_move(current_move)                      ### Effettua la mossa con pyautoGui
 
         for event in pygame.event.get():  # event handling loop
             if not pygame.key.get_focused():
@@ -141,21 +300,13 @@ def run_game():
 
                 # rotating the piece (if there is room to rotate)
                 elif (event.key == keys.K_UP or event.key == keys.K_w):
-                    falling_piece[
-                        'rotation'] = (falling_piece['rotation'] + 1) % len(
-                            PIECES[falling_piece['shape']])
+                    falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(PIECES[falling_piece['shape']])
                     if not is_valid_position(board, falling_piece):
-                        falling_piece[
-                            'rotation'] = (falling_piece['rotation'] - 1) % len(
-                                PIECES[falling_piece['shape']])
+                        falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(PIECES[falling_piece['shape']])
                 elif (event.key == keys.K_q):  # rotate the other direction
-                    falling_piece[
-                        'rotation'] = (falling_piece['rotation'] - 1) % len(
-                            PIECES[falling_piece['shape']])
+                    falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(PIECES[falling_piece['shape']])
                     if not is_valid_position(board, falling_piece):
-                        falling_piece[
-                            'rotation'] = (falling_piece['rotation'] + 1) % len(
-                                PIECES[falling_piece['shape']])
+                        falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(PIECES[falling_piece['shape']])
 
                 # making the piece fall faster with the down key
                 elif (event.key == keys.K_DOWN or event.key == keys.K_s):
@@ -182,8 +333,7 @@ def run_game():
                 falling_piece['x'] += 1
             last_lateral_time = time.time()
 
-        if moving_down and time.time(
-        ) - last_move_down_time > MOVEDOWNFREQ and is_valid_position(
+        if moving_down and time.time() - last_move_down_time > MOVEDOWNFREQ and is_valid_position(
                 board, falling_piece, adj_y=1):
             falling_piece['y'] += 1
             last_move_down_time = time.time()
@@ -214,7 +364,7 @@ def run_game():
         draw_next_piece(next_piece)
         if falling_piece is not None:
             draw_piece(falling_piece)
-
+        #time.sleep(1000)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
@@ -301,9 +451,28 @@ def get_level_and_fall_freq(score):
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
     level = int(score / 10) + 1
-    fall_freq = 0.07 * math.exp(
-        (1 - level) / 3)  # 0.27 - (level * 0.02) default
+    #fall_freq = 0.07 * math.exp((1 - level) / 3)  # 0.27 - (level * 0.02) default
+    fall_freq =  0.27 - (level * 0.02)
     return level, fall_freq
+
+
+# def get_new_piece():
+#     ### restituisce un pezzo random con colorazione random
+#     # return a random new piece in a random rotation and color
+#     shape = random.choice(list(PIECES.keys()))
+#     new_piece = {
+#         'shape': shape,
+#         'rotation': random.randint(0,
+#                                    len(PIECES[shape]) - 1),
+#         'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+#         'y': -2,  # start it above the board (i.e. less than 0)
+#         'color': random.randint(1,len(COLORS) - 1)
+        
+#         #// Implementare assegnazione statica dei colori in base alla forma
+
+#     }
+#    return new_piece
+
 
 # (DISCO MODE - ON)   SELEZIONA UN COLORE COMPLEATAMENTE A MotherFucker RANDOM
 def random_color():
@@ -404,14 +573,10 @@ def draw_box(boxx, boxy, color, pixelx=None, pixely=None):
 def draw_board(board):
     ### Disegna la board costrunendone il bordo, sfondo e le singole box (pixel) dei tetramini
     # draw the border around the board
-    pygame.draw.rect(DISPLAYSURF, random_color(),#BORDERCOLOR,
-                     (XMARGIN - 3, TOPMARGIN - 7, (BOARDWIDTH * BOXSIZE) + 8,
-                      (BOARDHEIGHT * BOXSIZE) + 8), 5)
+    pygame.draw.rect(DISPLAYSURF, BORDERCOLOR, (XMARGIN - 3, TOPMARGIN - 7, (BOARDWIDTH * BOXSIZE) + 8, (BOARDHEIGHT * BOXSIZE) + 8), 5)
 
     # fill the background of the board
-    pygame.draw.rect(
-        DISPLAYSURF, BGCOLOR, #random_color()
-        (XMARGIN, TOPMARGIN, BOXSIZE * BOARDWIDTH, BOXSIZE * BOARDHEIGHT))
+    pygame.draw.rect(DISPLAYSURF, BGCOLOR, (XMARGIN, TOPMARGIN, BOXSIZE * BOARDWIDTH, BOXSIZE * BOARDHEIGHT))
     # draw the individual boxes on the board
     for x in range(BOARDWIDTH):
         for y in range(BOARDHEIGHT):
@@ -421,20 +586,20 @@ def draw_status(score, level, best_move):
 
     ### Scrive le informazioni di gioco sullo schermo
     # draw the score text
-    randCol = random_color()
-    score_surf = BASICFONT.render('# Lines: %s' % score, True, randCol)#TEXTCOLOR)
+    #randCol = random_color()
+    score_surf = BASICFONT.render('# Lines: %s' % score, True, TEXTCOLOR)
     score_rect = score_surf.get_rect()
     score_rect.topleft = (WINDOWWIDTH - 150, 20)
     DISPLAYSURF.blit(score_surf, score_rect)
 
     # draw the level text
-    level_surf = BASICFONT.render('Level: %s' % level, True, randCol)#TEXTCOLOR)
+    level_surf = BASICFONT.render('Level: %s' % level, True, TEXTCOLOR)
     level_rect = level_surf.get_rect()
     level_rect.topleft = (WINDOWWIDTH - 150, 50)
     DISPLAYSURF.blit(level_surf, level_rect)
 
     # draw the best_move text
-    move_surf = BASICFONT.render('Current Move: %s' % best_move, True, randCol)#TEXTCOLOR)
+    move_surf = BASICFONT.render('Current Move: %s' % best_move, True, TEXTCOLOR)
     move_rect = move_surf.get_rect()
     move_rect.topleft = (WINDOWWIDTH - 200, 80)
     DISPLAYSURF.blit(move_surf, move_rect)
@@ -461,15 +626,13 @@ def draw_next_piece(piece):
     #print("GlobalNextPiece = ",GlobalNextPiece)
     #time.sleep(2)
 
-    randCol = random_color()
-    next_surf = BASICFONT.render('Next Tetromino:', True, randCol)#TEXTCOLOR)
+    #randCol = random_color()
+    next_surf = BASICFONT.render('Next Tetromino:', True, TEXTCOLOR)
     next_rect = next_surf.get_rect()
     next_rect.topleft = (WINDOWWIDTH - 180, 160)
     DISPLAYSURF.blit(next_surf, next_rect)
 
-    pygame.draw.rect(DISPLAYSURF, randCol,
-                    (485, 195, 
-                    (4.2 * BOXSIZE) + 8,(4.2 * BOXSIZE) + 8), 5)
+    pygame.draw.rect(DISPLAYSURF, TEXTCOLOR,(485, 195, (4.2 * BOXSIZE) + 8,(4.2 * BOXSIZE) + 8), 5)
 
     # draw the "next" piece
     draw_piece(piece, pixelx=WINDOWWIDTH - 150, pixely=200)
@@ -892,11 +1055,49 @@ def LS(board, piece, NextPiece):
 
     return move                                           ### Restituisce la mossa scelta
 
+def next_move(move):
+    rot = move[0]
+    sideways = move[1]
+    for event in pygame.event.get():  # event handling loop
+        if event.type == pygame.KEYDOWN:
+            if event.key == keys.K_w:
+                return rotate_move()
+            elif event.key == keys.K_d:
+                print("d")
+            else:
+                print("errore")
+                quit()
+        pygame.event.clear()
+
+def rotate_move(move):
+    rot = move[0] - 1
+    
+
+
+            
+
+        
 
 
 ##########################################################  MAIN ZONE  ################################################################
 
 if __name__ == '__main__':
+    ##game mode choice
+    AI = int(input("chose game mod: \n"
+                    "0 - Player\n" 
+                    "1 - LS\n"
+                    "2 - GENETICO\n"
+                    "3 - Q-LEARNING DETERMINISTICO\n"
+                    "4 - Q-LEARNING NON DETERMINISTICO\n" 
+                    "5 - RETI NEURALI\n"
+                    "6 - INCERTEZZA\n"
+                    "7 - ALTRA AI\n"
+                    "8 - RULE BASED\n\n"))
+    if AI<0 or AI>8:
+        print("game mode error")
+        quit()
+    #AI = True if choice == 1 else False
+
     global FPSCLOCK, DISPLAYSURF, BASICFONT, BIGFONT
     pygame.init()
     pygame.display.set_icon(pygame.image.load(MEDIAPATH+'DVD.png'))
@@ -926,10 +1127,10 @@ if __name__ == '__main__':
     except:
         print("Music not loaded")
 
-    while True:  # game loop
-
+    while True:  # games loop
+        
+        newScore, weights = run_game(AI)
         games_completed += 1
-        newScore, weights = run_game()
         print("Game Number ", games_completed, " achieved a score of: ", newScore)
         print("weights ", weights)
 

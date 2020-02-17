@@ -9,9 +9,9 @@ import copy
 import numpy
 import pygame.locals as keys
 import pyautogui
-from tetris_gui import *
-from tetris_module import *
-from tetris_utils import *
+#from tetris_gui import *
+#from tetris_model import *
+#from tetris_utils import *
 
 # Define settings and constants
 pyautogui.PAUSE = 0.03
@@ -21,7 +21,7 @@ DeepLines = 0
 pause = False
 APPNAME = "DiscoTetris"
 MEDIAPATH = "Media/"
-FPS = 50                    ### framerate del gioco (PAL 50FPS)
+FPS = 50                  ### framerate del gioco (PAL 50FPS)
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480          
 BOXSIZE = 20                ### Dimensione singolo blocco                       
@@ -30,7 +30,6 @@ BOARDHEIGHT = 20
 BLANK = '0'
 MOVESIDEWAYSFREQ = 0.075    ### frequenza di movimento laterale
 MOVEDOWNFREQ = 0.05         ### frequenza di discesa
-
 XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
 
@@ -49,6 +48,129 @@ weights = [1.8,1.0,0.5,0.02,0.01,0.2,0.3]
 # TEST FATTI SU Q-Learning
 # weights = [-0.0015, -0.00046, -0.0101, -99.9841] #400 Score
 # weights = [-0.0009, -0.0292, -0.7492, -99.2209] #489 Score
+
+import random
+
+# Define Color triplets in RGB
+WHITE = (255, 255, 255)
+GRAY = (185, 185, 185)
+BLACK = (0, 0, 0)
+RED = (155, 0, 0)
+LIGHTRED = (175, 20, 20)
+GREEN = (0, 155, 0)
+LIGHTGREEN = (20, 175, 20)
+BLUE = (0, 0, 155)
+LIGHTBLUE = (20, 20, 175)
+YELLOW = (155, 155, 0)
+LIGHTYELLOW = (175, 175, 20)
+CYAN = (0, 185, 185)
+LIGHTCYAN = (0, 255, 255)
+MAGENTA = (185, 0, 185)
+LIGHTMAGENTA = (255, 0, 255)
+ORANGE = (255, 128, 0)
+PURPLE = (128 ,0 ,255)
+
+# Define costants for teh gui
+BORDERCOLOR = BLUE
+BGCOLOR = BLACK
+TEXTCOLOR = WHITE
+TEXTSHADOWCOLOR = GRAY
+COLORS = (GRAY, BLUE, GREEN, RED, YELLOW, CYAN, MAGENTA, ORANGE, PURPLE)
+LIGHTCOLORS = (WHITE, LIGHTBLUE, WHITE, LIGHTGREEN, LIGHTRED, LIGHTYELLOW,
+               LIGHTCYAN, LIGHTMAGENTA)
+
+# set dimensioni del Template
+TEMPLATEWIDTH = 5
+TEMPLATEHEIGHT = 5
+BOARDWIDTH = 10
+
+S_SHAPE_TEMPLATE = [['00000', '00000', '00110', '01100', '00000'],
+                    ['00000', '00100', '00110', '00010', '00000']]
+
+Z_SHAPE_TEMPLATE = [['00000', '00000', '01100', '00110', '00000'],
+                    ['00000', '00100', '01100', '01000', '00000']]
+
+I_SHAPE_TEMPLATE = [['00100', '00100', '00100', '00100', '00000'],
+                    ['00000', '00000', '11110', '00000', '00000']]
+
+O_SHAPE_TEMPLATE = [['00000', '00000', '01100', '01100', '00000']]
+
+J_SHAPE_TEMPLATE = [['00000', '01000', '01110', '00000', '00000'], 
+                    ['00000', '00110', '00100', '00100', '00000'],
+                    ['00000', '00000', '01110', '00010', '00000'], 
+                    ['00000', '00100', '00100', '01100', '00000']]
+
+L_SHAPE_TEMPLATE = [['00000', '00010', '01110', '00000', '00000'], 
+                    ['00000', '00100', '00100', '00110', '00000'],
+                    ['00000', '00000', '01110', '01000', '00000'], 
+                    ['00000', '01100', '00100', '00100', '00000']]
+
+T_SHAPE_TEMPLATE = [['00000', '00100', '01110', '00000', '00000'], 
+                    ['00000', '00100', '00110', '00100', '00000'],
+                    ['00000', '00000', '01110', '00100', '00000'], 
+                    ['00000', '00100', '01100', '00100', '00000']]
+
+PIECES = {
+    'S': S_SHAPE_TEMPLATE,
+    'Z': Z_SHAPE_TEMPLATE,
+    'J': J_SHAPE_TEMPLATE,
+    'L': L_SHAPE_TEMPLATE,
+    'I': I_SHAPE_TEMPLATE,
+    'O': O_SHAPE_TEMPLATE,
+    'T': T_SHAPE_TEMPLATE
+}
+
+PIECES_COLORS = {
+    'S': GREEN,
+    'Z': RED,
+    'J': BLUE,
+    'L': ORANGE,
+    'I': CYAN,
+    'O': YELLOW,
+    'T': PURPLE
+}
+
+def get_new_piece():
+    ### restituisce un pezzo random con colorazione random
+    # return a random new piece in a random rotation and color
+    shape = random.choice(list(PIECES.keys()))
+    new_piece = {
+        'shape': shape,
+        'rotation': random.randint(0,len(PIECES[shape]) - 1),
+        'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+        'y': -2,  # start it above the board (i.e. less than 0)
+        #'color': random.randint(1,len(COLORS) - 1)
+        'color': PIECES_COLORS[shape]
+    }
+    return new_piece
+
+import matplotlib.pyplot as plt
+
+def plot_results(scoreArray, game_index_array, w0, w1, w2, w3):
+    plt.figure(1)
+    plt.subplot(211)
+    plt.plot(game_index_array, scoreArray, 'k-')
+    plt.xlabel('Game Number')
+    plt.ylabel('Game Score')
+    plt.title('Learning Curve')
+    plt.xlim(1, max(game_index_array))
+    plt.ylim(0, max(scoreArray) * 1.1)
+
+    # Plot the weights over time
+    plt.subplot(212)
+    plt.xlabel('Game Number')
+    plt.ylabel('Weights')
+    plt.title('Learning Curve')
+    ax = plt.gca()
+    ax.set_yscale('log')
+    plt.plot(game_index_array, w0, label="Aggregate Height")
+    plt.plot(game_index_array, w1, label="Unevenness")
+    plt.plot(game_index_array, w2, label="Maximum Height")
+    plt.plot(game_index_array, w3, label="Number of Holes")
+    plt.legend(loc='lower left')
+    plt.xlim(0, max(game_index_array))
+    plt.ylim(0.0001, 100)
+    plt.show()
 
  ##########################################################  GAME FUNCTIONS  #############################################################
 
@@ -183,8 +305,7 @@ def run_game():
                 falling_piece['x'] += 1
             last_lateral_time = time.time()
 
-        if moving_down and time.time(
-        ) - last_move_down_time > MOVEDOWNFREQ and is_valid_position(
+        if moving_down and time.time() - last_move_down_time > MOVEDOWNFREQ and is_valid_position(
                 board, falling_piece, adj_y=1):
             falling_piece['y'] += 1
             last_move_down_time = time.time()
@@ -874,7 +995,7 @@ def make_move(move):
         rot -= 1
     else:
         if sideways == 0:
-            pyautogui.press('space')
+            pyautogui.press('down')
         if sideways < 0:
             pyautogui.press('left')
             sideways += 1

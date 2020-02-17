@@ -36,7 +36,7 @@
     <Compile Include="tetris_gui.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="tetris_module.py">
+    <Compile Include="tetris_model.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tetris_AI_LS.py">
