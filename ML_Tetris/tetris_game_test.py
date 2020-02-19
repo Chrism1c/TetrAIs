@@ -40,6 +40,7 @@ def run_game(AI):
     moving_left = False
     moving_right = False
     score = 0
+    lines = 0
     one_step_reward = 0
     games_completed = 0
     level, fall_freq = get_level_and_fall_freq(score)
@@ -172,9 +173,10 @@ def run_game(AI):
                 add_to_board(board, falling_piece)
 
 
-                lines, board = remove_complete_lines(board)
-                score += lines #* lines
-
+                lines_removed, board = remove_complete_lines(board)
+                score += getScore(lines_removed, level)
+                #score += lines #* lines
+                lines += lines_removed #* lines
                 level, fall_freq = get_level_and_fall_freq(score)
                 print("level: ", level)
                 print("fall_freq: ", fall_freq)
@@ -187,13 +189,35 @@ def run_game(AI):
         # drawing everything on the screen
         DISPLAYSURF.fill(BGCOLOR)
         draw_board(board)
-        draw_status(score, level, current_move)
+        draw_status(score, lines, level, current_move)
         draw_next_piece(next_piece)
         if falling_piece is not None:
             draw_piece(falling_piece)
         #time.sleep(1000)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
+
+
+
+def getScore(lines, level):
+
+    #setting the multiplier
+    if level%2==0:
+        multiplier = level/2
+    else:
+        multiplier = level/2 + 1
+    
+    #score per lines removed
+    if lines == 0:
+        return 0
+    elif lines == 1:
+        return int(40 * multiplier)
+    elif lines == 2:
+        return int(100 * multiplier)
+    elif lines == 3:
+        return int(300 * multiplier)
+    elif lines == 4:
+        return int(1200 * multiplier)
 
 
 
@@ -309,7 +333,6 @@ def remove_complete_lines(board):
 
 
 
-
 def make_move(move):
     # This function will make the indicated move, with the first digit
     # representing the number of rotations to be made and the seconds
@@ -375,7 +398,7 @@ def draw_board(board):
 
 
 
-def draw_status(score, level, best_move):
+def draw_status_OLD(score, level, best_move):
 
     ### Scrive le informazioni di gioco sullo schermo
     # draw the score text
@@ -395,6 +418,34 @@ def draw_status(score, level, best_move):
     move_surf = BASICFONT.render('Current Move: %s' % best_move, True, TEXTCOLOR)
     move_rect = move_surf.get_rect()
     move_rect.topleft = (WINDOWWIDTH - 200, 80)
+    DISPLAYSURF.blit(move_surf, move_rect)
+
+def draw_status(score, lines, level, best_move):
+
+    ### Scrive le informazioni di gioco sullo schermo
+    # draw the score text
+    #randCol = random_color()
+    score_surf = BASICFONT.render('# Score: %s' % score, True, TEXTCOLOR)
+    score_rect = score_surf.get_rect()
+    score_rect.topleft = (WINDOWWIDTH - 150, 20)
+    DISPLAYSURF.blit(score_surf, score_rect)
+
+    #draw the lines text
+    lines_surf = BASICFONT.render('# Lines: %s' % lines, True, TEXTCOLOR)
+    lines_rect = lines_surf.get_rect()
+    lines_rect.topleft = (WINDOWWIDTH - 150, 40)
+    DISPLAYSURF.blit(lines_surf, lines_rect)
+
+    # draw the level text
+    level_surf = BASICFONT.render('Level: %s' % level, True, TEXTCOLOR)
+    level_rect = level_surf.get_rect()
+    level_rect.topleft = (WINDOWWIDTH - 150, 70)
+    DISPLAYSURF.blit(level_surf, level_rect)
+
+    # draw the best_move text
+    move_surf = BASICFONT.render('Current Move: %s' % best_move, True, TEXTCOLOR)
+    move_rect = move_surf.get_rect()
+    move_rect.topleft = (WINDOWWIDTH - 200, 100)
     DISPLAYSURF.blit(move_surf, move_rect)
 
 
@@ -461,6 +512,11 @@ if __name__ == '__main__':
     if AI<0 or AI>8:
         print("game mode error")
         quit()
+
+    Ngames = int (input("How many games? ")) 
+    if Ngames < 1:
+        print("to low number of games error")
+        quit()
     #AI = True if choice == 1 else False
 
     global FPSCLOCK, DISPLAYSURF, BASICFONT, BIGFONT
@@ -475,13 +531,13 @@ if __name__ == '__main__':
 
     games_completed = 0
     scoreArray = []
-    weight0Array = []
-    weight1Array = []
-    weight2Array = []
-    weight3Array = []
-    weight4Array = []
-    weight5Array = []
-    weight6Array = []
+    # weight0Array = []
+    # weight1Array = []
+    # weight2Array = []
+    # weight3Array = []
+    # weight4Array = []
+    # weight5Array = []
+    # weight6Array = []
     game_index_array = []
     time.sleep(0.5)
 
@@ -493,7 +549,8 @@ if __name__ == '__main__':
         print("Music not loaded")
 
     while True:  # games loop
-        
+        caption = "Game {game}".format(game=games_completed + 1)
+        pygame.display.set_caption(caption)
         newScore, weights = run_game(AI)
         games_completed += 1
         print("Game Number ", games_completed, " achieved a score of: ", newScore)
@@ -501,21 +558,22 @@ if __name__ == '__main__':
 
         scoreArray.append(newScore)
         game_index_array.append(games_completed)
-        weight0Array.append(-weights[0])
-        weight1Array.append(-weights[1])
-        weight2Array.append(-weights[2])
-        weight3Array.append(-weights[3])
-        weight4Array.append(-weights[4])
-        weight5Array.append(-weights[5])
-        weight6Array.append(-weights[6])
+
+        # weight0Array.append(-weights[0])
+        # weight1Array.append(-weights[1])
+        # weight2Array.append(-weights[2])
+        # weight3Array.append(-weights[3])
+        # weight4Array.append(-weights[4])
+        # weight5Array.append(-weights[5])
+        # weight6Array.append(-weights[6])
         show_text_screen('Game Over')
 
         #time.sleep(2)
 
-        if games_completed >= MAX_GAMES:
+        if games_completed >= Ngames:
             # Plot the game score over time
             pygame.mixer.music.stop()
-            plot_results(scoreArray, game_index_array, weight0Array, weight1Array, weight2Array, weight3Array)
+            plot_results(scoreArray, game_index_array)
            
             break
 

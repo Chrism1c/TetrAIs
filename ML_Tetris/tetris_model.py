@@ -188,11 +188,12 @@ def get_level_and_fall_freq(score):
     ### Calcola il livello del gioco in base a una funzione :  int(score / 10) + 1 e calcola quanti secondi passano per il drop
     # Based on the score, return the level the player is on and
     # how many seconds pass until a falling piece falls one space.
-    level = int(score / 10) + 1
+    level = int(score / 1000) + 1
     #fall_freq = 0.07 * math.exp((1 - level) / 3)  # 0.27 - (level * 0.02) default
-    fall_freq =  0.27 - (level * 0.02)
+    multiplier = level * 0.1
+    fall_freq =  0.27 - (multiplier * 0.02)
+    #fall_freq =  0.27 - (level * 0.02)
     return level, fall_freq
-
 
 
 def get_new_piece():
