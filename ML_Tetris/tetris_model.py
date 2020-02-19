@@ -209,3 +209,25 @@ def get_new_piece():
         'color': PIECES_COLORS[shape]
     }
     return new_piece
+
+
+def get_score(lines, level):
+
+    #setting the multiplier
+    multiplier = 1
+    if level>=25 and level<50:
+        multiplier = 2
+    elif level>=50:
+        multiplier = 3
+    
+    #score per lines removed
+    if lines == 0:
+        return 0
+    elif lines == 1:
+        return int(40 * multiplier)
+    elif lines == 2:
+        return int(100 * multiplier)
+    elif lines == 3:
+        return int(300 * multiplier)
+    elif lines == 4:
+        return int(1200 * multiplier)

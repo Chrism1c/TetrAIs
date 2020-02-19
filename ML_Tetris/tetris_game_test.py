@@ -174,7 +174,7 @@ def run_game(AI):
 
 
                 lines_removed, board = remove_complete_lines(board)
-                score += getScore(lines_removed, level)
+                score += get_score(lines_removed, level)
                 #score += lines #* lines
                 lines += lines_removed #* lines
                 level, fall_freq = get_level_and_fall_freq(score)
@@ -197,27 +197,6 @@ def run_game(AI):
         pygame.display.update()
         FPSCLOCK.tick(FPS)
 
-
-
-def getScore(lines, level):
-
-    #setting the multiplier
-    if level%2==0:
-        multiplier = level/2
-    else:
-        multiplier = level/2 + 1
-    
-    #score per lines removed
-    if lines == 0:
-        return 0
-    elif lines == 1:
-        return int(40 * multiplier)
-    elif lines == 2:
-        return int(100 * multiplier)
-    elif lines == 3:
-        return int(300 * multiplier)
-    elif lines == 4:
-        return int(1200 * multiplier)
 
 
 
@@ -499,7 +478,7 @@ def make_text_objs(text, font, color):
 
 if __name__ == '__main__':
     ##game mode choice
-    AI = int(input("chose game mod: \n"
+    AI = int(input("chose game mode: \n"
                     "0 - Player\n" 
                     "1 - LS\n"
                     "2 - GENETICO\n"
@@ -513,7 +492,7 @@ if __name__ == '__main__':
         print("game mode error")
         quit()
 
-    Ngames = int (input("How many games? ")) 
+    Ngames = int (input("How many runs? ")) 
     if Ngames < 1:
         print("to low number of games error")
         quit()
@@ -541,12 +520,12 @@ if __name__ == '__main__':
     game_index_array = []
     time.sleep(0.5)
 
-    try:
-        #pygame.mixer.music.load(MEDIAPATH+'DiscoTetris.mp3')
-        #pygame.mixer.music.play(-1)
-        print("Music loaded")
-    except:
-        print("Music not loaded")
+    # try:
+    #     #pygame.mixer.music.load(MEDIAPATH+'DiscoTetris.mp3')
+    #     #pygame.mixer.music.play(-1)
+    #     print("Music loaded")
+    # except:
+    #     print("Music not loaded")
 
     while True:  # games loop
         caption = "Game {game}".format(game=games_completed + 1)
@@ -573,8 +552,10 @@ if __name__ == '__main__':
         if games_completed >= Ngames:
             # Plot the game score over time
             pygame.mixer.music.stop()
-            plot_results(scoreArray, game_index_array)
-           
+            #plot_results(scoreArray, game_index_array)
+            plot = plot_results(scoreArray, game_index_array, list())
+            plot()
+
             break
 
 
