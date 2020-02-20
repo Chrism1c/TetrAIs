@@ -10,7 +10,7 @@ import numpy
 import pygame.locals as keys
 import pyautogui
 from tetris_gui import *
-from tetris_module import *
+from tetris_model import *
 from tetris_utils import *
 
 # Define settings and constants
@@ -136,21 +136,13 @@ def run_game(weights, explore_change):
 
                 # rotating the piece (if there is room to rotate)
                 elif (event.key == keys.K_UP or event.key == keys.K_w):
-                    falling_piece[
-                        'rotation'] = (falling_piece['rotation'] + 1) % len(
-                            PIECES[falling_piece['shape']])
+                    falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(PIECES[falling_piece['shape']])
                     if not is_valid_position(board, falling_piece):
-                        falling_piece[
-                            'rotation'] = (falling_piece['rotation'] - 1) % len(
-                                PIECES[falling_piece['shape']])
+                        falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(PIECES[falling_piece['shape']])
                 elif (event.key == keys.K_q):  # rotate the other direction
-                    falling_piece[
-                        'rotation'] = (falling_piece['rotation'] - 1) % len(
-                            PIECES[falling_piece['shape']])
+                    falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(PIECES[falling_piece['shape']])
                     if not is_valid_position(board, falling_piece):
-                        falling_piece[
-                            'rotation'] = (falling_piece['rotation'] + 1) % len(
-                                PIECES[falling_piece['shape']])
+                        falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(PIECES[falling_piece['shape']])
 
                 # making the piece fall faster with the down key
                 elif (event.key == keys.K_DOWN or event.key == keys.K_s):
@@ -177,9 +169,7 @@ def run_game(weights, explore_change):
                 falling_piece['x'] += 1
             last_lateral_time = time.time()
 
-        if moving_down and time.time(
-        ) - last_move_down_time > MOVEDOWNFREQ and is_valid_position(
-                board, falling_piece, adj_y=1):
+        if moving_down and time.time() - last_move_down_time > MOVEDOWNFREQ and is_valid_position(board, falling_piece, adj_y=1):
             falling_piece['y'] += 1
             last_move_down_time = time.time()
             games_completed += 1
@@ -303,22 +293,7 @@ def get_level_and_fall_freq(score):
     return level, fall_freq
 
 
-def get_new_piece():
-    ### restituisce un pezzo random con colorazione random
-    # return a random new piece in a random rotation and color
-    shape = random.choice(list(PIECES.keys()))
-    new_piece = {
-        'shape': shape,
-        'rotation': random.randint(0,
-                                   len(PIECES[shape]) - 1),
-        'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
-        'y': -2,  # start it above the board (i.e. less than 0)
-        'color': random.randint(1,len(COLORS) - 1)
-        
-        #// Implementare assegnazione statica dei colori in base alla forma
 
-    }
-    return new_piece
 
 # (DISCO MODE - ON)   SELEZIONA UN COLORE COMPLEATAMENTE A MotherFucker RANDOM
 def random_color():

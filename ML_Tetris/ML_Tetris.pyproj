@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>1911daff-6af9-40f8-8369-f89127d4da15</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>ML_Tetris_Genetic.py</StartupFile>
+    <StartupFile>ML_Tetris_LS.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -26,13 +26,17 @@
     </Compile>
     <Compile Include="ML_Tetris - BKUP.py" />
     <Compile Include="ML_Tetris_Genetic.py" />
+    <Compile Include="ML_Tetris_LS.py" />
+    <Compile Include="tetris_game.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="tetris_utils.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tetris_gui.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="tetris_module.py">
+    <Compile Include="tetris_model.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Tetris_AI_LS.py">
