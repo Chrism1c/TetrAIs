@@ -4,6 +4,7 @@
 from tetris_model import *
 from tetris_plot import *
 
+
 # IMPORT DELLE AI
 import tetris_ls as ls
 import tetris_qlp as qlp
@@ -82,6 +83,8 @@ def run_game(AI):
                 continue  # l'utente fa la sua mossa
             elif AI == 1:
                 current_move = ls.LS(board, falling_piece, next_piece)  ### Ottiene la mossa dall'IA
+
+
             elif AI == 2:
                 print("AI NON ANCORA IMPLEMENTATA")
                 quit()  # IA DA IMPLEMENTARE
@@ -105,6 +108,7 @@ def run_game(AI):
             elif AI == 8:
                 print("AI NON ANCORA IMPLEMENTATA")
                 quit()  # IA DA IMPLEMENTARE
+
 
         # check_for_quit()
         if AI:  ### Verifica se è stato premuto ESC per chiudere il gioco
