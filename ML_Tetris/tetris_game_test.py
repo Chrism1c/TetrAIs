@@ -49,7 +49,7 @@ def run_game(AI):
 
 
     if AI == 3:
-        qlp.set_PIece(100)
+        ql.set_PIece(100)
         falling_piece = ql.get_next_PIece()
         next_piece = ql.get_next_PIece()
     else:

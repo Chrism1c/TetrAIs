@@ -32,10 +32,9 @@ XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
 
 # Define learning parameters
-alpha = 0.01
-gamma = 0.9
+
 MAX_GAMES = 1
-explore_change = 0.5
+
 #weights = [-1, -1, -1, -30]  # Initial weight vector
 #weights = [-0.0009, -0.0292, -0.7492, -99.2209]  # Best weight record
 
