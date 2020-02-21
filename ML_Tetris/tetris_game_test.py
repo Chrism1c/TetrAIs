@@ -7,7 +7,7 @@ from tetris_plot import *
 
 # IMPORT DELLE AI
 import tetris_ls as ls
-import tetris_qlp as qlp
+import tetris_ql as ql
 
 ##########################################################  GAME FUNCTIONS  #############################################################
 
@@ -50,8 +50,8 @@ def run_game(AI):
 
     if AI == 3:
         qlp.set_PIece(100)
-        falling_piece = qlp.get_next_PIece()
-        next_piece = qlp.get_next_PIece()
+        falling_piece = ql.get_next_PIece()
+        next_piece = ql.get_next_PIece()
     else:
         falling_piece = get_new_piece()
         next_piece = get_new_piece()
@@ -66,7 +66,7 @@ def run_game(AI):
 
 
             if AI == 3:
-                next_piece = qlp.get_next_PIece()
+                next_piece = ql.get_next_PIece()
             else:
                 next_piece = get_new_piece()
 
@@ -83,19 +83,15 @@ def run_game(AI):
                 continue  # l'utente fa la sua mossa
             elif AI == 1:
                 current_move = ls.LS(board, falling_piece, next_piece)  ### Ottiene la mossa dall'IA
-
-
             elif AI == 2:
                 print("AI NON ANCORA IMPLEMENTATA")
                 quit()  # IA DA IMPLEMENTARE
             elif AI == 3:
                 print("3 - Q-LEARNING DETERMINISTICO")
-                current_move = qlp.QL_P(board, falling_piece)  ### Ottiene la mossa dall'IA
-                #quit()  # IA DA IMPLEMENTARE
+                current_move = ql.QL_P(board, falling_piece)  ### Ottiene la mossa dall'IA
             elif AI == 4:
                 print("4 - Q-LEARNING NONDETERMINISTICO")
-                #current_move = QL_NP(board, falling_piece, next_piece)  ### Ottiene la mossa dall'IA
-                #quit()  # IA DA IMPLEMENTARE
+                current_move = ql.QL_P(board, falling_piece)  ### Ottiene la mossa dall'IA
             elif AI == 5:
                 print("AI NON ANCORA IMPLEMENTATA")
                 quit()  # IA DA IMPLEMENTARE
