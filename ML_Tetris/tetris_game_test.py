@@ -5,7 +5,7 @@ from tetris_model import *
 from tetris_plot import *
 
 #IMPORT DELLE AI
-from tetris_ls import *
+import tetris_ls as ls
 
 
  ##########################################################  GAME FUNCTIONS  #############################################################
@@ -64,7 +64,7 @@ def run_game(AI):
             if AI == 0:
                 continue # l'utente fa la sua mossa
             elif AI == 1:
-                current_move = LS(board, falling_piece, next_piece) ### Ottiene la mossa dall'IA
+                current_move = ls.LS(board, falling_piece, next_piece) ### Ottiene la mossa dall'IA
             elif AI == 2:
                 print("AI NON ANCORA IMPLEMENTATA")
                 quit() #IA DA IMPLEMENTARE
@@ -88,7 +88,7 @@ def run_game(AI):
                 quit() #IA DA IMPLEMENTARE
 
         #check_for_quit()
-        if AI:                                            ### Verifica se è stato premuto ESC per chiudere il gioco
+        if AI != 0:                                            ### Verifica se è stato premuto ESC per chiudere il gioco
             current_move = make_move(current_move)                      ### Effettua la mossa con pyautoGui
 
         for event in pygame.event.get():  # event handling loop

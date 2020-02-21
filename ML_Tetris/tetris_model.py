@@ -196,6 +196,7 @@ def get_level_and_fall_freq(score):
     return level, fall_freq
 
 
+
 def get_new_piece():
     ### restituisce un pezzo random con colorazione random
     # return a random new piece in a random rotation and color
@@ -209,6 +210,7 @@ def get_new_piece():
         'color': PIECES_COLORS[shape]
     }
     return new_piece
+
 
 
 def get_score(lines, level):
