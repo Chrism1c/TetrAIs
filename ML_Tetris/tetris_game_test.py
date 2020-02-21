@@ -1,14 +1,14 @@
-#contiene il core del game Tetris
+# contiene il core del game Tetris
 
-#import dei moduli
+# import dei moduli
 from tetris_model import *
 from tetris_plot import *
 
-#IMPORT DELLE AI
-from tetris_ls import *
+# IMPORT DELLE AI
+import tetris_ls as ls
+import tetris_qlp as qlp
 
-
- ##########################################################  GAME FUNCTIONS  #############################################################
+##########################################################  GAME FUNCTIONS  #############################################################
 
 def run_game(AI):
     global pause
@@ -45,15 +45,32 @@ def run_game(AI):
     games_completed = 0
     level, fall_freq = get_level_and_fall_freq(score)
     current_move = [0, 0]  # Relative Rotation, lateral movement
-    falling_piece = get_new_piece()
-    next_piece = get_new_piece()
+
+
+    if AI == 3:
+        qlp.set_PIece(100)
+        falling_piece = qlp.get_next_PIece()
+        next_piece = qlp.get_next_PIece()
+    else:
+        falling_piece = get_new_piece()
+        next_piece = get_new_piece()
+
+
 
     while True:  # game loop
 
         if falling_piece is None:
             # No falling piece in play, so start a new piece at the top
             falling_piece = next_piece
-            next_piece = get_new_piece()
+
+
+            if AI == 3:
+                next_piece = qlp.get_next_PIece()
+            else:
+                next_piece = get_new_piece()
+
+
+
             last_fall_time = time.time()  # reset last_fall_time
 
             if not is_valid_position(board, falling_piece):
@@ -62,34 +79,36 @@ def run_game(AI):
 
             ### AI "THINK" HERE ###
             if AI == 0:
-                continue # l'utente fa la sua mossa
+                continue  # l'utente fa la sua mossa
             elif AI == 1:
-                current_move = LS(board, falling_piece, next_piece) ### Ottiene la mossa dall'IA
+                current_move = ls.LS(board, falling_piece, next_piece)  ### Ottiene la mossa dall'IA
             elif AI == 2:
                 print("AI NON ANCORA IMPLEMENTATA")
-                quit() #IA DA IMPLEMENTARE
+                quit()  # IA DA IMPLEMENTARE
             elif AI == 3:
-                print("AI NON ANCORA IMPLEMENTATA")
-                quit() #IA DA IMPLEMENTARE
+                print("3 - Q-LEARNING DETERMINISTICO")
+                current_move = qlp.QL_P(board, falling_piece)  ### Ottiene la mossa dall'IA
+                #quit()  # IA DA IMPLEMENTARE
             elif AI == 4:
-                print("AI NON ANCORA IMPLEMENTATA")
-                quit() #IA DA IMPLEMENTARE
+                print("4 - Q-LEARNING NONDETERMINISTICO")
+                #current_move = QL_NP(board, falling_piece, next_piece)  ### Ottiene la mossa dall'IA
+                #quit()  # IA DA IMPLEMENTARE
             elif AI == 5:
                 print("AI NON ANCORA IMPLEMENTATA")
-                quit() #IA DA IMPLEMENTARE
+                quit()  # IA DA IMPLEMENTARE
             elif AI == 6:
                 print("AI NON ANCORA IMPLEMENTATA")
-                quit() #IA DA IMPLEMENTARE
+                quit()  # IA DA IMPLEMENTARE
             elif AI == 7:
                 print("AI NON ANCORA IMPLEMENTATA")
-                quit() #IA DA IMPLEMENTARE
+                quit()  # IA DA IMPLEMENTARE
             elif AI == 8:
                 print("AI NON ANCORA IMPLEMENTATA")
-                quit() #IA DA IMPLEMENTARE
+                quit()  # IA DA IMPLEMENTARE
 
-        #check_for_quit()
-        if AI:                                            ### Verifica se è stato premuto ESC per chiudere il gioco
-            current_move = make_move(current_move)                      ### Effettua la mossa con pyautoGui
+        # check_for_quit()
+        if AI:  ### Verifica se è stato premuto ESC per chiudere il gioco
+            current_move = make_move(current_move)  ### Effettua la mossa con pyautoGui
 
         for event in pygame.event.get():  # event handling loop
             if not pygame.key.get_focused():
@@ -111,14 +130,14 @@ def run_game(AI):
             elif event.type == keys.KEYDOWN:
                 # moving the piece sideways
                 if (event.key == keys.K_LEFT or event.key == keys.K_a) and is_valid_position(
-                            board, falling_piece, adj_x=-1):
+                        board, falling_piece, adj_x=-1):
                     falling_piece['x'] -= 1
                     moving_left = True
                     moving_right = False
                     last_lateral_time = time.time()
 
                 elif (event.key == keys.K_RIGHT or event.key == keys.K_d) and is_valid_position(
-                          board, falling_piece, adj_x=1):
+                        board, falling_piece, adj_x=1):
                     falling_piece['x'] += 1
                     moving_right = True
                     moving_left = False
@@ -128,11 +147,13 @@ def run_game(AI):
                 elif (event.key == keys.K_UP or event.key == keys.K_w):
                     falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(PIECES[falling_piece['shape']])
                     if not is_valid_position(board, falling_piece):
-                        falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(PIECES[falling_piece['shape']])
+                        falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(
+                            PIECES[falling_piece['shape']])
                 elif (event.key == keys.K_q):  # rotate the other direction
                     falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(PIECES[falling_piece['shape']])
                     if not is_valid_position(board, falling_piece):
-                        falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(PIECES[falling_piece['shape']])
+                        falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(
+                            PIECES[falling_piece['shape']])
 
                 # making the piece fall faster with the down key
                 elif (event.key == keys.K_DOWN or event.key == keys.K_s):
@@ -172,11 +193,10 @@ def run_game(AI):
                 # falling piece has landed, set it on the board
                 add_to_board(board, falling_piece)
 
-
                 lines_removed, board = remove_complete_lines(board)
                 score += get_score(lines_removed, level)
-                #score += lines #* lines
-                lines += lines_removed #* lines
+                # score += lines #* lines
+                lines += lines_removed  # * lines
                 level, fall_freq = get_level_and_fall_freq(score)
                 print("level: ", level)
                 print("fall_freq: ", fall_freq)
@@ -193,11 +213,9 @@ def run_game(AI):
         draw_next_piece(next_piece)
         if falling_piece is not None:
             draw_piece(falling_piece)
-        #time.sleep(1000)
+        # time.sleep(1000)
         pygame.display.update()
         FPSCLOCK.tick(FPS)
-
-
 
 
 def terminate():
@@ -207,7 +225,6 @@ def terminate():
         sys.exit()
     except:
         print("Ended")
-
 
 
 def check_for_key_press():
@@ -221,7 +238,6 @@ def check_for_key_press():
             continue
         return event.key
     return None
-
 
 
 def show_text_screen(text):
@@ -245,9 +261,8 @@ def show_text_screen(text):
     DISPLAYSURF.blit(press_key_surf, press_key_rect)
 
     pygame.display.update()
-    FPSCLOCK.tick() ### Avanza al frame successivo
+    FPSCLOCK.tick()  ### Avanza al frame successivo
     time.sleep(0.5)
-
 
 
 def check_for_quit():
@@ -260,12 +275,11 @@ def check_for_quit():
         pygame.event.post(event)  # put the other KEYUP event objects back
 
 
-
 def paused():
     global pause
     pygame.mixer.music.pause()
     print("************************* Start PAUSE ************************")
-    #DISPLAYSURF.fill(BGCOLOR)
+    # DISPLAYSURF.fill(BGCOLOR)
     show_text_screen('Paused')  # pause until a key press
     pause = True
     while pause:
@@ -273,19 +287,17 @@ def paused():
             if event.type == keys.KEYUP:
                 if (event.key == keys.K_p):
                     pygame.mixer.music.unpause()
-                    pause = False       
+                    pause = False
     print("************************* End PAUSE **************************")
 
 
-                  
-def get_blank_board():                                                                                                                  
+def get_blank_board():
     ### Restituisco una matrice (Array of Array) di celle vuote '0'
     # create and return a new blank board data structure
     board = []
     for _ in range(BOARDWIDTH):
         board.append(['0'] * BOARDHEIGHT)
     return board
-
 
 
 def remove_complete_lines(board):
@@ -311,7 +323,6 @@ def remove_complete_lines(board):
     return lines_removed, board
 
 
-
 def make_move(move):
     # This function will make the indicated move, with the first digit
     # representing the number of rotations to be made and the seconds
@@ -334,17 +345,14 @@ def make_move(move):
     return [rot, sideways]
 
 
-    
 ######################################################  GUI DRAW FUNCTIONS  ###########################################################
 
 
-    
 def convert_to_pixel_coords(boxx, boxy):
     ### Converte le coordinate xy della board nelle corrispettive coordinate xy della loro locazione sullo schermo 
     # Convert the given xy coordinates of the board to xy
     # coordinates of the location on the screen.
     return (XMARGIN + (boxx * BOXSIZE)), (TOPMARGIN + (boxy * BOXSIZE))
-
 
 
 def draw_box(boxx, boxy, color, pixelx=None, pixely=None):
@@ -358,15 +366,15 @@ def draw_box(boxx, boxy, color, pixelx=None, pixely=None):
         return
     if pixelx is None and pixely is None:
         pixelx, pixely = convert_to_pixel_coords(boxx, boxy)
-    pygame.draw.rect(DISPLAYSURF,  COLORS[color],(pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
-    #pygame.draw.rect(DISPLAYSURF,  LIGHTCOLORS[color],(pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
-
+    pygame.draw.rect(DISPLAYSURF, COLORS[color], (pixelx + 1, pixely + 1, BOXSIZE - 1, BOXSIZE - 1))
+    # pygame.draw.rect(DISPLAYSURF,  LIGHTCOLORS[color],(pixelx + 1, pixely + 1, BOXSIZE - 4, BOXSIZE - 4))
 
 
 def draw_board(board):
     ### Disegna la board costrunendone il bordo, sfondo e le singole box (pixel) dei tetramini
     # draw the border around the board
-    pygame.draw.rect(DISPLAYSURF, BORDERCOLOR, (XMARGIN - 3, TOPMARGIN - 7, (BOARDWIDTH * BOXSIZE) + 8, (BOARDHEIGHT * BOXSIZE) + 8), 5)
+    pygame.draw.rect(DISPLAYSURF, BORDERCOLOR,
+                     (XMARGIN - 3, TOPMARGIN - 7, (BOARDWIDTH * BOXSIZE) + 8, (BOARDHEIGHT * BOXSIZE) + 8), 5)
 
     # fill the background of the board
     pygame.draw.rect(DISPLAYSURF, BGCOLOR, (XMARGIN, TOPMARGIN, BOXSIZE * BOARDWIDTH, BOXSIZE * BOARDHEIGHT))
@@ -376,12 +384,10 @@ def draw_board(board):
             draw_box(x, y, board[x][y])
 
 
-
 def draw_status_OLD(score, level, best_move):
-
     ### Scrive le informazioni di gioco sullo schermo
     # draw the score text
-    #randCol = random_color()
+    # randCol = random_color()
     score_surf = BASICFONT.render('# Lines: %s' % score, True, TEXTCOLOR)
     score_rect = score_surf.get_rect()
     score_rect.topleft = (WINDOWWIDTH - 150, 20)
@@ -399,17 +405,17 @@ def draw_status_OLD(score, level, best_move):
     move_rect.topleft = (WINDOWWIDTH - 200, 80)
     DISPLAYSURF.blit(move_surf, move_rect)
 
-def draw_status(score, lines, level, best_move):
 
+def draw_status(score, lines, level, best_move):
     ### Scrive le informazioni di gioco sullo schermo
     # draw the score text
-    #randCol = random_color()
+    # randCol = random_color()
     score_surf = BASICFONT.render('# Score: %s' % score, True, TEXTCOLOR)
     score_rect = score_surf.get_rect()
     score_rect.topleft = (WINDOWWIDTH - 150, 20)
     DISPLAYSURF.blit(score_surf, score_rect)
 
-    #draw the lines text
+    # draw the lines text
     lines_surf = BASICFONT.render('# Lines: %s' % lines, True, TEXTCOLOR)
     lines_rect = lines_surf.get_rect()
     lines_rect.topleft = (WINDOWWIDTH - 150, 40)
@@ -428,7 +434,6 @@ def draw_status(score, lines, level, best_move):
     DISPLAYSURF.blit(move_surf, move_rect)
 
 
-
 def draw_piece(piece, pixelx=None, pixely=None):
     ### disegna un pezzo. Se pixelx e pixely non sono avvalorate usa le coordinate contenute in piece
     shape_to_draw = PIECES[piece['shape']][piece['rotation']]
@@ -444,34 +449,30 @@ def draw_piece(piece, pixelx=None, pixely=None):
                 draw_box(None, None, piece['color'], pixelx + (x * BOXSIZE), pixely + (y * BOXSIZE))
 
 
-
 def draw_next_piece(piece):
-    #global GlobalNextPiece
+    # global GlobalNextPiece
     ### Disegan il prossimo tetramino sulla sideBar
     # draw the "next" text
-    #GlobalNextPiece = piece
-    #print("GlobalNextPiece = ",GlobalNextPiece)
-    #time.sleep(2)
+    # GlobalNextPiece = piece
+    # print("GlobalNextPiece = ",GlobalNextPiece)
+    # time.sleep(2)
 
-    #randCol = random_color()
+    # randCol = random_color()
     next_surf = BASICFONT.render('Next Tetromino:', True, TEXTCOLOR)
     next_rect = next_surf.get_rect()
     next_rect.topleft = (WINDOWWIDTH - 180, 160)
     DISPLAYSURF.blit(next_surf, next_rect)
 
-    pygame.draw.rect(DISPLAYSURF, TEXTCOLOR,(485, 195, (4.2 * BOXSIZE) + 8,(4.2 * BOXSIZE) + 8), 5)
+    pygame.draw.rect(DISPLAYSURF, TEXTCOLOR, (485, 195, (4.2 * BOXSIZE) + 8, (4.2 * BOXSIZE) + 8), 5)
 
     # draw the "next" piece
     draw_piece(piece, pixelx=WINDOWWIDTH - 150, pixely=200)
 
 
-
 def make_text_objs(text, font, color):
     ### Crea un oggetto testo definendone il colore e il font    
     surf = font.render(text, True, color)
-    return surf, surf.get_rect()            
-
-        
+    return surf, surf.get_rect()
 
 
 ##########################################################  MAIN ZONE  ################################################################
@@ -479,28 +480,28 @@ def make_text_objs(text, font, color):
 if __name__ == '__main__':
     ##game mode choice
     AI = int(input("chose game mode: \n"
-                    "0 - Player\n" 
-                    "1 - LS\n"
-                    "2 - GENETICO\n"
-                    "3 - Q-LEARNING DETERMINISTICO\n"
-                    "4 - Q-LEARNING NON DETERMINISTICO\n" 
-                    "5 - RETI NEURALI\n"
-                    "6 - INCERTEZZA\n"
-                    "7 - ALTRA AI\n"
-                    "8 - RULE BASED\n\n"))
-    if AI<0 or AI>8:
+                   "0 - Player\n"
+                   "1 - LS\n"
+                   "2 - GENETICO\n"
+                   "3 - Q-LEARNING DETERMINISTICO\n"
+                   "4 - Q-LEARNING NON DETERMINISTICO\n"
+                   "5 - RETI NEURALI\n"
+                   "6 - INCERTEZZA\n"
+                   "7 - ALTRA AI\n"
+                   "8 - RULE BASED\n\n"))
+    if AI < 0 or AI > 8:
         print("game mode error")
         quit()
 
-    Ngames = int (input("How many runs? ")) 
+    Ngames = int(input("How many runs? "))
     if Ngames < 1:
         print("to low number of games error")
         quit()
-    #AI = True if choice == 1 else False
+    # AI = True if choice == 1 else False
 
     global FPSCLOCK, DISPLAYSURF, BASICFONT, BIGFONT
     pygame.init()
-    pygame.display.set_icon(pygame.image.load(MEDIAPATH+'DVD.png'))
+    pygame.display.set_icon(pygame.image.load(MEDIAPATH + 'DVD.png'))
     BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
     BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
     FPSCLOCK = pygame.time.Clock()
@@ -547,38 +548,16 @@ if __name__ == '__main__':
         # weight6Array.append(-weights[6])
         show_text_screen('Game Over')
 
-        #time.sleep(2)
+        # time.sleep(2)
 
         if games_completed >= Ngames:
             # Plot the game score over time
             pygame.mixer.music.stop()
-            #plot_results(scoreArray, game_index_array)
+            # plot_results(scoreArray, game_index_array)
             plot = plot_results(scoreArray, game_index_array, list())
             plot()
 
             break
 
-
-
-
 #################################################################### TESTER BOARD ################################################################
-#board = []
-#for _ in range(10):
-#    board.append(['0'] * 20)
 
-##for i in range(20):
-##    print(board[i])
-##    print("\n")
-
-#for i in range(10):
-#    for j in range(20):
-#        if j <10:
-#            board[i][j] = '1'
-#print("\n")
-#for i in range(10):
-#    print(board[i])
-#    print("\n")
-
-#print("----------------------------------------")
-
-            

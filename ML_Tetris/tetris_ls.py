@@ -1,5 +1,13 @@
 from tetris_utils import *
 
+
+def get_expected_score(test_board):
+    ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
+    fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
+    test_score = float((fullLines * 1.8) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5)*0.002) - (stdDY * 0.01) - (absDy * 0.2) - (maxDy * 0.3))
+    return test_score, fullLines
+
+
 ### LV1 only analysis
 def find_best_moveLS_LV1only(board, piece):
     ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi

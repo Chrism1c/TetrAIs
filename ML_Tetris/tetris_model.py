@@ -40,12 +40,6 @@ explore_change = 0.5
 #weights = [-0.0009, -0.0292, -0.7492, -99.2209]  # Best weight record
 
 weights = [1.8,1.0,0.5,0.02,0.01,0.2,0.3]
-# height_sum, diff_sum, max_height, holes
-# score = fullLines * 1.8 - vHoles * 1.0 - vBlocks * 0.5 - maxHeight ** 1.5 * 0.02 - stdY * 0.0 - stdDY * 0.01 - absDy * 0.2 - maxDy * 0.3
-
-# TEST FATTI SU Q-Learning
-# weights = [-0.0015, -0.00046, -0.0101, -99.9841] #400 Score
-# weights = [-0.0009, -0.0292, -0.7492, -99.2209] #489 Score
 
 # Define Color triplets in RGB
 WHITE = (255, 255, 255)

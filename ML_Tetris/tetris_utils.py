@@ -47,94 +47,8 @@ def simulate_board(test_board, test_piece, move):
     return test_board
 
 
-
-def get_expected_score(test_board):
-    ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica 
-    fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
-    #A = weights[0]
-    #B = weights[1]
-    #C = weights[2]
-    #D = weights[3]
-    #E = weights[4]
-    #F = weights[5]
-    #G = weights[6]
-
-    #test_score = float(A * height_sum + B * diff_sum + C * max_height + D * holes)
-    #test_score = float((fullLines * A) - (vHoles * B) - (vBlocks * C) - ((maxHeight ** 1.5) * 0.02) - (stdDY * E) - (absDy * F) - (maxDy * G))
-    test_score = float((fullLines * 1.8) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5)*0.002) - (stdDY * 0.01) - (absDy * 0.2) - (maxDy * 0.3))
-    #test_score = float((fullLines) - ((maxHeight ** 2)))
-    
-    # score = fullLines * 1.8 - vHoles * 1.0 - vBlocks * 0.5 - maxHeight ** 1.5 * 0.02 - stdY * 0.0 - stdDY * 0.01 - absDy * 0.2 - maxDy * 0.3
-
-    return test_score, fullLines
-
-
-
 ###################################### METRICS FUNCTIONS ###################################################
 
-
-#def get_parametersOld(board):
-#    ### Calcola le metriche sulla board corrente
-#    # This function will calculate different parameters of the current board
-
-#    # Initialize some stuff
-#    heights = [0]*BOARDWIDTH
-#    diffs = [0]*(BOARDWIDTH-1)
-#    holes = 0
-#    diff_sum = 0
-#    numTetraminoes = 0
-#    standardDvHeights = 0
-#    abs_diffCol = 0
-#    max_diffCol = 0
-
-#    # Calculate the maximum height of each column
-#    for i in range(0, BOARDWIDTH):  # Select a column
-#        for j in range(0, BOARDHEIGHT):  # Search down starting from the top of the board
-#            #print((i,j))
-#            if int(board[i][j]) > 0:  # Is the cell occupied?
-#                heights[i] = BOARDHEIGHT - j  # Store the height value
-#                break
-
-#    # Calculate the difference in heights
-#    for i in range(0, len(diffs)):
-#        diffs[i] = heights[i + 1] - heights[i]
-#    #print("diffs ",diffs)
-
-#    # Calculate the maximum height
-#    max_height = max(heights)
-
-#    # Count the number of holes
-#    for i in range(0, BOARDWIDTH):
-#        occupied = 0  # Set the 'Occupied' flag to 0 for each new column
-#        for j in range(0, BOARDHEIGHT):  # Scan from top to bottom
-#            if int(board[i][j]) > 0:
-#                occupied = 1  # If a block is found, set the 'Occupied' flag to 1
-#            if int(board[i][j]) == 0 and occupied == 1:
-#                holes += 1  # If a hole is found, add one to the count
-
-#    height_sum = sum(heights)
-#    for i in diffs:
-#        diff_sum += abs(i)
-
-
-#    #numero di tetramini piazzati
-#    countTetra = 0
-#    for i in range(0, BOARDWIDTH):
-#        for j in range(0, BOARDHEIGHT):
-#            if board[i][j] != '0':
-#                countTetra += 1
-
-
-#    roofRY = roofRelativeY(heights)
-
-#    #holes
-#    numTetraminoes = countTetra // 4
-#    #max_height
-#    standardDvHeights = standard_deviation_heights(heights)
-#    abs_diffCol = sum([abs(x) for x in roofRY])
-#    max_diffCol = roofRY[len(roofRY) - 1]
-
-#    return fullLines, holes, numTetraminoes, max_height, standardDvHeights, abs_diffCol, max_diffCol
 
 def get_parameters(board):
     global DeepLines
@@ -260,9 +174,5 @@ def maxHeight(board):
                     max = heights[i]
                 break
     return max
-
-
-
-
 
 
