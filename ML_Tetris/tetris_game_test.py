@@ -4,10 +4,11 @@
 from tetris_model import *
 from tetris_plot import *
 
-
 # IMPORT DELLE AI
 import tetris_ls as ls
 import tetris_ql as ql
+import tetris_genetic as gen
+
 
 ##########################################################  GAME FUNCTIONS  #############################################################
 
@@ -47,6 +48,9 @@ def run_game(AI):
     level, fall_freq = get_level_and_fall_freq(score)
     current_move = [0, 0]  # Relative Rotation, lateral movement
 
+    #sezione riguardante l'IA genetica
+    if AI == 2:
+        chromosome = gen.getNewChromosome()
 
     if AI == 3:
         ql.set_PIece(100)
@@ -56,21 +60,16 @@ def run_game(AI):
         falling_piece = get_new_piece()
         next_piece = get_new_piece()
 
-
-
     while True:  # game loop
 
         if falling_piece is None:
             # No falling piece in play, so start a new piece at the top
             falling_piece = next_piece
 
-
             if AI == 3:
                 next_piece = ql.get_next_PIece()
             else:
                 next_piece = get_new_piece()
-
-
 
             last_fall_time = time.time()  # reset last_fall_time
 
@@ -84,8 +83,7 @@ def run_game(AI):
             elif AI == 1:
                 current_move = ls.LS(board, falling_piece, next_piece)  ### Ottiene la mossa dall'IA
             elif AI == 2:
-                print("AI NON ANCORA IMPLEMENTATA")
-                quit()  # IA DA IMPLEMENTARE
+                current_move = gen.getGeneticMove(board, falling_piece, next_piece, chromosome) #ottiene la mossa dall'IA
             elif AI == 3:
                 print("3 - Q-LEARNING DETERMINISTICO")
                 current_move = ql.QL_P(board, falling_piece)  ### Ottiene la mossa dall'IA
@@ -104,7 +102,6 @@ def run_game(AI):
             elif AI == 8:
                 print("AI NON ANCORA IMPLEMENTATA")
                 quit()  # IA DA IMPLEMENTARE
-
 
         # check_for_quit()
         if AI:  ### Verifica se è stato premuto ESC per chiudere il gioco
@@ -560,4 +557,3 @@ if __name__ == '__main__':
             break
 
 #################################################################### TESTER BOARD ################################################################
-
