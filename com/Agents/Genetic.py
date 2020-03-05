@@ -201,12 +201,7 @@ class Genetic(BaseGame, ABC):
 
 
 if __name__ == "__main__":
-    caption = "Game {game}".format(game=1)
-    pygame.display.set_caption(caption)
-
-    p = Genetic('r')
-    print("fuori")
-
-    newScore, weights = p.run()
+    gen = Genetic('r')
+    newScore, weights = gen.run()
     print("Game achieved a score of: ", newScore)
     print("weights ", weights)
