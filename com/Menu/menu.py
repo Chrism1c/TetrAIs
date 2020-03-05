@@ -1,5 +1,4 @@
 # Import libraries
-import sys
 import os
 import pygame
 import pygameMenu
@@ -28,7 +27,7 @@ sound = None
 surface = None
 main_menu = None
 
-pieceType = "Random"
+pieceType = "r"
 
 # -----------------------------------------------------------------------------
 # Methods
@@ -57,10 +56,10 @@ def changePieceType(x,y):
     pieceType = y
     print("pieceType = ",pieceType)
 
-def Local_Search(x, y):
+def Local_Search(x, mode):
     global pieceType
-    # os.system("")
-    print("GO --> LS ",y," ",pieceType)
+    print("GO --> LS ",mode," ",pieceType)
+    os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + mode)
 
 def SDG_QL():
     global pieceType
@@ -82,6 +81,10 @@ def Monte_Carlo():
     # os.system("")
     print("GO --> Monte_Carlo ",pieceType)
 
+def Player():
+    global pieceType
+    print("GO --> Player ", pieceType)
+    os.system('python com/Agents/Player.py ' + pieceType)
 
 def cat():
     import subprocess
@@ -190,7 +193,7 @@ def main(test=False):
                               window_width=WINDOW_SIZE[0],
                               )
 
-    AI_menu.add_selector('',[('Random Circuit', 'Random'), ('PI Circuit', 'PI')], onchange=changePieceType)
+    AI_menu.add_selector('',[('Random Circuit', 'r'), ('PI Circuit', 'p')], onchange=changePieceType)
     AI_menu.add_selector('Local Search ',
                          [('LV1 Deep','LV1'), ('LV2 Deep','LV2')], onreturn=Local_Search)
     AI_menu.add_option('SGD Q-Learning ', SDG_QL)
@@ -198,6 +201,7 @@ def main(test=False):
                          [('Perfect Chromosome','Perfect'), ('Training Run','Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)
     AI_menu.add_option('Monte Carlo', Monte_Carlo)
+    AI_menu.add_option('Player', Player)
     AI_menu.add_option('??? ', cat)
     # AI_menu.add_option('|| BACK ||', pygameMenu.events.BACK)
 

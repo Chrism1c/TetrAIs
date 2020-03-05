@@ -3,13 +3,19 @@ from abc import ABC
 import copy
 from com.Core.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
+import sys
 
 class LocalSearch(BaseGame, ABC):
-    def __init__(self, r_p):
+    def __init__(self, r_p, lv):
         super().__init__(r_p)
+        self.lv = lv
 
     def get_move(self):
-        return self.find_best_moveLS_full(self.board, self.falling_piece, self.next_piece)
+        if self.lv == 'LV1':
+            return self.find_best_moveLS_LV1only(self.board, self.falling_piece)
+        else:
+            return self.find_best_moveLS_full(self.board, self.falling_piece, self.next_piece)
+
 
     def find_best_moveLS_full(self, board, piece, NextPiece):
         ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
@@ -54,6 +60,27 @@ class LocalSearch(BaseGame, ABC):
 
         return [best_rot, best_sideways]
 
+    def find_best_moveLS_LV1only(self, board, piece):
+        ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
+        #start = time.perf_counter()
+
+        strategy = None
+        for rot in range(0, len(PIECES[piece['shape']])):
+            for sideways in range(-5, 6):
+                move = [rot, sideways]
+                test_board = copy.deepcopy(board)
+                test_piece = copy.deepcopy(piece)
+                test_board = simulate_board(test_board, test_piece, move)
+                if test_board is not None:
+                    test_score = self.get_expected_score(test_board)
+                    if not strategy or strategy[2] < test_score:
+                        strategy = (rot, sideways, test_score)
+
+        #finish = time.perf_counter()
+        #print(f'Finished in {round(finish - start, 2)} second(s) with LV1Only')
+
+        return [strategy[0], strategy[1]]
+
     def get_expected_score(self, test_board):
         ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
@@ -64,7 +91,9 @@ class LocalSearch(BaseGame, ABC):
 
 
 if __name__ == "__main__":
-    ls = LocalSearch('r')
+    r_p = sys.argv[1]
+    lv = sys.argv[2]
+    ls = LocalSearch(r_p, lv)
     newScore, weights = ls.run()
     print("Game achieved a score of: ", newScore)
     print("weights ", weights)
