@@ -1,8 +1,8 @@
 from abc import ABCMeta, abstractmethod
 import time
 from mpmath import mp
-from Model import *
-from tetris_plot import *
+from com.Core.Model import *
+from com.Core.Plot import *
 
 import pygame
 import random
@@ -11,7 +11,6 @@ import random
 class BaseGame(metaclass=ABCMeta):
 
     def __init__(self, r_p):
-        print("__init__")
         self.r_p = r_p
         self.player = False
         self.PIece = ""
