@@ -103,13 +103,6 @@ def getMove(board, piece, nextPiece, chromosome):
 
     return [bestRot, bestSide]
 
-
-# interfaccia dell'IA che restituisce la mossa che deve effettuare
-def getGeneticMove(board, falling_piece, next_piece, chromosome):
-    move = getMove(board, falling_piece, next_piece, chromosome)
-    return move
-
-
 # Create Gen0
 def createGen0(num):
     gen0 = list()
