@@ -9,7 +9,6 @@ import random
 
 
 class BaseGame(metaclass=ABCMeta):
-    print("classe")
 
     def __init__(self, r_p):
         print("__init__")
@@ -25,8 +24,6 @@ class BaseGame(metaclass=ABCMeta):
         self.DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
         pygame.display.set_caption(APPNAME)
         # show_text_screen(APPNAME)
-
-    print("ciao")
 
     def init_run(self):
         # setting iniziale uguale per tutti

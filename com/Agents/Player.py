@@ -2,12 +2,10 @@ from com.Core.BaseGame import BaseGame
 import pygame
 
 
-class Player(BaseGame, metaclass=ABCMeta):
-    print('player')
+class Player(BaseGame):
 
     def __init__(self, r_p):
         super().__init__(r_p)
-        print("game")
         self.player = True
 
     def move(self):
