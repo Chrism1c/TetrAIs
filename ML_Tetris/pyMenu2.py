@@ -9,21 +9,21 @@ import pygameMenu
 # Constants and global variables
 # -----------------------------------------------------------------------------
 
-ABOUT = ['TetrAIs: v0.5','Authors: ']
+ABOUT = ['TetrAIs: v0.5', 'Authors: ']
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
-ARANCIONE  = (228, 100, 36)
+ARANCIONE = (228, 100, 36)
 ARANCIONE_SCURO = (218, 1, 1)
 BLU_SCURO = (0, 11, 173)
 BLU_CHIARO = (84, 95, 255)
 
 FPS = 60.0
 
-MENU_BACKGROUND_COLOR =  ARANCIONE_SCURO
+MENU_BACKGROUND_COLOR = ARANCIONE_SCURO
 COLOR_BACKGROUND = COLOR_BLACK
 MENU_TITLE_COLOR = COLOR_WHITE
-WINDOW_SIZE = (900, 580)
+WINDOW_SIZE = (500, 380)
 
 LS_mode = ""
 Genetic_mode = ""
@@ -90,6 +90,7 @@ def update_Genetic(value, mode):
         Genetic_mode = "Genetic Perfect Run"
         print(Genetic_mode)
 
+
 def update_SDG(value, mode):
     """
     :param value: Value of the selector (Label and index)
@@ -107,11 +108,13 @@ def update_SDG(value, mode):
         print(SDG_mode)
 
 
-def starter(x,y):
-    print("GO ",x)
+def starter(x, y):
+    print("GO ", x)
+
 
 def exSys():
     print("exSys")
+
 
 def cat():
     import subprocess
@@ -119,15 +122,18 @@ def cat():
     url2 = "https://www.youtube.com/watch?v=3AGqTbqhAU4"
     os.startfile(url)
 
+
 def CM():
     import subprocess
     url = "https://github.com/Chrism1c"
     os.startfile(url)
 
+
 def DP():
     import subprocess
     url = "https://github.com/W1l50n2208"
     os.startfile(url)
+
 
 def MP():
     import subprocess
@@ -178,7 +184,7 @@ def main(test=False):
 
     # Create pygame screen and objects
     surface = pygame.display.set_mode(WINDOW_SIZE)
-    pygame.display.set_caption('Example - Multi Input')
+    pygame.display.set_caption('TetrAIs')
     clock = pygame.time.Clock()
 
     # -------------------------------------------------------------------------
@@ -202,32 +208,32 @@ def main(test=False):
                               font=pygameMenu.font.FONT_NEVIS,
                               font_title=pygameMenu.font.FONT_8BIT,
                               font_color=COLOR_BLACK,
-                              font_size=28,
+                              font_size=20,
                               font_size_title=50,
                               menu_alpha=100,
                               menu_color=MENU_BACKGROUND_COLOR,
-                              menu_color_title = MENU_TITLE_COLOR,
-                              menu_height=int(WINDOW_SIZE[1] * 0.85),
+                              menu_color_title=MENU_TITLE_COLOR,
+                              menu_height=int(WINDOW_SIZE[1] * 0.9),
                               menu_width=int(WINDOW_SIZE[0] * 0.9),
                               onclose=pygameMenu.events.DISABLE_CLOSE,
                               title='AI Agents',
-                              widget_alignment=pygameMenu.locals.ALIGN_CENTER,#.ALIGN_LEFT,
+                              widget_alignment=pygameMenu.locals.ALIGN_CENTER,  # .ALIGN_LEFT,
                               window_height=WINDOW_SIZE[1],
                               window_width=WINDOW_SIZE[0],
                               )
 
-
     AI_menu.add_selector('Local Search ',
-                           [('LV1', False), ('LV2', True)], onchange=update_LS, onreturn=starter)
+                         [('LV1', False), ('LV2', True)], onreturn=starter)
     AI_menu.add_selector('SGD Q-Learning ',
-                         [('PI Circuit', False), ('Random Circuit', True)], onchange=update_SDG, onreturn=starter)
+                         [('PI Circuit', False), ('Random Circuit', True)], onreturn=starter)
     AI_menu.add_selector('Genetic ',
-                         [('Perfect Chromosome', False), ('Training', True)], onchange=update_Genetic, onreturn=starter)
-    AI_menu.add_option('Probabilistic', exSys)
-    AI_menu.add_option('Expert System', exSys)
-    AI_menu.add_option('Monte Carlo', exSys)
+                         [('Perfect Chromosome', False), ('Training', True)], onreturn=starter)
+    AI_menu.add_selector('Rule Based ',
+                         [('PI Circuit', False), ('Random Circuit', True)], onreturn=starter)
+    AI_menu.add_selector('Monte Carlo',
+                       [('PI Circuit', False), ('Random Circuit', True)], onreturn=starter)
     AI_menu.add_option('??? ', cat)
-    #AI_menu.add_option('|| BACK ||', pygameMenu.events.BACK)
+    # AI_menu.add_option('|| BACK ||', pygameMenu.events.BACK)
 
     # About menu
     about_menu = pygameMenu.TextMenu(surface,
@@ -239,8 +245,8 @@ def main(test=False):
                                      font_title=pygameMenu.font.FONT_8BIT,
                                      menu_color=MENU_BACKGROUND_COLOR,
                                      menu_color_title=COLOR_WHITE,
-                                     menu_height=int(WINDOW_SIZE[1] * 0.7),
-                                     menu_width=int(WINDOW_SIZE[0] * 0.5),
+                                     menu_height=int(WINDOW_SIZE[1] * 1),
+                                     menu_width=int(WINDOW_SIZE[0] * 1),
                                      onclose=pygameMenu.events.DISABLE_CLOSE,
                                      option_shadow=False,
                                      text_color=COLOR_BLACK,
@@ -249,7 +255,7 @@ def main(test=False):
                                      window_height=WINDOW_SIZE[1],
                                      window_width=WINDOW_SIZE[0]
                                      )
-    #about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+    # about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
     for m in ABOUT:
         about_menu.add_line(m)
 
@@ -257,7 +263,7 @@ def main(test=False):
     about_menu.add_option('@W1l50n2208', DP)
     about_menu.add_option('@m3ttiw', MP)
 
-    #about_menu.add_option('> BACK <', pygameMenu.events.BACK)
+    # about_menu.add_option('> BACK <', pygameMenu.events.BACK)
 
     # Settings menu
     # settings_menu = pygameMenu.Menu(surface,
@@ -338,12 +344,12 @@ def main(test=False):
                                 menu_alpha=100,
                                 menu_color=MENU_BACKGROUND_COLOR,
                                 menu_color_title=MENU_TITLE_COLOR,
-                                menu_height=int(WINDOW_SIZE[1] * 0.5),
-                                menu_width=int(WINDOW_SIZE[0] * 0.7),
+                                menu_height=int(WINDOW_SIZE[1] * 1),
+                                menu_width=int(WINDOW_SIZE[0] * 1),
                                 # User press ESC button
                                 onclose=pygameMenu.events.EXIT,
                                 option_shadow=False,
-                                title = 'TetrAIs',
+                                title='TetrAIs',
                                 window_height=WINDOW_SIZE[1],
                                 window_width=WINDOW_SIZE[0]
                                 )
