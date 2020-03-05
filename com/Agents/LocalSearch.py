@@ -93,7 +93,9 @@ class LocalSearch(BaseGame, ABC):
 if __name__ == "__main__":
     r_p = sys.argv[1]
     lv = sys.argv[2]
-    ls = LocalSearch(r_p, lv)
-    newScore, weights = ls.run()
-    print("Game achieved a score of: ", newScore)
-    print("weights ", weights)
+    numOfRun = int(sys.argv[3])
+    for x in range(numOfRun):
+        ls = LocalSearch(r_p, lv)
+        newScore, weights = ls.run()
+        print("Game achieved a score of: ", newScore)
+        print("weights ", weights)

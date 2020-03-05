@@ -18,7 +18,9 @@ if __name__ == "__main__":
     caption = "Game {game}".format(game=1)
     pygame.display.set_caption(caption)
     r_p = sys.argv[1]
-    p = Player(r_p)
-    newScore, weights = p.run()
-    print("Game achieved a score of: ", newScore)
-    print("weights ", weights)
+    numOfRun = int(sys.argv[2])
+    for x in range(numOfRun):
+        p = Player(r_p)
+        newScore, weights = p.run()
+        print("Game achieved a score of: ", newScore)
+        print("weights ", weights)
