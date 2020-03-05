@@ -31,7 +31,7 @@ class BaseGame(metaclass=ABCMeta):
     def run(self):
 
         # setup variables for the start of the game
-        board = self.get_blank_board()
+        self.board = self.get_blank_board()
         last_move_down_time = time.time()
         last_lateral_time = time.time()
         last_fall_time = time.time()
@@ -51,18 +51,18 @@ class BaseGame(metaclass=ABCMeta):
         #     #chromosome = gen.getNewChromosome()
         #     chromosome = gen.get_chromosome()
         get_new_piece = self.get_new_piece_method()
-        falling_piece = get_new_piece()
-        next_piece = get_new_piece()
+        self.falling_piece = get_new_piece()
+        self.next_piece = get_new_piece()
 
         while True:  # game loop
 
-            if falling_piece is None:
+            if self.falling_piece is None:
                 # No falling piece in play, so start a new piece at the top
-                falling_piece = next_piece
-                next_piece = get_new_piece()
+                self.falling_piece = self.next_piece
+                self.next_piece = get_new_piece()
                 last_fall_time = time.time()  # reset last_fall_time
                 # ENDGAME
-                if not is_valid_position(board, falling_piece):
+                if not is_valid_position(self.board, self.falling_piece):
                     # can't fit a new piece on the board, so game over
                     return score, weights
                 # MOVE
@@ -70,16 +70,16 @@ class BaseGame(metaclass=ABCMeta):
 
             # check_for_quit() ### Verifica se è stato premuto ESC per chiudere il gioco
             if self.player == False:
-                current_move = make_move(current_move)  ### Effettua la mossa con pyautoGui
+                current_move = self.make_move(current_move)  ### Effettua la mossa con pyautoGui
 
             for event in pygame.event.get():  # event handling loop
                 # event_handler(event)
                 if not pygame.key.get_focused():
-                    paused()
+                    self.paused()
                 elif event.type == keys.KEYUP:
                     if (event.key == keys.K_p):
                         # Pausing the game
-                        paused()
+                        self.paused()
                         last_fall_time = time.time()
                         last_move_down_time = time.time()
                         last_lateral_time = time.time()
@@ -93,38 +93,38 @@ class BaseGame(metaclass=ABCMeta):
                 elif event.type == keys.KEYDOWN:
                     # moving the piece sideways
                     if (event.key == keys.K_LEFT or event.key == keys.K_a) and is_valid_position(
-                            board, falling_piece, adj_x=-1):
-                        falling_piece['x'] -= 1
+                            self.board, self.falling_piece, adj_x=-1):
+                        self.falling_piece['x'] -= 1
                         moving_left = True
                         moving_right = False
                         last_lateral_time = time.time()
 
                     elif (event.key == keys.K_RIGHT or event.key == keys.K_d) and is_valid_position(
-                            board, falling_piece, adj_x=1):
-                        falling_piece['x'] += 1
+                            self.board, self.falling_piece, adj_x=1):
+                        self.falling_piece['x'] += 1
                         moving_right = True
                         moving_left = False
                         last_lateral_time = time.time()
 
                     # rotating the piece (if there is room to rotate)
                     elif (event.key == keys.K_UP or event.key == keys.K_w):
-                        falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(
-                            PIECES[falling_piece['shape']])
-                        if not is_valid_position(board, falling_piece):
-                            falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(
-                                PIECES[falling_piece['shape']])
+                        self.falling_piece['rotation'] = (self.falling_piece['rotation'] + 1) % len(
+                            PIECES[self.falling_piece['shape']])
+                        if not is_valid_position(self.board, self.falling_piece):
+                            self.falling_piece['rotation'] = (self.falling_piece['rotation'] - 1) % len(
+                                PIECES[self.falling_piece['shape']])
                     elif (event.key == keys.K_q):  # rotate the other direction
-                        falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(
-                            PIECES[falling_piece['shape']])
-                        if not is_valid_position(board, falling_piece):
-                            falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(
-                                PIECES[falling_piece['shape']])
+                        self.falling_piece['rotation'] = (self.falling_piece['rotation'] - 1) % len(
+                            PIECES[self.falling_piece['shape']])
+                        if not is_valid_position(self.board, falling_piece):
+                            self.falling_piece['rotation'] = (self.falling_piece['rotation'] + 1) % len(
+                                PIECES[self.falling_piece['shape']])
 
                     # making the piece fall faster with the down key
                     elif (event.key == keys.K_DOWN or event.key == keys.K_s):
                         moving_down = True
-                        if is_valid_position(board, falling_piece, adj_y=1):
-                            falling_piece['y'] += 1
+                        if is_valid_position(self.board, self.falling_piece, adj_y=1):
+                            self.falling_piece['y'] += 1
                         last_move_down_time = time.time()
 
                     # move the current piece all the way down
@@ -133,51 +133,51 @@ class BaseGame(metaclass=ABCMeta):
                         moving_left = False
                         moving_right = False
                         for i in range(1, BOARDHEIGHT):
-                            if not is_valid_position(board, falling_piece, adj_y=i):
+                            if not is_valid_position(self.board, self.falling_piece, adj_y=i):
                                 break
-                        falling_piece['y'] += i - 1
+                        self.falling_piece['y'] += i - 1
 
             # handle moving the piece because of user input
             if (moving_left or moving_right) and time.time() - last_lateral_time > MOVESIDEWAYSFREQ:
-                if moving_left and is_valid_position(board, falling_piece, adj_x=-1):
-                    falling_piece['x'] -= 1
-                elif moving_right and is_valid_position(board, falling_piece, adj_x=1):
-                    falling_piece['x'] += 1
+                if moving_left and is_valid_position(self.board, self.falling_piece, adj_x=-1):
+                    self.falling_piece['x'] -= 1
+                elif moving_right and is_valid_position(self.board, self.falling_piece, adj_x=1):
+                    self.falling_piece['x'] += 1
                 last_lateral_time = time.time()
 
             if moving_down and time.time() - last_move_down_time > MOVEDOWNFREQ and is_valid_position(
-                    board, falling_piece, adj_y=1):
-                falling_piece['y'] += 1
+                    self.board, self.falling_piece, adj_y=1):
+                self.falling_piece['y'] += 1
                 last_move_down_time = time.time()
                 games_completed += 1
 
             # let the piece fall if it is time to fall
             if time.time() - last_fall_time > fall_freq:
                 # see if the piece has landed
-                if not is_valid_position(board, falling_piece, adj_y=1):
+                if not is_valid_position(self.board, self.falling_piece, adj_y=1):
                     # falling piece has landed, set it on the board
-                    add_to_board(board, falling_piece)
+                    add_to_board(self.board, self.falling_piece)
 
-                    lines_removed, board = self.remove_complete_lines(board)
+                    lines_removed, self.board = self.remove_complete_lines(self.board)
                     score += get_score(lines_removed, level)
                     # score += lines #* lines
                     lines += lines_removed  # * lines
                     level, fall_freq = get_level_and_fall_freq(score)
                     # print("level: ", level)
                     # print("fall_freq: ", fall_freq)
-                    falling_piece = None
+                    self.falling_piece = None
                 else:
                     # piece did not land, just move the piece down
-                    falling_piece['y'] += 1
+                    self.falling_piece['y'] += 1
                     last_fall_time = time.time()
                     games_completed += 1
             # drawing everything on the screen
             self.DISPLAYSURF.fill(BGCOLOR)
-            self.draw_board(board)
+            self.draw_board(self.board)
             self.draw_status(score, lines, level, current_move)
-            self.draw_next_piece(next_piece)
-            if falling_piece is not None:
-                self.draw_piece(falling_piece)
+            self.draw_next_piece(self.next_piece)
+            if self.falling_piece is not None:
+                self.draw_piece(self.falling_piece)
             # time.sleep(1000)
             pygame.display.update()
             self.FPSCLOCK.tick(FPS)
@@ -208,12 +208,13 @@ class BaseGame(metaclass=ABCMeta):
 
             listx = list(PIECES.keys())
             shape = listx[int(self.PIeces[0])]
-            new_piece = {'shape': shape, 'rotation': 0,  # random.randint(0,len(PIECES[shape]) - 1),
-                         'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
-                         'y': -2,  # start it above the board (i.e. less than 0)
-                         'color': random.randint(1, len(COLORS) - 1)
-                         }
-            PIeces = PIeces[1:]
+            new_piece = {
+                'shape': shape, 'rotation': 0,  # random.randint(0,len(PIECES[shape]) - 1),
+                'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+                'y': -2,  # start it above the board (i.e. less than 0)
+                'color': PIECES_COLORS[shape]
+                }
+            self.PIeces = self.PIeces[1:]
 
             return new_piece
 
@@ -296,10 +297,10 @@ class BaseGame(metaclass=ABCMeta):
     def get_blank_board(self):
         ### Restituisco una matrice (Array of Array) di celle vuote '0'
         # create and return a new blank board data structure
-        board = []
+        self.board = []
         for _ in range(BOARDWIDTH):
-            board.append(['0'] * BOARDHEIGHT)
-        return board
+            self.board.append(['0'] * BOARDHEIGHT)
+        return self.board
 
     def remove_complete_lines(self, board):
         ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
