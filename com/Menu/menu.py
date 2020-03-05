@@ -66,10 +66,11 @@ def SDG_QL():
     # os.system("")
     print("GO --> SDG_QL ",pieceType)
 
-def Genetic(x, y):
+def Genetic(x, mode):
     global pieceType
     # os.system("")
-    print("GO --> Genetic ",y," ",pieceType)
+    print("GO --> Genetic ", mode , " " ,pieceType)
+    os.system('python com/Agents/Genetic.py ' + pieceType + ' ' + mode)
 
 def Rule_Based():
     global pieceType

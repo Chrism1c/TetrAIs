@@ -1,12 +1,5 @@
 # Import dell librerie
 import random
-import time
-import pygame
-import sys
-import math
-import copy
-import numpy
-import pygame.locals as keys
 import pyautogui
 
 # Define settings and constants
@@ -16,7 +9,7 @@ pyautogui.FAILSAFE = True
 DeepLines = 0
 pause = False
 APPNAME = "DiscoTetris"
-MEDIAPATH = "C://Users/david/PyCharmProjects/DiscoTetris/com/raw/"
+MEDIAPATH = "com/raw/"
 #MEDIAPATH = "C://Users/matti/PyCharmProjects/DiscoTetris/com/raw/"
 FPS = 50  ### framerate del gioco (PAL 50FPS)
 WINDOWWIDTH = 640

@@ -3,10 +3,15 @@ import time
 from mpmath import mp
 from com.Core.Model import *
 from com.Core.Plot import *
-
-import pygame
 import random
-
+import time
+import pygame
+import sys
+import math
+import copy
+import numpy
+import pygame.locals as keys
+import pyautogui
 
 class BaseGame(metaclass=ABCMeta):
 
@@ -22,7 +27,7 @@ class BaseGame(metaclass=ABCMeta):
         self.FPSCLOCK = pygame.time.Clock()
         self.DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
         pygame.display.set_caption(APPNAME)
-        # show_text_screen(APPNAME)
+        # self.show_text_screen(APPNAME)
 
     def init_run(self):
         # setting iniziale uguale per tutti
@@ -254,7 +259,7 @@ class BaseGame(metaclass=ABCMeta):
         pygame.mixer.music.pause()
         print("************************* Start PAUSE ************************")
         # self.DISPLAYSURF.fill(BGCOLOR)
-        show_text_screen('Paused')  # pause until a key press
+        self.show_text_screen('Paused')  # pause until a key press
         self.pause = True
         while self.pause:
             for event in pygame.event.get():

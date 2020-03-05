@@ -1,7 +1,7 @@
 from com.Core.BaseGame import BaseGame
 from abc import ABC
 import copy
-from com.Core.Utils import simulate_board, get_parameters
+from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
 import sys
 

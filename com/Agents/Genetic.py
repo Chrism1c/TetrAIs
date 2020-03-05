@@ -1,27 +1,28 @@
-from abc import ABC
-import pygame
 import numpy as np
-
+import sys
+import copy
+from abc import ABC
+from operator import itemgetter
 from com.Core.BaseGame import *
-from com.Core.Model import *
-from com.Core.Utils import *
+from com.Utils.Utils import *
+from com.Utils.fileManager import chromToStr
 
 numChrom = 7
 
-
 class Genetic(BaseGame, ABC):
 
-    def __init__(self, r_p):
+    def __init__(self, r_p, mode):
         super().__init__(r_p)
         print('creazione cromosoma')
         #self.chromosome = self.createGen0(numChrom)
         self.chromosome = self.getNewChromosome()
+        self.mode = mode
 
         print('stampa cromosoma')
         print(self.chromosome)
 
     def get_move(self):
-        return self.getGeneticMove(self.board, self.piece, self.nextPiece)
+        return self.getGeneticMove(self.board, self.falling_piece, self.next_piece)
 
     def getGeneticMove(self, board, piece, nextPiece):
 
@@ -51,7 +52,7 @@ class Genetic(BaseGame, ABC):
                             testPiece2 = copy.deepcopy(nextPiece)
                             testBoard2 = simulate_board(testBoard, testPiece, move)
                             if testBoard2 is not None:
-                                testScore2, nextLine = self.calTestScore(self.chromosome, testBoard2)
+                                testScore2, nextLine = self.calTestScore(testBoard2)
                                 if nextScore[2] < testScore2:
                                     nextScore = [rotation2, sideway2, testScore2]
                     if bestScore < nextScore[2]:
@@ -140,7 +141,7 @@ class Genetic(BaseGame, ABC):
         for x in range(k):
             orderedChromosome[x].pop(len(orderedChromosome[x]) - 1)
             bestK.append(orderedChromosome[x])
-            print(chromoListToChromoStr(orderedChromosome[x]) + " - Print bestK - ")
+            print(chromToStr(orderedChromosome[x]) + " - Print bestK - ")
 
         return bestK
 
@@ -195,13 +196,15 @@ class Genetic(BaseGame, ABC):
                 newchromosome[x] = (a[x] + b[
                     x]) / 2  # 80% di possibilità di prelevare il cromosoma dalla Media dei 2 Genitori
                 # print("Gene from Merged genes =",newchromosome[x])
-            newchromosome[x] += mutation(newchromosome[x])
+            newchromosome[x] += self.mutation(newchromosome[x])
         # print("newchromosome = ",newchromosome)
         return newchromosome
 
 
 if __name__ == "__main__":
-    gen = Genetic('r')
+    r_p = sys.argv[1]
+    mode = sys.argv[2]
+    gen = Genetic(r_p, mode)
     newScore, weights = gen.run()
     print("Game achieved a score of: ", newScore)
     print("weights ", weights)
