@@ -69,11 +69,15 @@ def update_num_runs(num):
 
 
 
-
-def Local_Search(x, mode):
+def DFS(x, mode):
     global pieceType,numOfRuns
-    print("GO --> LS ",mode," ",pieceType," ",numOfRuns)
-    os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + mode +' '+ str(numOfRuns))
+    print("GO --> DFS ",mode," ",pieceType," ",numOfRuns)
+    os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode +' '+ str(numOfRuns))
+
+def Local_Search():
+    global pieceType,numOfRuns
+    print("GO --> LS ",pieceType," ",numOfRuns)
+    os.system('python com/Agents/LocalSearch.py ' + pieceType +' '+ str(numOfRuns))
 
 def SDG_QL():
     global pieceType,numOfRuns
@@ -211,8 +215,9 @@ def main(test=False):
                               )
 
     AI_menu.add_option('Player', Player)
-    AI_menu.add_selector('Local Search ',
-                         [('LV1 Deep', 'LV1'), ('LV2 Deep', 'LV2')], onreturn=Local_Search)
+    AI_menu.add_selector('Deep First Search ',
+                         [('LV1 Deep', 'LV1'), ('LV2 Deep', 'LV2')], onreturn=DFS)
+    AI_menu.add_option('Local Search ', Local_Search)
     AI_menu.add_option('SGD Q-Learning ', SDG_QL)
     AI_menu.add_selector('Genetic ',
                          [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)

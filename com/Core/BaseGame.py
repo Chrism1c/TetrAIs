@@ -69,7 +69,6 @@ class BaseGame(metaclass=ABCMeta):
         moving_right = False
         score = 0
         lines = 0
-        one_step_reward = 0
         games_completed = 0
         level, fall_freq = get_level_and_fall_freq(score)
         current_move = [0, 0]  # Relative Rotation, lateral movement
@@ -102,7 +101,7 @@ class BaseGame(metaclass=ABCMeta):
                 # MOVE
                 current_move = self.get_move()
 
-            # check_for_quit() ### Verifica se è stato premuto ESC per chiudere il gioco
+            self.check_for_quit() ### Verifica se è stato premuto ESC per chiudere il gioco
             if self.player == False:
                 current_move = self.make_move(current_move)  ### Effettua la mossa con pyautoGui
 
@@ -320,13 +319,16 @@ class BaseGame(metaclass=ABCMeta):
         return None
 
     def check_for_quit(self):
-        ### Interrompe il gioco quando viene premuto il tasto 'ESC' e
-        for event in pygame.event.get(keys.QUIT):  # get all the QUIT events
-            self.terminate()  # terminate if any QUIT events are present
-        for event in pygame.event.get(keys.KEYUP):  # get all the KEYUP events
-            if event.key == keys.K_ESCAPE:
-                self.terminate()  # terminate if the KEYUP event was for the Esc key
-            pygame.event.post(event)  # put the other KEYUP event objects back
+        try:
+            ### Interrompe il gioco quando viene premuto il tasto 'ESC' e
+            for event in pygame.event.get(keys.QUIT):  # get all the QUIT events
+                self.terminate()  # terminate if any QUIT events are present
+            for event in pygame.event.get(keys.KEYUP):  # get all the KEYUP events
+                if event.key == keys.K_ESCAPE:
+                    self.terminate()  # terminate if the KEYUP event was for the Esc key
+                pygame.event.post(event)  # put the other KEYUP event objects back
+        except SystemExit:
+            print("Chiusura Soppressa")
 
     def get_blank_board(self):
         ### Restituisco una matrice (Array of Array) di celle vuote '0'
