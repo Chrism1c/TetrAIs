@@ -42,6 +42,8 @@ class BaseGame(metaclass=ABCMeta):
     def __init__(self, r_p):
         self.r_p = r_p
         self.player = False
+        self.timeKiller = False
+        self.minutes = 20
         self.PIece = ""
         self.pause = False
         pygame.init()
@@ -53,12 +55,10 @@ class BaseGame(metaclass=ABCMeta):
         pygame.display.set_caption(APPNAME)
         self.show_text_screen(APPNAME)
 
-    def init_run(self):
-        # setting iniziale uguale per tutti
-        pass
 
     def run(self):
-
+        if self.timeKiller == True:
+            start = time.time()
         # setup variables for the start of the game
         self.board = self.get_blank_board()
         last_move_down_time = time.time()
@@ -84,6 +84,11 @@ class BaseGame(metaclass=ABCMeta):
         self.next_piece = get_new_piece()
 
         while True:  # game loop
+
+            if self.timeKiller == True:         #se ha superato il tempo limite killiamo il gioco
+                current_time = time.time()
+                if round(current_time - start) > 60*self.minutes:
+                    return score, weights
 
             if self.falling_piece is None:
                 # No falling piece in play, so start a new piece at the top

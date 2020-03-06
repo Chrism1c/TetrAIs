@@ -81,10 +81,12 @@ def SDG_QL():
     print("GO --> SDG_QL ",pieceType," ",numOfRuns)
     os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
 
-def Genetic(x, y):
+def Genetic(x, mode):
     global pieceType,numOfRuns
     # os.system("")
-    print("GO --> Genetic ",y," ",pieceType)
+    print("GO --> Genetic ",mode," ",pieceType)
+    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+
 
 def Rule_Based():
     global pieceType,numOfRuns

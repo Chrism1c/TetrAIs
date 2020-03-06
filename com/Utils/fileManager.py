@@ -3,6 +3,7 @@ import ast
 fileName = "Population.txt"
 #fileNameScore = "PopulationScore.txt"
 fileNameScoreMatch = "MatchScore.txt"
+filePerfect = "LastChromosome.txt"
 
 ### Funzione che conta le linee del file
 def countLines(fileName):
@@ -78,3 +79,10 @@ def populationAsListofStr(population):
     for x in range(len(population)):
         populationOfStr.append(chromToStr((population[x]),len(population[x])))
     return populationOfStr
+
+def getPerfectChromosome():
+    population = loadFromFile(fileName)     #salva il chromosoma perfetto in un altro file dedicato
+    if len(population) == 1:
+        return population[0]
+    else:
+        return None
