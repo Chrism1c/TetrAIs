@@ -17,4 +17,4 @@ if mode == 'Training':
     train.workGenetic()
 
 else:
-    perfectRun()
+    perfectRun(r_p)

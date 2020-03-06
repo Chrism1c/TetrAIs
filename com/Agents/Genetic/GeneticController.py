@@ -14,13 +14,13 @@ class GeneticController:
         self.dimChromomsome = 7
         self.generation = list()
         self.population = list()
-        self.bello = np.array([1.8, 0, 0.5, 1.5, 0.01, 0.2, 0.3])
+        #self.bello = np.array([1.8, 1, 0.5, 1.5, 0.01, 0.2, 0.3])
 
     def workGenetic(self):
         print("start creation gen:0")
         numGen0 = 2**self.numGen
-        #self.generation = self.createGen0(numGen0)
-        self.generation = self.createGen01(numGen0)
+        self.generation = self.createGen0(numGen0)
+        #self.generation = self.createGen01(numGen0)
         print("end creation gen0")
         i = 0
         while True:
