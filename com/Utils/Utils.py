@@ -1,6 +1,8 @@
 # contiene funzioni utili per l'implementazione delle AI
 
 from com.Core.Model import *
+import math
+
 
 
 def simulate_board(test_board, test_piece, move):
