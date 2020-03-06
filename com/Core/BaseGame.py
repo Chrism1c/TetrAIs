@@ -3,15 +3,33 @@ import time
 from mpmath import mp
 from com.Core.Model import *
 from com.Core.Plot import *
-import random
-import time
+
 import pygame
-import sys
-import math
-import copy
-import numpy
-import pygame.locals as keys
-import pyautogui
+import random
+
+
+def remove_complete_lines(board):
+    ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
+    # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
+    lines_removed = 0
+    y = BOARDHEIGHT - 1  # start y at the bottom of the board
+    while y >= 0:
+        if is_complete_line(board, y):
+            # Remove the line and pull boxes down by one line.
+            for pull_down_y in range(y, 0, -1):
+                for x in range(BOARDWIDTH):
+                    board[x][pull_down_y] = board[x][pull_down_y - 1]
+            # Set very top line to blank.
+            for x in range(BOARDWIDTH):
+                board[x][0] = BLANK
+            lines_removed += 1
+            # Note on the next iteration of the loop, y is the same.
+            # This is so that if the line that was pulled down is also
+            # complete, it will be removed.
+        else:
+            y -= 1  # move on to check next row up
+    return lines_removed, board
+
 
 class BaseGame(metaclass=ABCMeta):
 
@@ -21,13 +39,13 @@ class BaseGame(metaclass=ABCMeta):
         self.PIece = ""
         self.pause = False
         pygame.init()
-        pygame.display.set_icon(pygame.image.load(MEDIAPATH + 'DVD.png'))
+        #pygame.display.set_icon(pygame.image.load(MEDIAPATH + 'DVD.png'))
         self.BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
-        BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
+        self.BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
         self.FPSCLOCK = pygame.time.Clock()
         self.DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
         pygame.display.set_caption(APPNAME)
-        # self.show_text_screen(APPNAME)
+        self.show_text_screen(APPNAME)
 
     def init_run(self):
         # setting iniziale uguale per tutti
@@ -121,7 +139,7 @@ class BaseGame(metaclass=ABCMeta):
                     elif (event.key == keys.K_q):  # rotate the other direction
                         self.falling_piece['rotation'] = (self.falling_piece['rotation'] - 1) % len(
                             PIECES[self.falling_piece['shape']])
-                        if not is_valid_position(self.board, falling_piece):
+                        if not is_valid_position(self.board, self.falling_piece):
                             self.falling_piece['rotation'] = (self.falling_piece['rotation'] + 1) % len(
                                 PIECES[self.falling_piece['shape']])
 
@@ -163,7 +181,7 @@ class BaseGame(metaclass=ABCMeta):
                     # falling piece has landed, set it on the board
                     add_to_board(self.board, self.falling_piece)
 
-                    lines_removed, self.board = self.remove_complete_lines(self.board)
+                    lines_removed, self.board = remove_complete_lines(self.board)
                     score += get_score(lines_removed, level)
                     # score += lines #* lines
                     lines += lines_removed  # * lines
@@ -237,17 +255,17 @@ class BaseGame(metaclass=ABCMeta):
         # This function displays large text in the
         # center of the screen until a key is pressed.
         # Draw the text drop shadow
-        title_surf, title_rect = make_text_objs(text, self.BIGFONT, TEXTSHADOWCOLOR)
+        title_surf, title_rect = self.make_text_objs(text, self.BIGFONT, TEXTSHADOWCOLOR)
         title_rect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
         self.DISPLAYSURF.blit(title_surf, title_rect)
 
         # Draw the text
-        title_surf, title_rect = make_text_objs(text, self.BIGFONT, TEXTCOLOR)
+        title_surf, title_rect = self.make_text_objs(text, self.BIGFONT, TEXTCOLOR)
         title_rect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 3)
         self.DISPLAYSURF.blit(title_surf, title_rect)
 
         # Draw the additional "Press a key to play." text.
-        press_key_surf, press_key_rect = make_text_objs('Loading a new Dance !', self.BASICFONT, TEXTCOLOR)
+        press_key_surf, press_key_rect = self.make_text_objs('Loading a new Dance !', self.BASICFONT, TEXTCOLOR)
         press_key_rect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
         self.DISPLAYSURF.blit(press_key_surf, press_key_rect)
 
@@ -264,9 +282,9 @@ class BaseGame(metaclass=ABCMeta):
         while self.pause:
             for event in pygame.event.get():
                 if event.type == keys.KEYUP:
-                    if (event.key == keys.K_p):
+                    if event.key == keys.K_p:
                         pygame.mixer.music.unpause()
-                        pause = False
+                        self.pause = False
         print("************************* End PAUSE **************************")
 
     def terminate(self):
@@ -282,7 +300,7 @@ class BaseGame(metaclass=ABCMeta):
         ### Verifica la pressione di un tasto
         # Go through event queue looking for a KEYUP event.
         # Grab KEYDOWN events to remove them from the event queue.
-        check_for_quit()
+        self.check_for_quit()
 
         for event in pygame.event.get([keys.KEYDOWN, keys.KEYUP]):
             if event.type == keys.KEYDOWN:
@@ -293,10 +311,10 @@ class BaseGame(metaclass=ABCMeta):
     def check_for_quit(self):
         ### Interrompe il gioco quando viene premuto il tasto 'ESC' e
         for event in pygame.event.get(keys.QUIT):  # get all the QUIT events
-            terminate()  # terminate if any QUIT events are present
+            self.terminate()  # terminate if any QUIT events are present
         for event in pygame.event.get(keys.KEYUP):  # get all the KEYUP events
             if event.key == keys.K_ESCAPE:
-                terminate()  # terminate if the KEYUP event was for the Esc key
+                self.terminate()  # terminate if the KEYUP event was for the Esc key
             pygame.event.post(event)  # put the other KEYUP event objects back
 
     def get_blank_board(self):
@@ -306,28 +324,6 @@ class BaseGame(metaclass=ABCMeta):
         for _ in range(BOARDWIDTH):
             self.board.append(['0'] * BOARDHEIGHT)
         return self.board
-
-    def remove_complete_lines(self, board):
-        ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
-        # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
-        lines_removed = 0
-        y = BOARDHEIGHT - 1  # start y at the bottom of the board
-        while y >= 0:
-            if is_complete_line(board, y):
-                # Remove the line and pull boxes down by one line.
-                for pull_down_y in range(y, 0, -1):
-                    for x in range(BOARDWIDTH):
-                        board[x][pull_down_y] = board[x][pull_down_y - 1]
-                # Set very top line to blank.
-                for x in range(BOARDWIDTH):
-                    board[x][0] = BLANK
-                lines_removed += 1
-                # Note on the next iteration of the loop, y is the same.
-                # This is so that if the line that was pulled down is also
-                # complete, it will be removed.
-            else:
-                y -= 1  # move on to check next row up
-        return lines_removed, board
 
     def make_move(self, move):
         # This function will make the indicated move, with the first digit

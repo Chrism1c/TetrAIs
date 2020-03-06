@@ -27,7 +27,11 @@ sound = None
 surface = None
 main_menu = None
 
+
+AI_Setting_menu = None
+
 pieceType = "r"
+numOfRuns = 1
 
 # -----------------------------------------------------------------------------
 # Methods
@@ -51,63 +55,73 @@ def check_name_test(value):
     """
     print('User name: {0}'.format(value))
 
+
 def changePieceType(x,y):
     global pieceType
     pieceType = y
     print("pieceType = ",pieceType)
 
+def update_num_runs(num):
+    global numOfRuns
+    if len(num)>0 and int(num)>0 and int(num)<999:
+        numOfRuns = int(num)
+        print("numOfRuns = ", numOfRuns)
+
+
+
+
 def Local_Search(x, mode):
-    global pieceType
-    print("GO --> LS ",mode," ",pieceType)
-    os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + mode)
+    global pieceType,numOfRuns
+    print("GO --> LS ",mode," ",pieceType," ",numOfRuns)
+    os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + mode +' '+ str(numOfRuns))
 
 def SDG_QL():
-    global pieceType
+    global pieceType,numOfRuns
     # os.system("")
-    print("GO --> SDG_QL ",pieceType)
+    print("GO --> SDG_QL ",pieceType," ",numOfRuns)
+    os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
 
-def Genetic(x, mode):
-    global pieceType
+def Genetic(x, y):
+    global pieceType,numOfRuns
     # os.system("")
-    print("GO --> Genetic ", mode , " " ,pieceType)
-    os.system('python com/Agents/Genetic.py ' + pieceType + ' ' + mode)
+    print("GO --> Genetic ",y," ",pieceType)
 
 def Rule_Based():
-    global pieceType
+    global pieceType,numOfRuns
     # os.system("")
     print("GO --> Rule_Based ",pieceType)
 
 def Monte_Carlo():
-    global pieceType
+    global pieceType,numOfRuns
     # os.system("")
     print("GO --> Monte_Carlo ",pieceType)
 
 def Player():
-    global pieceType
-    print("GO --> Player ", pieceType)
-    os.system('python com/Agents/Player.py ' + pieceType)
+    global pieceType,numOfRuns
+    print("GO --> Player ", pieceType, " ",numOfRuns)
+    os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
+
+
+
+
 
 def cat():
-    import subprocess
-    url = "https://www.youtube.com/watch?v=J---aiyznGQ"
-    url2 = "https://www.youtube.com/watch?v=3AGqTbqhAU4"
+    #url = "https://www.youtube.com/watch?v=J---aiyznGQ"
+    url = "https://www.youtube.com/watch?v=3AGqTbqhAU4"
     os.startfile(url)
 
 
 def CM():
-    import subprocess
     url = "https://github.com/Chrism1c"
     os.startfile(url)
 
 
 def DP():
-    import subprocess
     url = "https://github.com/W1l50n2208"
     os.startfile(url)
 
 
 def MP():
-    import subprocess
     url = "https://github.com/m3ttiw"
     os.startfile(url)
 
@@ -182,7 +196,7 @@ def main(test=False):
                               font_size=20,
                               font_size_title=50,
                               menu_alpha=100,
-                              option_shadow = False,
+                              option_shadow=False,
                               menu_color=MENU_BACKGROUND_COLOR,
                               menu_color_title=MENU_TITLE_COLOR,
                               menu_height=int(WINDOW_SIZE[1] * 0.9),
@@ -194,17 +208,49 @@ def main(test=False):
                               window_width=WINDOW_SIZE[0],
                               )
 
-    AI_menu.add_selector('',[('Random Circuit', 'r'), ('PI Circuit', 'p')], onchange=changePieceType)
+    AI_menu.add_option('Player', Player)
     AI_menu.add_selector('Local Search ',
-                         [('LV1 Deep','LV1'), ('LV2 Deep','LV2')], onreturn=Local_Search)
+                         [('LV1 Deep', 'LV1'), ('LV2 Deep', 'LV2')], onreturn=Local_Search)
     AI_menu.add_option('SGD Q-Learning ', SDG_QL)
     AI_menu.add_selector('Genetic ',
-                         [('Perfect Chromosome','Perfect'), ('Training Run','Training')], onreturn=Genetic)
+                         [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)
     AI_menu.add_option('Monte Carlo', Monte_Carlo)
-    AI_menu.add_option('Player', Player)
-    AI_menu.add_option('??? ', cat)
+
     # AI_menu.add_option('|| BACK ||', pygameMenu.events.BACK)
+
+
+    AI_Setting_menu = pygameMenu.Menu(surface,
+                              bgfun=main_background,
+                              color_selected=COLOR_WHITE,
+                              font=pygameMenu.font.FONT_NEVIS,
+                              font_title=pygameMenu.font.FONT_8BIT,
+                              font_color=COLOR_BLACK,
+                              font_size=25,
+                              font_size_title=40,
+                              menu_alpha=100,
+                              option_shadow=False,
+                              menu_color=MENU_BACKGROUND_COLOR,
+                              menu_color_title=MENU_TITLE_COLOR,
+                              menu_height=int(WINDOW_SIZE[1] * 0.85),
+                              menu_width=int(WINDOW_SIZE[0] * 0.85),
+                              onclose=pygameMenu.events.DISABLE_CLOSE,
+                              title='AI Settings',
+                              widget_alignment=pygameMenu.locals.ALIGN_CENTER,  # .ALIGN_LEFT,
+                              window_height=WINDOW_SIZE[1],
+                              window_width=WINDOW_SIZE[0],
+                              )
+
+    #AI_Setting_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+    AI_Setting_menu.add_selector('Type of Circuit: ',
+                                 [('Random', 'r'), ('PI', 'p')], onchange=changePieceType)
+    AI_Setting_menu.add_text_input('How many runs?: ',
+                                        default='1',
+                                        onchange=update_num_runs,
+                                        textinput_id='Runs')
+    AI_Setting_menu.add_option("|| AI Agents ||",AI_menu)
+
+
 
     # About menu
     about_menu = pygameMenu.TextMenu(surface,
@@ -222,6 +268,7 @@ def main(test=False):
                                      option_shadow=False,
                                      text_color=COLOR_BLACK,
                                      text_fontsize=25,
+                                     font_size=30,
                                      title='About',
                                      window_height=WINDOW_SIZE[1],
                                      window_width=WINDOW_SIZE[0]
@@ -233,6 +280,7 @@ def main(test=False):
     about_menu.add_option('@Chrism1c', CM)
     about_menu.add_option('@W1l50n2208', DP)
     about_menu.add_option('@m3ttiw', MP)
+    about_menu.add_option('??? ', cat)
 
     # about_menu.add_option('> BACK <', pygameMenu.events.BACK)
 
@@ -260,7 +308,7 @@ def main(test=False):
                                 )
     main_menu.set_fps(FPS)
 
-    main_menu.add_option('New Game', AI_menu)
+    main_menu.add_option('New Game', AI_Setting_menu)
 
     main_menu.add_selector('Sound ',
                            [('Off', False), ('On', True)],
