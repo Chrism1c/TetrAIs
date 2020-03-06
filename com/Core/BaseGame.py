@@ -282,9 +282,9 @@ class BaseGame(metaclass=ABCMeta):
         while self.pause:
             for event in pygame.event.get():
                 if event.type == keys.KEYUP:
-                    if (event.key == keys.K_p):
+                    if event.key == keys.K_p:
                         pygame.mixer.music.unpause()
-                        pause = False
+                        self.pause = False
         print("************************* End PAUSE **************************")
 
     def terminate(self):
