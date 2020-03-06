@@ -41,11 +41,11 @@ class BaseGame(metaclass=ABCMeta):
         pygame.init()
         #pygame.display.set_icon(pygame.image.load(MEDIAPATH + 'DVD.png'))
         self.BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
-        BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
+        self.BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
         self.FPSCLOCK = pygame.time.Clock()
         self.DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
         pygame.display.set_caption(APPNAME)
-        # self.show_text_screen(APPNAME)
+        self.show_text_screen(APPNAME)
 
     def init_run(self):
         # setting iniziale uguale per tutti
