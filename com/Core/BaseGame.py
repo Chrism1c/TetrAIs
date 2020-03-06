@@ -8,6 +8,29 @@ import pygame
 import random
 
 
+def remove_complete_lines(board):
+    ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
+    # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
+    lines_removed = 0
+    y = BOARDHEIGHT - 1  # start y at the bottom of the board
+    while y >= 0:
+        if is_complete_line(board, y):
+            # Remove the line and pull boxes down by one line.
+            for pull_down_y in range(y, 0, -1):
+                for x in range(BOARDWIDTH):
+                    board[x][pull_down_y] = board[x][pull_down_y - 1]
+            # Set very top line to blank.
+            for x in range(BOARDWIDTH):
+                board[x][0] = BLANK
+            lines_removed += 1
+            # Note on the next iteration of the loop, y is the same.
+            # This is so that if the line that was pulled down is also
+            # complete, it will be removed.
+        else:
+            y -= 1  # move on to check next row up
+    return lines_removed, board
+
+
 class BaseGame(metaclass=ABCMeta):
 
     def __init__(self, r_p):
