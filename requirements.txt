@@ -1,4 +1,5 @@
 numpy==1.18.1
+mpmath
 pygame==1.9.3
 pygame-menu==2.1.2
 matplotlib==2.1.2
