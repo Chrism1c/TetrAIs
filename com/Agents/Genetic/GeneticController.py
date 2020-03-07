@@ -5,22 +5,23 @@ import random
 import time
 from operator import itemgetter
 
+
 class GeneticController:
 
     def __init__(self, r_p, numGen):
         self.r_p = r_p
         self.numGen = int(numGen)
-        self.numRun = 5
+        self.numRun = 1
         self.dimChromomsome = 7
         self.generation = list()
         self.population = list()
-        #self.bello = np.array([1.8, 1, 0.5, 1.5, 0.01, 0.2, 0.3])
+        # self.bello = np.array([1.8, 1, 0.5, 1.5, 0.01, 0.2, 0.3])
 
     def workGenetic(self):
         print("start creation gen:0")
-        numGen0 = 2**self.numGen
+        numGen0 = 2 ** self.numGen
         self.generation = self.createGen0(numGen0)
-        #self.generation = self.createGen01(numGen0)
+        # self.generation = self.createGen01(numGen0)
         print("end creation gen0")
         i = 0
         while True:
@@ -30,12 +31,13 @@ class GeneticController:
                 avgScoreChromosome = self.AVGfitnesingSing(self.generation[x])
                 population.append((self.generation[x], avgScoreChromosome))
                 print("Gen ", i, " Run ", x, " AvgScore ", str(avgScoreChromosome))
-            #k = round(len(self.generation)/2)
+            # k = round(len(self.generation)/2)
             k = len(self.generation)
+            print("Full Generation = ", self.generation)
             self.generation = self.crossingPopulation(self.bestChromosomeSearch(population, k), k)
             print("end gen:", i)
             i += 1
-            #save
+            # save
             for x in range(len(population)):
                 self.population.append(population[x])
             print(len(self.generation))
@@ -59,7 +61,7 @@ class GeneticController:
     def AVGfitnesingSing(self, chromosome):
         # global TETRIS_AI_GENETIC
         # TETRIS_AI_GENETIC = TetrisAIGenetic(chromosome)
-        #strChromosome = chromToStr(chromosome, self.dimChromomsome)
+        # strChromosome = chromToStr(chromosome, self.dimChromomsome)
         avgFitness = 0
         for i in range(self.numRun):
             g = Genetic(self.r_p, chromosome, True)
@@ -68,7 +70,7 @@ class GeneticController:
             finish = time.time()
             tempo = round(finish - start)
             avgFitness += (score + tempo)
-            print(' - Match ' + str(i) + ' Score ' + str(score + tempo))
+            print(' - Match ' + str(i) + ' Score ' + str(score + tempo), " Chromosome = ", chromosome)
         return avgFitness / self.numRun
 
     def avgFitness(self, vFitness):
@@ -103,30 +105,30 @@ class GeneticController:
         for x in range(k):
             chromosome, _ = orderedChromosome[x]
             bestK.append(chromosome)
-            print(chromToStr(chromosome, self.dimChromomsome) + " - Print bestK - ")
+            print(" - BestK - ", chromToStr(chromosome, self.dimChromomsome) + " --- WScore Of: ", str(_))
         return bestK
 
-    def kChoice(self, populationWScore):
-
-        orderedPopulation = sorted(populationWScore, key=itemgetter(6), reverse=True)
-        lenP = len(orderedPopulation)
-        avgScore = 0
-        k = 0
-        pow2 = [2 ** x for x in range(0, 7)]
-        for x in range(lenP):
-            avgScore += orderedPopulation[x][6]
-        avgScore /= lenP
-        print(avgScore)
-        for x in range(lenP):
-            if orderedPopulation[x][6] >= avgScore:
-                k += 1
-        print(k)
-        pow2.append(k)
-        pow2.sort()
-        indexK = pow2.index(k)
-        k = pow2[indexK + 1]
-        print(k)
-        return k
+    # def kChoice(self, populationWScore):
+    #
+    #     orderedPopulation = sorted(populationWScore, key=itemgetter(6), reverse=True)
+    #     lenP = len(orderedPopulation)
+    #     avgScore = 0
+    #     k = 0
+    #     pow2 = [2 ** x for x in range(0, 7)]
+    #     for x in range(lenP):
+    #         avgScore += orderedPopulation[x][6]
+    #     avgScore /= lenP
+    #     print(avgScore)
+    #     for x in range(lenP):
+    #         if orderedPopulation[x][6] >= avgScore:
+    #             k += 1
+    #     print(k)
+    #     pow2.append(k)
+    #     pow2.sort()
+    #     indexK = pow2.index(k)
+    #     k = pow2[indexK + 1]
+    #     print(k)
+    #     return k
 
     def mutation(self, a):
         if random.randint(1, 10) == 10:  # 10% di possibilità di mutazione
@@ -161,10 +163,19 @@ class GeneticController:
         # print("newchromosome = ",newchromosome)
         return newchromosome
 
-    def crossingPopulation(self, population, k):
+    def crossingPopulation_OLD(self, population, k):
         newPopulation = list()
         for x in range(0, int(k - 1), 2):
             newPopulation.append(self.crossingchromosome(population[x], population[x - 1]))
+        return newPopulation
+
+    def crossingPopulation(self, population, k):
+        newPopulation = list()
+        if len(population) == 2:
+            newPopulation.append(population[0])
+        else:
+            for x in range(0, int(k), 2):
+                newPopulation.append(self.crossingchromosome(population[x], population[x + 1]))
         return newPopulation
 
     def createGen01(self, num):
@@ -173,5 +184,3 @@ class GeneticController:
         for i in range(num):
             gen0.append(self.bello)
         return gen0
-
-
