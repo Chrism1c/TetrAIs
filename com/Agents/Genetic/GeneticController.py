@@ -189,7 +189,7 @@ class GeneticController:
             newPopulation.append(orderedPopulation[0])
         else:
             newPopulation = self.crossingTournmentPopulation(orderedPopulation, len(orderedPopulation))
-            for x in range(len(orderedPopulation) / 2):
+            for x in range(round(len(orderedPopulation) / 2)):
                 newPopulation.append(orderedPopulation[x])
         return newPopulation
 
