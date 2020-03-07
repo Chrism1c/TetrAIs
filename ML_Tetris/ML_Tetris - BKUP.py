@@ -100,7 +100,7 @@ PIECES = {
     'T': T_SHAPE_TEMPLATE
 }
 
-bigG = 0
+BigG = 0
 # Define learning parameters
 alpha = 0.01
 gamma = 0.9
@@ -265,8 +265,8 @@ def run_game(weights, explore_change):
         # drawing everything on the screen
         DISPLAYSURF.fill(BGCOLOR)
         draw_board(board)
-        bigG += score
-        print("bigG ",bigG)
+        BigG += score
+        # print("bigG ",BigG)
         draw_status(score, level, current_move)
         draw_next_piece(next_piece)
         if falling_piece is not None:
@@ -726,11 +726,11 @@ if __name__ == '__main__':
     game_index_array = []
     time.sleep(5)
 
-    try:
-        pygame.mixer.music.load(MEDIAPATH+'DiscoTetris.mp3')
-        pygame.mixer.music.play(-1)
-    except:
-        print("Music not loaded")
+    # try:
+    #     pygame.mixer.music.load(MEDIAPATH+'DiscoTetris.mp3')
+    #     pygame.mixer.music.play(-1)
+    # except:
+    #     print("Music not loaded")
 
     while True:  # game loop
         games_completed += 1
