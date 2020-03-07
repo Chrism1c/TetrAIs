@@ -36,7 +36,8 @@ class GeneticController:
             print("Full Generation = ", self.generation)
             print("end gen:", i)
             i += 1
-            self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
+            #self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
+            self.generation = self.crossingFixedPopulation(self.generation, i)
             # save
             for x in range(len(population)):
                 self.population.append(population[x])
@@ -181,14 +182,15 @@ class GeneticController:
 
     #numero fisso di chromosomi
     #metà migliori e metà incrocio dei migliori
-    def crossingFixedPopulation(self, population, k, numGen):
+    def crossingFixedPopulation(self, population, numGen):
         newPopulation = list()
+        orderedPopulation = sorted(population, key=itemgetter(1), reverse=True)
         if numGen == self.numGen:
-            newPopulation.append(population[0])
+            newPopulation.append(orderedPopulation[0])
         else:
-            newPopulation = self.crossingTournmentPopulation(population, k)
-            for x in range(len(population)):
-                newPopulation.append(population[x])
+            newPopulation = self.crossingTournmentPopulation(orderedPopulation, len(orderedPopulation))
+            for x in range(len(orderedPopulation) / 2):
+                newPopulation.append(orderedPopulation[x])
         return newPopulation
 
     def crossingFullPopulation(self, population, k, numGen):
