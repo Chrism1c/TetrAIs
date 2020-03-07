@@ -11,7 +11,7 @@ class GeneticController:
     def __init__(self, r_p, numGen):
         self.r_p = r_p
         self.numGen = int(numGen)
-        self.numRun = 1
+        self.numRun = 3
         self.dimChromomsome = 7
         self.generation = list()
         self.population = list()
@@ -34,9 +34,9 @@ class GeneticController:
             # k = round(len(self.generation)/2)
             k = len(self.generation)
             print("Full Generation = ", self.generation)
-            self.generation = self.crossingPopulation(self.bestChromosomeSearch(population, k), k)
             print("end gen:", i)
             i += 1
+            self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
             # save
             for x in range(len(population)):
                 self.population.append(population[x])
@@ -45,6 +45,7 @@ class GeneticController:
                 break
             else:
                 continue
+        destroy(fileName)
         saveOnFile(fileName, self.generation)
         print('end training')
 
@@ -169,7 +170,7 @@ class GeneticController:
             newPopulation.append(self.crossingchromosome(population[x], population[x - 1]))
         return newPopulation
 
-    def crossingPopulation(self, population, k):
+    def crossingTournmentPopulation(self, population, k):
         newPopulation = list()
         if len(population) == 2:
             newPopulation.append(population[0])
@@ -177,6 +178,21 @@ class GeneticController:
             for x in range(0, int(k), 2):
                 newPopulation.append(self.crossingchromosome(population[x], population[x + 1]))
         return newPopulation
+
+    #numero fisso di chromosomi
+    #metà migliori e metà incrocio dei migliori
+    def crossingFixedPopulation(self, population, k, numGen):
+        newPopulation = list()
+        if numGen == self.numGen:
+            newPopulation.append(population[0])
+        else:
+            newPopulation = self.crossingTournmentPopulation(population, k)
+            for x in range(len(population)):
+                newPopulation.append(population[x])
+        return newPopulation
+
+    def crossingFullPopulation(self, population, k, numGen):
+        pass
 
     def createGen01(self, num):
         gen0 = list()
