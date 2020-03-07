@@ -46,7 +46,7 @@ class GeneticController:
             else:
                 continue
         destroy(fileName)
-        saveOnFile(fileName, self.generation)
+        saveOnFile(fileName, self.generation[0])
         print('end training')
 
     # funzione fitness alternativa, che tiene conto del numero di tetramini piazzati ma anche dello score finale
