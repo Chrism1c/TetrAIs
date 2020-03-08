@@ -1,13 +1,13 @@
 # contiene il core del game Tetris
 
 # import dei moduli
-from tetris_model import *
-from tetris_plot import *
+from ML_Tetris.tetris_model import *
+from ML_Tetris.tetris_plot import *
 
 # IMPORT DELLE AI
-import tetris_ls as ls
-import tetris_ql as ql
-import tetris_genetic as gen
+#import ML_Tetris.tetris_ls as ls
+import ML_Tetris.tetris_ql as ql
+#import ML_Tetris.tetris_genetic as gen
 
 
 ##########################################################  GAME FUNCTIONS  #############################################################
@@ -48,9 +48,9 @@ def run_game(AI):
     level, fall_freq = get_level_and_fall_freq(score)
     current_move = [0, 0]  # Relative Rotation, lateral movement
 
-    #sezione riguardante l'IA genetica
-    if AI == 2:
-        chromosome = gen.getNewChromosome()
+    # sezione riguardante l'IA genetica
+    # if AI == 2:
+    #     chromosome = gen.getNewChromosome()
 
     if AI == 3:
         ql.set_PIece(100)
@@ -80,10 +80,11 @@ def run_game(AI):
             ### AI "THINK" HERE ###
             if AI == 0:
                 continue  # l'utente fa la sua mossa
-            elif AI == 1:
-                current_move = ls.LS(board, falling_piece, next_piece)  ### Ottiene la mossa dall'IA
-            elif AI == 2:
-                current_move = gen.getGeneticMove(board, falling_piece, next_piece, chromosome) #ottiene la mossa dall'IA
+            # elif AI == 1:
+            #     current_move = ls.LS(board, falling_piece, next_piece)  ### Ottiene la mossa dall'IA
+            # elif AI == 2:
+            #     current_move = gen.getGeneticMove(board, falling_piece, next_piece,
+            #                                       chromosome)  # ottiene la mossa dall'IA
             elif AI == 3:
                 print("3 - Q-LEARNING DETERMINISTICO")
                 current_move = ql.QL_P(board, falling_piece)  ### Ottiene la mossa dall'IA

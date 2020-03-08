@@ -1,6 +1,7 @@
 from abc import ABC
 from com.Core.BaseGame import BaseGame
 import pygame
+import sys
 
 
 class Player(BaseGame, ABC):
@@ -16,9 +17,10 @@ class Player(BaseGame, ABC):
 if __name__ == "__main__":
     caption = "Game {game}".format(game=1)
     pygame.display.set_caption(caption)
-    # q = Square(4)
-
-    p = Player('r')
-    newScore, weights = p.run()
-    print("Game achieved a score of: ", newScore)
-    print("weights ", weights)
+    r_p = sys.argv[1]
+    numOfRun = int(sys.argv[2])
+    for x in range(numOfRun):
+        p = Player(r_p)
+        newScore, weights = p.run()
+        print("Game achieved a score of: ", newScore)
+        print("weights ", weights)

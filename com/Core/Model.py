@@ -1,12 +1,5 @@
 # Import dell librerie
 import random
-import time
-import pygame
-import sys
-import math
-import copy
-import numpy
-import pygame.locals as keys
 import pyautogui
 
 # Define settings and constants
@@ -16,7 +9,7 @@ pyautogui.FAILSAFE = True
 DeepLines = 0
 pause = False
 APPNAME = "DiscoTetris"
-MEDIAPATH = "C://Users/david/PyCharmProjects/DiscoTetris/com/raw/"
+MEDIAPATH = "com/raw/"
 #MEDIAPATH = "C://Users/matti/PyCharmProjects/DiscoTetris/com/raw/"
 FPS = 50  ### framerate del gioco (PAL 50FPS)
 WINDOWWIDTH = 640
@@ -218,3 +211,26 @@ def get_score(lines, level):
         return int(300 * multiplier)
     elif lines == 4:
         return int(1200 * multiplier)
+
+
+def remove_complete_lines(board):
+    ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
+    # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
+    lines_removed = 0
+    y = BOARDHEIGHT - 1  # start y at the bottom of the board
+    while y >= 0:
+        if is_complete_line(board, y):
+            # Remove the line and pull boxes down by one line.
+            for pull_down_y in range(y, 0, -1):
+                for x in range(BOARDWIDTH):
+                    board[x][pull_down_y] = board[x][pull_down_y - 1]
+            # Set very top line to blank.
+            for x in range(BOARDWIDTH):
+                board[x][0] = BLANK
+            lines_removed += 1
+            # Note on the next iteration of the loop, y is the same.
+            # This is so that if the line that was pulled down is also
+            # complete, it will be removed.
+        else:
+            y -= 1  # move on to check next row up
+    return lines_removed, board

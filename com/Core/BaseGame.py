@@ -1,11 +1,40 @@
 from abc import ABCMeta, abstractmethod
-import time
 from mpmath import mp
 from com.Core.Model import *
 from com.Core.Plot import *
 
-import pygame
 import random
+import time
+import pygame
+import sys
+import math
+import copy
+import numpy
+import pygame.locals as keys
+import pyautogui
+
+
+def remove_complete_lines(board):
+    ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
+    # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
+    lines_removed = 0
+    y = BOARDHEIGHT - 1  # start y at the bottom of the board
+    while y >= 0:
+        if is_complete_line(board, y):
+            # Remove the line and pull boxes down by one line.
+            for pull_down_y in range(y, 0, -1):
+                for x in range(BOARDWIDTH):
+                    board[x][pull_down_y] = board[x][pull_down_y - 1]
+            # Set very top line to blank.
+            for x in range(BOARDWIDTH):
+                board[x][0] = BLANK
+            lines_removed += 1
+            # Note on the next iteration of the loop, y is the same.
+            # This is so that if the line that was pulled down is also
+            # complete, it will be removed.
+        else:
+            y -= 1  # move on to check next row up
+    return lines_removed, board
 
 
 class BaseGame(metaclass=ABCMeta):
@@ -13,25 +42,25 @@ class BaseGame(metaclass=ABCMeta):
     def __init__(self, r_p):
         self.r_p = r_p
         self.player = False
+        self.timeKiller = False
+        self.minutes = 20
         self.PIece = ""
         self.pause = False
         pygame.init()
-        pygame.display.set_icon(pygame.image.load(MEDIAPATH + 'DVD.png'))
+        #pygame.display.set_icon(pygame.image.load(MEDIAPATH + 'DVD.png'))
         self.BASICFONT = pygame.font.Font('freesansbold.ttf', 18)
-        BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
+        self.BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
         self.FPSCLOCK = pygame.time.Clock()
         self.DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
         pygame.display.set_caption(APPNAME)
-        # show_text_screen(APPNAME)
+        self.show_text_screen(APPNAME)
 
-    def init_run(self):
-        # setting iniziale uguale per tutti
-        pass
 
     def run(self):
-
+        if self.timeKiller == True:
+            start = time.time()
         # setup variables for the start of the game
-        board = self.get_blank_board()
+        self.board = self.get_blank_board()
         last_move_down_time = time.time()
         last_lateral_time = time.time()
         last_fall_time = time.time()
@@ -40,7 +69,6 @@ class BaseGame(metaclass=ABCMeta):
         moving_right = False
         score = 0
         lines = 0
-        one_step_reward = 0
         games_completed = 0
         level, fall_freq = get_level_and_fall_freq(score)
         current_move = [0, 0]  # Relative Rotation, lateral movement
@@ -51,35 +79,40 @@ class BaseGame(metaclass=ABCMeta):
         #     #chromosome = gen.getNewChromosome()
         #     chromosome = gen.get_chromosome()
         get_new_piece = self.get_new_piece_method()
-        falling_piece = get_new_piece()
-        next_piece = get_new_piece()
+        self.falling_piece = get_new_piece()
+        self.next_piece = get_new_piece()
 
         while True:  # game loop
 
-            if falling_piece is None:
+            if self.timeKiller == True:         #se ha superato il tempo limite killiamo il gioco
+                current_time = time.time()
+                if round(current_time - start) > 60*self.minutes:
+                    return score, weights
+
+            if self.falling_piece is None:
                 # No falling piece in play, so start a new piece at the top
-                falling_piece = next_piece
-                next_piece = get_new_piece()
+                self.falling_piece = self.next_piece
+                self.next_piece = get_new_piece()
                 last_fall_time = time.time()  # reset last_fall_time
                 # ENDGAME
-                if not is_valid_position(board, falling_piece):
+                if not is_valid_position(self.board, self.falling_piece):
                     # can't fit a new piece on the board, so game over
                     return score, weights
                 # MOVE
                 current_move = self.get_move()
 
-            # check_for_quit() ### Verifica se è stato premuto ESC per chiudere il gioco
+            self.check_for_quit() ### Verifica se è stato premuto ESC per chiudere il gioco
             if self.player == False:
-                current_move = make_move(current_move)  ### Effettua la mossa con pyautoGui
+                current_move = self.make_move(current_move)  ### Effettua la mossa con pyautoGui
 
             for event in pygame.event.get():  # event handling loop
                 # event_handler(event)
                 if not pygame.key.get_focused():
-                    paused()
+                    self.paused()
                 elif event.type == keys.KEYUP:
                     if (event.key == keys.K_p):
                         # Pausing the game
-                        paused()
+                        self.paused()
                         last_fall_time = time.time()
                         last_move_down_time = time.time()
                         last_lateral_time = time.time()
@@ -93,38 +126,38 @@ class BaseGame(metaclass=ABCMeta):
                 elif event.type == keys.KEYDOWN:
                     # moving the piece sideways
                     if (event.key == keys.K_LEFT or event.key == keys.K_a) and is_valid_position(
-                            board, falling_piece, adj_x=-1):
-                        falling_piece['x'] -= 1
+                            self.board, self.falling_piece, adj_x=-1):
+                        self.falling_piece['x'] -= 1
                         moving_left = True
                         moving_right = False
                         last_lateral_time = time.time()
 
                     elif (event.key == keys.K_RIGHT or event.key == keys.K_d) and is_valid_position(
-                            board, falling_piece, adj_x=1):
-                        falling_piece['x'] += 1
+                            self.board, self.falling_piece, adj_x=1):
+                        self.falling_piece['x'] += 1
                         moving_right = True
                         moving_left = False
                         last_lateral_time = time.time()
 
                     # rotating the piece (if there is room to rotate)
                     elif (event.key == keys.K_UP or event.key == keys.K_w):
-                        falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(
-                            PIECES[falling_piece['shape']])
-                        if not is_valid_position(board, falling_piece):
-                            falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(
-                                PIECES[falling_piece['shape']])
+                        self.falling_piece['rotation'] = (self.falling_piece['rotation'] + 1) % len(
+                            PIECES[self.falling_piece['shape']])
+                        if not is_valid_position(self.board, self.falling_piece):
+                            self.falling_piece['rotation'] = (self.falling_piece['rotation'] - 1) % len(
+                                PIECES[self.falling_piece['shape']])
                     elif (event.key == keys.K_q):  # rotate the other direction
-                        falling_piece['rotation'] = (falling_piece['rotation'] - 1) % len(
-                            PIECES[falling_piece['shape']])
-                        if not is_valid_position(board, falling_piece):
-                            falling_piece['rotation'] = (falling_piece['rotation'] + 1) % len(
-                                PIECES[falling_piece['shape']])
+                        self.falling_piece['rotation'] = (self.falling_piece['rotation'] - 1) % len(
+                            PIECES[self.falling_piece['shape']])
+                        if not is_valid_position(self.board, self.falling_piece):
+                            self.falling_piece['rotation'] = (self.falling_piece['rotation'] + 1) % len(
+                                PIECES[self.falling_piece['shape']])
 
                     # making the piece fall faster with the down key
                     elif (event.key == keys.K_DOWN or event.key == keys.K_s):
                         moving_down = True
-                        if is_valid_position(board, falling_piece, adj_y=1):
-                            falling_piece['y'] += 1
+                        if is_valid_position(self.board, self.falling_piece, adj_y=1):
+                            self.falling_piece['y'] += 1
                         last_move_down_time = time.time()
 
                     # move the current piece all the way down
@@ -133,51 +166,51 @@ class BaseGame(metaclass=ABCMeta):
                         moving_left = False
                         moving_right = False
                         for i in range(1, BOARDHEIGHT):
-                            if not is_valid_position(board, falling_piece, adj_y=i):
+                            if not is_valid_position(self.board, self.falling_piece, adj_y=i):
                                 break
-                        falling_piece['y'] += i - 1
+                        self.falling_piece['y'] += i - 1
 
             # handle moving the piece because of user input
             if (moving_left or moving_right) and time.time() - last_lateral_time > MOVESIDEWAYSFREQ:
-                if moving_left and is_valid_position(board, falling_piece, adj_x=-1):
-                    falling_piece['x'] -= 1
-                elif moving_right and is_valid_position(board, falling_piece, adj_x=1):
-                    falling_piece['x'] += 1
+                if moving_left and is_valid_position(self.board, self.falling_piece, adj_x=-1):
+                    self.falling_piece['x'] -= 1
+                elif moving_right and is_valid_position(self.board, self.falling_piece, adj_x=1):
+                    self.falling_piece['x'] += 1
                 last_lateral_time = time.time()
 
             if moving_down and time.time() - last_move_down_time > MOVEDOWNFREQ and is_valid_position(
-                    board, falling_piece, adj_y=1):
-                falling_piece['y'] += 1
+                    self.board, self.falling_piece, adj_y=1):
+                self.falling_piece['y'] += 1
                 last_move_down_time = time.time()
                 games_completed += 1
 
             # let the piece fall if it is time to fall
             if time.time() - last_fall_time > fall_freq:
                 # see if the piece has landed
-                if not is_valid_position(board, falling_piece, adj_y=1):
+                if not is_valid_position(self.board, self.falling_piece, adj_y=1):
                     # falling piece has landed, set it on the board
-                    add_to_board(board, falling_piece)
+                    add_to_board(self.board, self.falling_piece)
 
-                    lines_removed, board = self.remove_complete_lines(board)
+                    lines_removed, self.board = remove_complete_lines(self.board)
                     score += get_score(lines_removed, level)
                     # score += lines #* lines
                     lines += lines_removed  # * lines
                     level, fall_freq = get_level_and_fall_freq(score)
                     # print("level: ", level)
                     # print("fall_freq: ", fall_freq)
-                    falling_piece = None
+                    self.falling_piece = None
                 else:
                     # piece did not land, just move the piece down
-                    falling_piece['y'] += 1
+                    self.falling_piece['y'] += 1
                     last_fall_time = time.time()
                     games_completed += 1
             # drawing everything on the screen
             self.DISPLAYSURF.fill(BGCOLOR)
-            self.draw_board(board)
+            self.draw_board(self.board)
             self.draw_status(score, lines, level, current_move)
-            self.draw_next_piece(next_piece)
-            if falling_piece is not None:
-                self.draw_piece(falling_piece)
+            self.draw_next_piece(self.next_piece)
+            if self.falling_piece is not None:
+                self.draw_piece(self.falling_piece)
             # time.sleep(1000)
             pygame.display.update()
             self.FPSCLOCK.tick(FPS)
@@ -208,12 +241,13 @@ class BaseGame(metaclass=ABCMeta):
 
             listx = list(PIECES.keys())
             shape = listx[int(self.PIeces[0])]
-            new_piece = {'shape': shape, 'rotation': 0,  # random.randint(0,len(PIECES[shape]) - 1),
-                         'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
-                         'y': -2,  # start it above the board (i.e. less than 0)
-                         'color': random.randint(1, len(COLORS) - 1)
-                         }
-            PIeces = PIeces[1:]
+            new_piece = {
+                'shape': shape, 'rotation': 0,  # random.randint(0,len(PIECES[shape]) - 1),
+                'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+                'y': -2,  # start it above the board (i.e. less than 0)
+                'color': PIECES_COLORS[shape]
+                }
+            self.PIeces = self.PIeces[1:]
 
             return new_piece
 
@@ -231,17 +265,17 @@ class BaseGame(metaclass=ABCMeta):
         # This function displays large text in the
         # center of the screen until a key is pressed.
         # Draw the text drop shadow
-        title_surf, title_rect = make_text_objs(text, self.BIGFONT, TEXTSHADOWCOLOR)
+        title_surf, title_rect = self.make_text_objs(text, self.BIGFONT, TEXTSHADOWCOLOR)
         title_rect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2))
         self.DISPLAYSURF.blit(title_surf, title_rect)
 
         # Draw the text
-        title_surf, title_rect = make_text_objs(text, self.BIGFONT, TEXTCOLOR)
+        title_surf, title_rect = self.make_text_objs(text, self.BIGFONT, TEXTCOLOR)
         title_rect.center = (int(WINDOWWIDTH / 2) - 3, int(WINDOWHEIGHT / 2) - 3)
         self.DISPLAYSURF.blit(title_surf, title_rect)
 
         # Draw the additional "Press a key to play." text.
-        press_key_surf, press_key_rect = make_text_objs('Loading a new Dance !', self.BASICFONT, TEXTCOLOR)
+        press_key_surf, press_key_rect = self.make_text_objs('Loading a new Dance !', self.BASICFONT, TEXTCOLOR)
         press_key_rect.center = (int(WINDOWWIDTH / 2), int(WINDOWHEIGHT / 2) + 100)
         self.DISPLAYSURF.blit(press_key_surf, press_key_rect)
 
@@ -253,21 +287,21 @@ class BaseGame(metaclass=ABCMeta):
         pygame.mixer.music.pause()
         print("************************* Start PAUSE ************************")
         # self.DISPLAYSURF.fill(BGCOLOR)
-        show_text_screen('Paused')  # pause until a key press
+        self.show_text_screen('Paused')  # pause until a key press
         self.pause = True
         while self.pause:
             for event in pygame.event.get():
                 if event.type == keys.KEYUP:
-                    if (event.key == keys.K_p):
+                    if event.key == keys.K_p:
                         pygame.mixer.music.unpause()
-                        pause = False
+                        self.pause = False
         print("************************* End PAUSE **************************")
 
     def terminate(self):
         ### Termina il gioco chiudendo pygame e l'applicazione
         try:
             pygame.quit()
-            sys.exit()
+            #sys.exit()
             # da aggiungere alla classe e distruggere l'oggetto
         except:
             print("Ended")
@@ -276,8 +310,7 @@ class BaseGame(metaclass=ABCMeta):
         ### Verifica la pressione di un tasto
         # Go through event queue looking for a KEYUP event.
         # Grab KEYDOWN events to remove them from the event queue.
-        check_for_quit()
-
+        self.check_for_quit()
         for event in pygame.event.get([keys.KEYDOWN, keys.KEYUP]):
             if event.type == keys.KEYDOWN:
                 continue
@@ -285,43 +318,24 @@ class BaseGame(metaclass=ABCMeta):
         return None
 
     def check_for_quit(self):
-        ### Interrompe il gioco quando viene premuto il tasto 'ESC' e
-        for event in pygame.event.get(keys.QUIT):  # get all the QUIT events
-            terminate()  # terminate if any QUIT events are present
-        for event in pygame.event.get(keys.KEYUP):  # get all the KEYUP events
-            if event.key == keys.K_ESCAPE:
-                terminate()  # terminate if the KEYUP event was for the Esc key
-            pygame.event.post(event)  # put the other KEYUP event objects back
+        try:
+            ### Interrompe il gioco quando viene premuto il tasto 'ESC' e
+            for event in pygame.event.get(keys.QUIT):  # get all the QUIT events
+                self.terminate()  # terminate if any QUIT events are present
+            for event in pygame.event.get(keys.KEYUP):  # get all the KEYUP events
+                if event.key == keys.K_ESCAPE:
+                    self.terminate()  # terminate if the KEYUP event was for the Esc key
+                pygame.event.post(event)  # put the other KEYUP event objects back
+        except SystemExit:
+            print("Chiusura Soppressa")
 
     def get_blank_board(self):
         ### Restituisco una matrice (Array of Array) di celle vuote '0'
         # create and return a new blank board data structure
-        board = []
+        self.board = []
         for _ in range(BOARDWIDTH):
-            board.append(['0'] * BOARDHEIGHT)
-        return board
-
-    def remove_complete_lines(self, board):
-        ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
-        # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
-        lines_removed = 0
-        y = BOARDHEIGHT - 1  # start y at the bottom of the board
-        while y >= 0:
-            if is_complete_line(board, y):
-                # Remove the line and pull boxes down by one line.
-                for pull_down_y in range(y, 0, -1):
-                    for x in range(BOARDWIDTH):
-                        board[x][pull_down_y] = board[x][pull_down_y - 1]
-                # Set very top line to blank.
-                for x in range(BOARDWIDTH):
-                    board[x][0] = BLANK
-                lines_removed += 1
-                # Note on the next iteration of the loop, y is the same.
-                # This is so that if the line that was pulled down is also
-                # complete, it will be removed.
-            else:
-                y -= 1  # move on to check next row up
-        return lines_removed, board
+            self.board.append(['0'] * BOARDHEIGHT)
+        return self.board
 
     def make_move(self, move):
         # This function will make the indicated move, with the first digit

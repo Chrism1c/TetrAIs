@@ -1,10 +1,11 @@
 # contiene funzioni utili per l'implementazione delle AI
 
 from com.Core.Model import *
+import math
 
 
 def simulate_board(test_board, test_piece, move):
-    ### Simula la board di test piazzando il tetramino di test e la mossa scelta
+    # Simula la board di test piazzando il tetramino di test e la mossa scelta
 
     # This function simulates placing the current falling piece onto the
     # board, specified by 'move,' an array with two elements, 'rot' and 'sideways'.
@@ -16,7 +17,7 @@ def simulate_board(test_board, test_piece, move):
     rot = move[0]
     sideways = move[1]
     test_lines_removed = 0
-    ##print("simulating reference_height")
+    # print("simulating reference_height")
     # reference_height = get_parameters(test_board)[3]
     if test_piece is None:
         return None
@@ -166,5 +167,3 @@ def maxHeight(board):
                     max = heights[i]
                 break
     return max
-
-
