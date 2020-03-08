@@ -1,32 +1,28 @@
 from com.Core.BaseGame import BaseGame
 from abc import ABC
 import copy
-from com.Core.Model import PIECES, is_valid_position, add_to_board, remove_complete_lines
+from com.Core.Model import PIECES, BOARDWIDTH, BOARDHEIGHT, is_valid_position, add_to_board, \
+    remove_complete_lines
 import sys
 import random
 import math
 
-alpha = 0.01
-gamma = 0.9
-explore_change = 0.75
 weights = [-1, -1, -1, -30]  # Initial weight vector
-
-BOARDWIDTH = 10
-BOARDHEIGHT = 20
-BLANK = '0'
 
 
 class SDG_QL(BaseGame, ABC):
 
     def __init__(self, r_p):
-        global weights
         super().__init__(r_p)
-        self.weights = weights
+        self.alpha = 0.01
+        self.gamma = 0.9
+        self.explore_change = 0
+        #self.weights = globalWeights  #[-1, -1, -1, -30]
 
     def get_move(self):
-        return self.SDG_QL(self.board, self.falling_piece)
+        return self.sdg(self.board, self.falling_piece)
 
-    def get_parameters(self, board):
+    def get_parameters_x(self, board):
         # This function will calculate different parameters of the current board
 
         # Initialize some stuff
@@ -63,9 +59,11 @@ class SDG_QL(BaseGame, ABC):
             diff_sum += abs(i)
         return height_sum, diff_sum, max_height, holes
 
-    def get_expected_score_QL_P(self, test_board, weights):
-        # This function calculates the score of a given board state, given weights and the number of lines previously cleared.
-        height_sum, diff_sum, max_height, holes = self.get_parameters(test_board)
+    def get_expected_score_x(self, test_board):
+        global weights
+        # This function calculates the score of a given board state, given weights and the number of lines previously
+        # cleared.
+        height_sum, diff_sum, max_height, holes = self.get_parameters_x(test_board)
         A = weights[0]
         B = weights[1]
         C = weights[2]
@@ -73,7 +71,7 @@ class SDG_QL(BaseGame, ABC):
         test_score = float(A * height_sum + B * diff_sum + C * max_height + D * holes)
         return test_score
 
-    def simulate_board(self, test_board, test_piece, move):
+    def simulate_board_x(self, test_board, test_piece, move):
         # This function simulates placing the current falling piece onto the
         # board, specified by 'move,' an array with two elements, 'rot' and 'sideways'.
         # 'rot' gives the number of times the piece is to be rotated ranging in [0:3]
@@ -84,7 +82,7 @@ class SDG_QL(BaseGame, ABC):
         rot = move[0]
         sideways = move[1]
         test_lines_removed = 0
-        reference_height = self.get_parameters(test_board)[0]
+        reference_height = self.get_parameters_x(test_board)[0]
         if test_piece is None:
             return None
 
@@ -108,11 +106,12 @@ class SDG_QL(BaseGame, ABC):
             add_to_board(test_board, test_piece)
             test_lines_removed, test_board = remove_complete_lines(test_board)
 
-        height_sum, diff_sum, max_height, holes = self.get_parameters(test_board)
+        height_sum, diff_sum, max_height, holes = self.get_parameters_x(test_board)
         one_step_reward = 5 * (test_lines_removed * test_lines_removed) - (height_sum - reference_height)
+        # print("one_step_reward: ",one_step_reward)
         return test_board, one_step_reward
 
-    def find_best_move(self, board, piece, weights, explore_change):
+    def find_best_move(self, board, piece):
         move_list = []
         score_list = []
         for rot in range(0, len(PIECES[piece['shape']])):
@@ -120,50 +119,52 @@ class SDG_QL(BaseGame, ABC):
                 move = [rot, sideways]
                 test_board = copy.deepcopy(board)
                 test_piece = copy.deepcopy(piece)
-                test_board = self.simulate_board(test_board, test_piece, move)
+                test_board = self.simulate_board_x(test_board, test_piece, move)
                 if test_board is not None:
                     move_list.append(move)
-                    test_score = self.get_expected_score_QL_P(test_board[0], weights)
+                    test_score = self.get_expected_score_x(test_board[0])
                     score_list.append(test_score)
         best_score = max(score_list)
         best_move = move_list[score_list.index(best_score)]
 
-        if random.random() < explore_change:
+        if random.random() < self.explore_change:
             move = move_list[random.randint(0, len(move_list) - 1)]
         else:
             move = best_move
         return move
 
-    def SDG_QL(self, board, piece):
-        global weights, explore_change
-        move = self.find_best_move(board, piece, weights, explore_change)
-        old_params = self.get_parameters(board)
+    def sdg(self, board, piece):
+        global weights
+        move = self.find_best_move(board, piece)
+        old_params = self.get_parameters_x(board)
         test_board = copy.deepcopy(board)
         test_piece = copy.deepcopy(piece)
-        test_board = self.simulate_board(test_board, test_piece, move)
+        test_board = self.simulate_board_x( test_board, test_piece, move)
         if test_board is not None:
-            new_params = self.get_parameters(test_board[0])
+            new_params = self.get_parameters_x(test_board[0])
             one_step_reward = test_board[1]
         for i in range(0, len(weights)):
-            weights[i] = weights[i] + alpha * weights[i] * (one_step_reward - old_params[i]+ gamma * new_params[i])
+            weights[i] = weights[i] + self.alpha * weights[i] * (one_step_reward - old_params[i] + self.gamma * new_params[i])
         regularization_term = abs(sum(weights))
         for i in range(0, len(weights)):
             weights[i] = 100 * weights[i] / regularization_term
             weights[i] = math.floor(1e4 * weights[i]) / 1e4  # Rounds the weights
 
-        if explore_change > 0.001:
-            explore_change = explore_change * 0.99
+        if self.explore_change > 0.001:
+            self.explore_change = self.explore_change * 0.99
         else:
-            explore_change = 0
-
+            self.explore_change = 0
+        #print("byby: ", weights)
         return move
 
 
 if __name__ == "__main__":
+    print("START SDG QL ")
     r_p = sys.argv[1]
     numOfRun = int(sys.argv[2])
+    print("globalWeights ",weights)
     for x in range(numOfRun):
         SdgQL = SDG_QL(r_p)
         newScore, _ = SdgQL.run()
         print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+        #print("weights ", SdgQL.weights)

@@ -1,6 +1,6 @@
 #contiene funzioni utili per l'implementazione delle AI
 
-from tetris_model import *
+from ML_Tetris.tetris_model import *
 
 
 

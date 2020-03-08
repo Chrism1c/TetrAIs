@@ -1,9 +1,9 @@
 from mpmath import mp
-from tetris_utils import *
+from ML_Tetris.tetris_utils import *
 
 alpha = 0.01
 gamma = 0.9
-explore_change = 0.5
+#explore_change = 0.5
 
 PIeces = ""
 explore_change = 0.75

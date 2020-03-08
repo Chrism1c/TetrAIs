@@ -301,7 +301,7 @@ class BaseGame(metaclass=ABCMeta):
         ### Termina il gioco chiudendo pygame e l'applicazione
         try:
             pygame.quit()
-            sys.exit()
+            #sys.exit()
             # da aggiungere alla classe e distruggere l'oggetto
         except:
             print("Ended")
@@ -311,7 +311,6 @@ class BaseGame(metaclass=ABCMeta):
         # Go through event queue looking for a KEYUP event.
         # Grab KEYDOWN events to remove them from the event queue.
         self.check_for_quit()
-
         for event in pygame.event.get([keys.KEYDOWN, keys.KEYUP]):
             if event.type == keys.KEYDOWN:
                 continue
