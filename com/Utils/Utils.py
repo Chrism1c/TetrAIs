@@ -66,7 +66,7 @@ def get_parameters(board):
 
     DeepLines = count_full_lines(board)
 
-    # Calculate all tougether to optimize calculation
+    # Calculate all together to optimize calculation
     countTetra = 0
     max_height = 0
     height_sum = 0
@@ -103,6 +103,54 @@ def get_parameters(board):
     max_diffCol = roofRY[len(roofRY) - 1]
 
     return fullLines, holes, numTetraminoes, max_height, standardDvHeights, abs_diffCol, max_diffCol
+
+
+# metriche per l'IA Monte Carlo
+def getParametersMC(board):
+    global DeepLines
+    ### Calcola le metriche sulla board corrente
+
+    # Initialize some stuff
+    heights = [0] * BOARDWIDTH
+    holes = 0
+    DeepLines = count_full_lines(board)
+
+    # Calculate all together to optimize calculation
+    max_height = 0
+    height_sum = 0
+    for i in range(0, BOARDWIDTH):  # Select a column
+        occupied = 0  # Set the 'Occupied' flag to 0 for each new column
+        Hflag = False
+        for j in range(0, BOARDHEIGHT):  # Search down starting from the top of the board
+            if int(board[i][j]) > 0:  # Is the cell occupied?
+                occupied = 1  # If a block is found, set the 'Occupied' flag to 1
+                if not Hflag:
+                    heights[i] = BOARDHEIGHT - j  # Store the height value
+                    height_sum += heights[i]
+                    if max_height < heights[i]:
+                        max_height = heights[i]
+                    Hflag = True
+            if int(board[i][j]) == 0 and occupied == 1:
+                holes += 1  # If a hole is found, add one to the count
+
+    fullLines = DeepLines
+    aggrHeight = calcAggrHeight(heights)
+
+    return holes, aggrHeight, fullLines
+
+
+# calcola aggrheight pari alla radice quadrata della sommatoria delle altezze al quadrato
+def calcAggrHeight(heights):
+    return sum(getSquareH(heights)) ** 0.5
+
+
+# calcola il quadrato del vettore delle altezze
+def getSquareH(heights):
+    tempHeight = []
+    for i in range(len(heights)):
+        tempHeight[i] = heights[i] ** 2
+
+    return tempHeight
 
 
 # numero di tetramini piazzati, dato che conta il numero di blocchi presenti
