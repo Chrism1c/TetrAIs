@@ -25,12 +25,13 @@ def chromToStr(c,dim):
     return _str
 
 ### funzione che salva su file una popolazione di cromosomi
+
 def saveOnFile(fileName,population):
     file = open(fileName,"a+")
     y = 0
     for x in range(1,len(population) + 1,1):
         #writethis = "BOT-" + str(start) + " = " + population[y] + "\n"
-        writethis = str(chromToStr(population[y],len(population[y]))) + "\n"
+        writethis = str(chromToStr(population[y],len(population[y]))) + "\n"    ## calcolare la dimensione di population[y]
         y+=1
         #start+=1
         file.write(writethis)

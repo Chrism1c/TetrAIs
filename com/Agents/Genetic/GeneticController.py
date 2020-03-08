@@ -19,7 +19,8 @@ class GeneticController:
 
     def workGenetic(self):
         print("start creation gen:0")
-        numGen0 = 2 ** self.numGen
+        #numGen0 = 2 ** self.numGen
+        numGen0 = 8
         self.generation = self.createGen0(numGen0)
         # self.generation = self.createGen01(numGen0)
         print("end creation gen0")
@@ -82,7 +83,9 @@ class GeneticController:
         return mFitness / len(vFitness)
 
     def getNewChromosome(self):
-        return np.random.uniform(low=0.0, high=1.0, size=7)
+        chromosome = np.random.uniform(low=0.0, high=1.0, size=7)
+        chromosome[0] = chromosome[0] * 2
+        return chromosome
 
     # Create Gen0
 
@@ -182,15 +185,35 @@ class GeneticController:
 
     #numero fisso di chromosomi
     #metà migliori e metà incrocio dei migliori
+    def crossingFixedPopulation_OLD(self, population, numGen):
+        newPopulation = list()
+        orderedPopulation = sorted(population, key=itemgetter(1), reverse=True)
+        if numGen == self.numGen:
+            newPopulation.append(orderedPopulation[0])
+        else:
+            aux = self.crossingTournmentPopulation(orderedPopulation, len(orderedPopulation))
+            for x in range(round(len(orderedPopulation) / 2)):                              #metà migliori
+                newPopulation.append(orderedPopulation[x])
+            for x in range(round(len(orderedPopulation) / 2), len(orderedPopulation), 1):   #metà incroci
+                newPopulation.append(aux[x])
+        return newPopulation
+
+    # numero fisso di chromosomi
+    # 1/2 migliori + 1/4 incrocio dei migliori + 1/4 nuovi
     def crossingFixedPopulation(self, population, numGen):
         newPopulation = list()
         orderedPopulation = sorted(population, key=itemgetter(1), reverse=True)
         if numGen == self.numGen:
             newPopulation.append(orderedPopulation[0])
         else:
-            newPopulation = self.crossingTournmentPopulation(orderedPopulation, len(orderedPopulation))
-            for x in range(round(len(orderedPopulation) / 2)):
+            cross = self.crossingTournmentPopulation(orderedPopulation, round((len(orderedPopulation)) / 2))
+            for x in range(round(len(orderedPopulation) / 2)):  # 1/2 migliori
                 newPopulation.append(orderedPopulation[x])
+            for x in range(round(len(cross))):                  # 1/4 incroci
+                newPopulation.append(cross[x])
+            new = round(len(population) - len(newPopulation))
+            for x in range(new):                                # 1/4 nuovi
+                newPopulation = self.getNewChromosome()
         return newPopulation
 
     def crossingFullPopulation(self, population, k, numGen):
