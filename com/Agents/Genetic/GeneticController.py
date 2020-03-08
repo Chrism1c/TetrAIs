@@ -20,7 +20,7 @@ class GeneticController:
     def workGenetic(self):
         print("start creation gen:0")
         #numGen0 = 2 ** self.numGen
-        numGen0 = 4
+        numGen0 = 8
         self.generation = self.createGen0(numGen0)
         # self.generation = self.createGen01(numGen0)
         print("end creation gen0")
@@ -48,7 +48,7 @@ class GeneticController:
             else:
                 continue
         destroy(fileName)
-        saveOnFile(fileName, self.generation[0])
+        saveOnFile(fileName, self.generation)
         print('end training')
 
     # funzione fitness alternativa, che tiene conto del numero di tetramini piazzati ma anche dello score finale

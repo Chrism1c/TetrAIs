@@ -80,12 +80,21 @@ class Genetic(BaseGame, ABC):
 
     # serve per calcolare lo score del tetramino che si sta piazzando in base ai valori assegnati al cromosoma
 
-    def get_expected_score(self, test_board):
+    def get_expected_score_OLD(self, test_board):
         ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
         test_score = float(
             (fullLines * 2 * self.chromosome[0]) - (vHoles * self.chromosome[1]) - (vBlocks * self.chromosome[2]) -
             ((maxHeight ** 1.5) * self.chromosome[3]) - (stdDY * self.chromosome[4]) - (absDy * self.chromosome[5]) -
+            (maxDy * self.chromosome[6]))
+        return test_score, fullLines
+
+    def get_expected_score(self, test_board):
+        ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
+        fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
+        test_score = float(
+            (fullLines * self.chromosome[0]) - (vHoles * self.chromosome[1]) - (vBlocks * self.chromosome[2]) -
+            (maxHeight * self.chromosome[3]) - (stdDY * self.chromosome[4]) - (absDy * self.chromosome[5]) -
             (maxDy * self.chromosome[6]))
         return test_score, fullLines
 
