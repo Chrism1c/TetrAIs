@@ -7,3 +7,6 @@ class RuleBased(BaseGame):
     def get_move(self):
         pass
 
+
+
+
