@@ -1,4 +1,5 @@
 from com.Core.BaseGame import BaseGame
+from com.Utils.KnowledgeBase import *
 
 class RuleBased(BaseGame):
     def __init__(self, r_p):
@@ -7,6 +8,6 @@ class RuleBased(BaseGame):
     def get_move(self):
         pass
 
-
-
-
+#restituisce una cresta con offset sullo start
+def offset(crest):
+    pass
