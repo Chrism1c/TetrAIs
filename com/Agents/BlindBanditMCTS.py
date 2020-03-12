@@ -19,71 +19,14 @@ class MonteCarlo(BaseGame, ABC):
         self.lv = lv
         self.action = ""
         self.deepLimit = 3
-        self.timeLimit = 10
-        self.start = time.perf_counter()
 
     def get_move(self):
-        if self.lv == 'LV1':
-            return self.MonteCarlo_LV1Only(self.board, self.falling_piece)
-        elif self.lv == 'LV2':
-            return self.MonteCarlo_full(self.board, self.falling_piece, self.next_piece)
-        else:
+        if self.lv == 'full':
             return self.MonteCarlo_MCTS(self.board, self.falling_piece, self.next_piece)
-            # return self.MonteCarlo_MCTS(self.board, self.falling_piece, self.next_piece)
-
-    def MonteCarlo_full(self, board, piece, NextPiece):
-        ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
-        # start = time.perf_counter()  # salvo il tempo di partenza
-
-        best_rot = 0
-        best_sideways = 0
-        best_score = - 99
-
-        NextScore = (0, 0, -99)  # rot,sideways, score
-
-        # rot =  1-'O':    2-'I': 2-'Z':    4-'J': 4-'L': 4-'T'
-
-        for rot in range(0, len(PIECES[piece['shape']])):  # per le rotazioni possibili su lpezzo corrente
-            for sideways in range(-5, 6):  # per i drop possibili sulla board
-                move = [rot, sideways]  # salvo la coppia corrente
-                test_board = copy.deepcopy(board)  # duplico la board corrente
-                test_piece = copy.deepcopy(piece)  # duplico il pezzo corrente
-                test_board = simulate_board(test_board, test_piece, move)  # simulo il pezzo e la mossa sulla board test
-                # Check NEXT
-                if test_board is not None:  # se la simulazione è andata a buon fine
-                    ## Chose the best after next                                # effettuo il calcolo con il pezzo successivo
-                    for rot2 in range(0, len(PIECES[NextPiece['shape']])):
-                        for sideways2 in range(-5, 6):
-                            move2 = [rot2, sideways2]
-                            test_board2 = copy.deepcopy(test_board)
-                            test_piece2 = copy.deepcopy(NextPiece)
-                            test_board2 = simulate_board(test_board2, test_piece2, move2)
-                            if test_board2 is not None:
-                                test_score2, nextLines = self.get_expected_score(test_board2)
-                                if NextScore[2] < test_score2:
-                                    NextScore = [rot2, sideways2, test_score2]  # aggiorno il best local score (LV2)
-                    if best_score < NextScore[2]:  # confronto
-                        best_score = NextScore[2]  # aggiorno il best local score (LV1+LV2)
-                        best_sideways = sideways  # aggiorno il best sideway (LV1)
-                        best_rot = rot  # aggiorno il best rot (LV1)
-
-        return [best_rot, best_sideways]
-
-    def MonteCarlo_LV1Only(self, board, piece):
-
-        strategy = None
-        for rot in range(0, len(PIECES[piece['shape']])):
-            for sideways in range(-5, 6):
-                move = [rot, sideways]
-                test_board = copy.deepcopy(board)
-                test_piece = copy.deepcopy(piece)
-                test_board = simulate_board(test_board, test_piece, move)
-                if test_board is not None:
-                    test_score = self.get_expected_score(test_board)
-                    if not strategy or strategy[2] < test_score:
-                        strategy = (rot, sideways, test_score)
-
-        return [strategy[0], strategy[1]]
+        elif self.lv == 'random':
+            return self.MonteCarlo_MCTS_random(self.board, self.falling_piece, self.next_piece)
+        else:
+            print("not valid")
 
     def get_expected_score(self, test_board):
         # Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
@@ -95,6 +38,96 @@ class MonteCarlo(BaseGame, ABC):
 
     ### MonteCarlo Step 1 (DFS BASED)
     def MonteCarlo_MCTS(self, board, piece, NextPiece):
+        # Main Step1 Branch Analyser
+        deep = 1
+        numIter = 0
+        # print("Branch Deep :", deep, " Real piece: ", piece['shape'])
+        self.action = str(piece['shape'])
+        topStrategies = list()
+        strategy = None
+        for rot in range(0, len(PIECES[piece['shape']])):
+            for sideways in range(-5, 6):
+                numIter = numIter + 1
+                # print("<<<<<<<<<< Enter into branch n° ", numIter)
+                move = [rot, sideways]
+                test_board = copy.deepcopy(board)
+                test_piece = copy.deepcopy(piece)
+                test_board = simulate_board(test_board, test_piece, move)
+
+                fatherName = str(piece['shape'] + ":" + str(sideways) + ":" + str(0))
+                # MonteCarloPlot.addedge(ROOTZERO, fatherName)
+                # print("ROOTZERO X fatherName ===== ", fatherName)
+
+                if test_board is not None:
+                    test_score, fullLines = self.get_expected_score(test_board)
+                    NextScore = 0
+                    selfAction = ""
+
+                    if self.deepLimit > 1:
+                        NextScore, selfAction = self.MonteCarlo_MCTS_stepx(board, deep + 1, NextPiece, fatherName)
+                    else:
+                        # print("EXECPTION = self.action : ", self.action)
+                        selfAction = self.action
+                        self.action = str(piece['shape'])
+                    NextScore = NextScore + test_score
+
+                    if not strategy or strategy[2] < NextScore:
+                        strategy = (rot, sideways, NextScore, selfAction)
+                        topStrategies.append(strategy)
+
+        # print("Plotting 4 You")
+        # MonteCarloPlot.plot()
+        MonteCarloPlot.Graph.clear()
+
+        print("--->> TOP STRATEGIES <<---")
+        topStrategies = sorted(topStrategies, key=itemgetter(2), reverse=True)
+        for x in range(len(topStrategies)):
+            print(topStrategies[x])
+
+        # print("---X>> Winner STRATEGY <<X---",topStrategies[0])
+
+        # return [strategy[0], strategy[1]]
+        return [topStrategies[0][0], topStrategies[0][1]]
+
+    def MonteCarlo_MCTS_stepx(self, board, deep, piece, fatherName):
+        # Recursive Scanning of Virtual Branches on Deep >2
+        # print("deep, :", deep, " piece: ", piece['shape'])
+        inizio = -5
+        fine = 6
+        self.action = self.action + "-" + piece['shape']
+        strategy = None
+
+        sidewaysIndex = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]  # 11 Sideways
+
+        for rot in range(0, len(PIECES[piece['shape']])):
+            for sideways in sidewaysIndex:  # range(inizio, fine):
+                # print("sideways and rot", sideways, " ", rot)
+                move = [rot, sideways]
+                test_board = copy.deepcopy(board)
+                test_piece = copy.deepcopy(piece)
+                test_board = simulate_board(test_board, test_piece, move)
+
+                NameNode = str(piece['shape'] + ":" + str(sideways) + ":" + str(deep))
+                MonteCarloPlot.addedge(fatherName, fatherName + "_" + NameNode)
+                # print("fatherName === ", fatherName, " NodeNameX === ", fatherName + "_" + NameNode)
+
+                if test_board is not None:
+                    test_score, fullLines = self.get_expected_score(test_board)
+                    # print("STEPX: test_score: ",test_score)
+
+                    # print("yyyy: ", deep, " ",self.deepLimit)
+                    if deep < self.deepLimit:
+                        # print("dxxxxx: ", deep)
+                        RandPiece = self.__random()
+                        deepScore, pieceType = self.MonteCarlo_MCTS_stepx(board, deep + 1, RandPiece,
+                                                                          fatherName + "_" + NameNode)
+                        test_score = test_score + deepScore
+
+                    if not strategy or strategy[2] < test_score:
+                        strategy = (rot, sideways, test_score)
+        return strategy[2], self.action
+
+    def MonteCarlo_MCTS_random(self, board, piece, NextPiece):
         # Main Step1 Branch Analyser
         # print("LV1: -------------------------------------------------------------------------------------- New Move ")
         deep = 1
@@ -113,7 +146,7 @@ class MonteCarlo(BaseGame, ABC):
                 test_board = simulate_board(test_board, test_piece, move)
 
                 fatherName = str(piece['shape'] + ":" + str(sideways) +  ":" + str(0))
-                MonteCarloPlot.addedge(ROOTZERO, fatherName)
+                # MonteCarloPlot.addedge(ROOTZERO, fatherName)
                 # print("ROOTZERO X fatherName ===== ", fatherName)
 
                 if test_board is not None:
@@ -121,10 +154,9 @@ class MonteCarlo(BaseGame, ABC):
                     NextScore = 0
                     selfAction = ""
 
-                    try:
-                        if(self.deepLimit>1):
-                            NextScore, selfAction = self.MonteCarlo_MCTS_stepx(board, deep+1, NextPiece, fatherName)
-                    except:
+                    if self.deepLimit > 1:
+                        NextScore, selfAction = self.MonteCarlo_MCTS_stepx_random(board, deep+1, NextPiece, fatherName)
+                    else:
                         # print("EXECPTION = self.action : ",self.action)
                         selfAction = self.action
                         self.action = str(piece['shape'])
@@ -134,28 +166,43 @@ class MonteCarlo(BaseGame, ABC):
                         strategy = (rot, sideways, NextScore, selfAction)
                         topStrategies.append(strategy)
 
-        print("Plotting 4 You")
+        # print("Plotting 4 You")
         # MonteCarloPlot.plot()
         MonteCarloPlot.Graph.clear()
 
         print("--->> TOP STRATEGIES <<---")
         topStrategies = sorted(topStrategies, key=itemgetter(2), reverse=True)
-        # for x in range(len(topStrategies)):
-        #     print(topStrategies[x])
+        for x in range(len(topStrategies)):
+             print(topStrategies[x])
 
         #print("---X>> Winner STRATEGY <<X---",topStrategies[0])
 
         #return [strategy[0], strategy[1]]
         return [topStrategies[0][0], topStrategies[0][1]]
 
-
-    def MonteCarlo_MCTS_stepx(self, board, deep, piece, fatherName):
+    def MonteCarlo_MCTS_stepx_random(self, board, deep, piece, fatherName):
         # Recursive Scanning of Virtual Branches on Deep >2
         # print("deep, :", deep, " piece: ", piece['shape'])
+        inizio = -5
+        fine = 6
         self.action = self.action + "-" +piece['shape']
         strategy = None
+
+        sidewaysIndex = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5] #11 Sideways
+        if deep > 2:
+            toRemove = random.randint(0, 8)
+            # print("------------------- daRimuovere ",toRemove)
+            for z in range(toRemove):
+                deathindex = random.randint(0, len(sidewaysIndex) - 1)
+                #print("*** deathindex: ",deathindex-1)
+                sidewaysIndex.pop(deathindex)
+            lenindex = len(sidewaysIndex)
+            # print('@@@ sidewaysIndex : ',sidewaysIndex," W len of :",lenindex)
+            # inizio = random.randint(-5, 0)
+            # fine = random.randint(1, 6)
+
         for rot in range(0, len(PIECES[piece['shape']])):
-            for sideways in range(-5, 6):
+            for sideways in sidewaysIndex: #range(inizio, fine):
                 # print("sideways and rot",sideways, " ",rot)
                 move = [rot, sideways]
                 test_board = copy.deepcopy(board)
@@ -174,7 +221,7 @@ class MonteCarlo(BaseGame, ABC):
                     if deep < self.deepLimit:
                         # print("dxxxxx: ", deep)
                         RandPiece = self.__random()
-                        deepScore, pieceType = self.MonteCarlo_MCTS_stepx(board, deep+1, RandPiece, fatherName+"_"+NameNode)
+                        deepScore, pieceType = self.MonteCarlo_MCTS_stepx_random(board, deep+1, RandPiece, fatherName+"_"+NameNode)
                         test_score = test_score + deepScore
 
                     if not strategy or strategy[2] < test_score:
@@ -195,9 +242,9 @@ class MonteCarlo(BaseGame, ABC):
         return new_piece
 
 if __name__ == "__main__":
-    r_p = 'p'    # sys.argv[1]               # 'r'
-    lv = 'LV3'   # sys.argv[2]                # 'LV3'
-    numOfRun = 1 # int(sys.argv[3])     # 2
+    r_p = sys.argv[1]              # 'r' # 'p'
+    lv = sys.argv[2]               # 'full' # 'random'
+    numOfRun = int(sys.argv[3])    # 1
 
     for x in range(numOfRun):
         mc = MonteCarlo(r_p, lv)

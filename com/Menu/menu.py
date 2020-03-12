@@ -98,11 +98,6 @@ def Rule_Based():
     # os.system("")
     print("GO --> Rule_Based ", pieceType)
 
-# def Monte_Carlo():
-#     global pieceType,numOfRuns
-#     # os.system("")
-#     print("GO --> Monte_Carlo ",pieceType)
-
 def Monte_Carlo(x, mode):
     global pieceType, numOfRuns
     # os.system("")
@@ -235,7 +230,7 @@ def main(test=False):
     AI_menu.add_option('Rule Based ', Rule_Based)
     # AI_menu.add_option('Monte Carlo', Monte_Carlo)
     AI_menu.add_selector('Blind Bandit Monte Carlo',
-                         [('LV1 Deep', 'LV1'), ('LV2 Deep', 'LV2'), ('LV100 Deep', 'LV100')], onreturn=Monte_Carlo)
+                         [('RandSideways', 'random'), ('FullScan', 'full')], onreturn=Monte_Carlo)
 
     # AI_menu.add_option('|| BACK ||', pygameMenu.events.BACK)
 
