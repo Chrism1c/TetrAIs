@@ -1,5 +1,6 @@
 # Import libraries
 import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygameMenu
 
@@ -7,7 +8,7 @@ import pygameMenu
 # Constants and global variables
 # -----------------------------------------------------------------------------
 
-ABOUT = ['TetrAIs: v0.5', 'Authors: ']
+ABOUT = ['TetrAIs: v1.0', 'Authors: ']
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
@@ -93,18 +94,24 @@ def Genetic(x, mode):
 
 
 def Rule_Based():
-    global pieceType,numOfRuns
+    global pieceType, numOfRuns
     # os.system("")
-    print("GO --> Rule_Based ",pieceType)
+    print("GO --> Rule_Based ", pieceType)
 
-def Monte_Carlo():
-    global pieceType,numOfRuns
+# def Monte_Carlo():
+#     global pieceType,numOfRuns
+#     # os.system("")
+#     print("GO --> Monte_Carlo ",pieceType)
+
+def Monte_Carlo(x, mode):
+    global pieceType, numOfRuns
     # os.system("")
-    print("GO --> Monte_Carlo ",pieceType)
+    print("GO --> Monte_Carlo ", mode, " ", pieceType)
+    os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
 def Player():
     global pieceType,numOfRuns
-    print("GO --> Player ", pieceType, " ",numOfRuns)
+    print("GO --> Player ", pieceType, " ", numOfRuns)
     os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
 
 
@@ -171,7 +178,11 @@ def main(test=False):
     # Init pygame
     # -------------------------------------------------------------------------
     pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
+    WINDOWWIDTH = 400
+    WINDOWHEIGHT = 500
+    pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
+
+    # os.environ['SDL_VIDEO_CENTERED'] = '1'
 
     # Create pygame screen and objects
     surface = pygame.display.set_mode(WINDOW_SIZE)
@@ -222,7 +233,9 @@ def main(test=False):
     AI_menu.add_selector('Genetic ',
                          [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)
-    AI_menu.add_option('Monte Carlo', Monte_Carlo)
+    # AI_menu.add_option('Monte Carlo', Monte_Carlo)
+    AI_menu.add_selector('Blind Bandit Monte Carlo',
+                         [('LV1 Deep', 'LV1'), ('LV2 Deep', 'LV2'), ('LV100 Deep', 'LV100')], onreturn=Monte_Carlo)
 
     # AI_menu.add_option('|| BACK ||', pygameMenu.events.BACK)
 
