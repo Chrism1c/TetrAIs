@@ -26,8 +26,6 @@ class DeepFirstSearch(BaseGame, ABC):
         best_score = - 99
 
         NextScore = (0, 0, -99)  # rot,sideways, score
-        bestLines = -1
-        nextLines = -1
 
         # rot =  1-'O':    2-'I': 2-'Z':    4-'J': 4-'L': 4-'T'
 
@@ -96,7 +94,7 @@ if __name__ == "__main__":
     lv = sys.argv[2]
     numOfRun = int(sys.argv[3])
     for x in range(numOfRun):
-        ls = DeepFirstSearch(r_p,lv)
-        newScore, weights = ls.run()
+        dfs = DeepFirstSearch(r_p,lv)
+        newScore, weights = dfs.run()
         print("Game achieved a score of: ", newScore)
         print("weights ", weights)
