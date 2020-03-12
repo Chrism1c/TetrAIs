@@ -41,12 +41,11 @@ def DeepMaxSearch(root):
     return best_state
 
 
-class MonteCarlo(BaseGame, ABC):
-    def __init__(self, r_p, board, parent=None, action=None, depth=0):
-        super().__init__(r_p)
+class GameNode(object):
+    def __init__(self, board, parent=None, move=None, depth=0):
         self.hashtable = [0] * self.hash_length  # tavola hash per evitare children duplicati
         self.board = board  # contiene la copia del gioco corrente
-        self.action = action  # la mossa che ci ha portato a questo stato
+        self.move = move  # la mossa che ci ha portato a questo stato
         self.parent = parent  # riferimento al nodo genitore
         self.depth = depth
         self.visitedStates = []
@@ -56,9 +55,59 @@ class MonteCarlo(BaseGame, ABC):
         self.UCB = 0
         self.metrics = getParametersMC(self.board)
 
-    def get_move(self):
-        return self.getMCMove(self.board, self.falling_piece, self.next_piece)
+    # una specie di simulate_board, devo passargli il pezzo quando richiamo questo metodo
+    def getFutureStates(self, falling_piece):
+        if len(self.futureStates) == 0:
+            depth_children = self.depth + 1
 
-    def getMCMove(self):
-        move = 0
-        return move
+            for sideways in range(-5, 6, 1):
+                for rotation in range(0, 4, 1):  # numero di rotazioni
+                    action_child = rotation, sideways  # sarebbe la move
+                    # simula il gioco facendo rotazioni e traslazioni in modo da ottenere il nuovo stato (per ogni mossa)
+                    new_state = simulate_board(self.board, falling_piece, move)
+
+                    child = GameNode(new_state, self, action_child, depth_children)
+
+                    # hashing preprocess
+                    child_grid_string = child.griToString()
+                    hash_value = abs(hash(child_grid_string))
+
+                    # se questo child non è stato ancora aggiunto, si fa un append alla children list
+                    if (self.hashtable[hash_value % self.hash_length] == 0):
+                        self.hashtable[hash_value % self.hash_length] = 1
+                        self.future_states.append(child)
+
+        return self.future_states
+
+    # restituisce una copia della board
+    def getBoard(self):
+        board = [[0 for i in range(BOARDWIDTH)]
+                 for i in range(BOARDHEIGHT)]
+        for x in range(BOARDWIDTH):
+            for y in range(BOARDHEIGHT):
+                board[y][x] = self.board[x][y]
+        return board
+
+    # parte da controllare potrebbe essere necessario cancellare tutto, eventualmente aggiungere lo score a riga 109 e 113
+    # trasforma la board in stringa
+    def boardToString(self):
+        state_string = ""
+        board = [[0 for i in range(BOARDWIDTH)]
+                 for i in range(BOARDHEIGHT)]
+        for x in range(BOARDWIDTH):
+            for y in range(BOARDHEIGHT):
+                board[y][x] = self.board[x][y]
+
+        for row in state:
+            state_string += str(row)
+            state_string += "\n"
+        return state_string
+
+    def __str__(self):
+        if self.parent is None:
+            return ("ROOT" + "\nBoard\n" + str(self.boardToString()) + "Depth: " + str(self.depth) + "\nPlays: " + str(
+                self.plays) + "\nWins: " + str(self.wins) + "\nMetrics: " + str(self.metrics))
+        else:
+            return ("State:\n" + str(self.gridToStringPretty()) + "Action: " + str(self.action) + "\nDepth: " + str(
+                self.depth) + "\nPlays: " + str(self.plays) + "\nWins: " + str(self.wins) + "\nMetrics: " + str(
+                self.metrics))
