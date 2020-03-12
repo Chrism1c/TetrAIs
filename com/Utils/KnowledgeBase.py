@@ -88,3 +88,29 @@ shadows_T = {
     f_u: 3,
     f_3: 4,
 }
+
+a = [0, 0, -1, 0, 1, 1, 0, 0, 0, 2]         #cresta
+
+Pa = list()                                 #insieme delle parti della cresta
+
+for x in range(int(len(a))):                #1
+    Pa.append([a[x]])
+
+for x in range(int(len(a) - 1)):            #2
+    Pa.append([a[x], a[x+1]])
+
+for x in range(int(len(a) - 2)):            #3
+    Pa.append([a[x], a[x+1], a[x+2]])
+
+for x in range(int(len(a) - 3)):            #4
+    Pa.append([a[x], a[x+1], a[x+2], a[x+3]])
+
+b = [1, 0, 0]                               #ombra del pezzo
+
+if b in Pa:
+    print('yes')                            #salvo la posizione
+else:
+    print('no')                             #non salvo la posizione
+
+#analizzo l'altra ombra
+
