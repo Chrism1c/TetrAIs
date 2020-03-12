@@ -230,9 +230,7 @@ def main(test=False):
     AI_menu.add_option('Rule Based ', Rule_Based)
     # AI_menu.add_option('Monte Carlo', Monte_Carlo)
     AI_menu.add_selector('Blind Bandit Monte Carlo',
-                         [('RandSideways', 'random'), ('FullScan', 'full')], onreturn=Monte_Carlo)
-
-    # AI_menu.add_option('|| BACK ||', pygameMenu.events.BACK)
+                         [('RandScan', 'random'), ('FullScan', 'full')], onreturn=Monte_Carlo)
 
 
     AI_Setting_menu = pygameMenu.Menu(surface,
