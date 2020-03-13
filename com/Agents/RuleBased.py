@@ -1,6 +1,7 @@
 from com.Core.BaseGame import BaseGame
 from com.Utils.KnowledgeBase import *
 from com.Core.Model import BOARDHEIGHT, BOARDWIDTH, is_on_board
+import sys
 
 class RuleBased(BaseGame):
     def __init__(self, r_p):
@@ -24,7 +25,7 @@ class RuleBased(BaseGame):
                     if seq_s == seq_x and (current_priority < priority or self.crest[start] < self.crest[current_start]):
                         current_start = start_
                         current_rot = rot
-        return [current_rot, current_start - 5]
+        return [current_rot, current_start]
 
 
     def get_move_by_rule_old(self, piece, Pa):
@@ -99,13 +100,14 @@ class RuleBased(BaseGame):
 
 
 
-
-
-
-
-
-
-
+if __name__ == "__main__":
+    r_p = sys.argv[1]
+    numOfRun = int(sys.argv[2])
+    for x in range(numOfRun):
+        rb = RuleBased(r_p)
+        newScore, weights = rb.run()
+        print("Game achieved a score of: ", newScore)
+        print("weights ", weights)
 
 
 

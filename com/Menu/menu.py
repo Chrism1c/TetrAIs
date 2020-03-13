@@ -93,9 +93,10 @@ def Genetic(x, mode):
 
 
 def Rule_Based():
-    global pieceType,numOfRuns
+    global pieceType, numOfRuns
     # os.system("")
-    print("GO --> Rule_Based ",pieceType)
+    print("GO --> Rule_Based ", pieceType)
+    os.system('python com/Agents/RuleBased.py ' + pieceType + " " + str(numOfRuns))
 
 def Monte_Carlo():
     global pieceType,numOfRuns
