@@ -119,8 +119,8 @@ print(c)
 
 for pax in Pa:
     start, seq = pax
-    print('start: ', str(start))
-    print('seq__: ', str(seq))
+    if seq == b:
+        print('yes, start: ', str(start))
 
 
 Shadow = namedtuple('Shadow', [
