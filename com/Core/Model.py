@@ -119,7 +119,7 @@ PIECES_COLORS = {
     'L': 8,  # ORANGE
     'I': 6,  # CYAN
     'O': 5,  # YELLOW
-    'T': 9  # PURPLE
+    'T': 9   # PURPLE
 }
 
 

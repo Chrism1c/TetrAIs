@@ -90,21 +90,21 @@ Pa = list()                                 #insieme delle parti della cresta
 #c[x] = b[x] - b[x-1]
 
 for x in range(int(len(a))):                #1
-    Pa.append((x, [a[x]]))
+    Pa.append((x, [0]))
 
 for x in range(int(len(a) - 1)):            #2
-    Pa.append((x, [a[x], a[x+1]]))
+    Pa.append((x, [0, a[x+1] - a[x]]))
 
 for x in range(int(len(a) - 2)):            #3
-    Pa.append((x, [a[x], a[x+1], a[x+2]]))
+    Pa.append((x, [0, a[x+1] - a[x], a[x+2] - a[x+1]]))
 
 for x in range(int(len(a) - 3)):            #4
-    Pa.append((x, [a[x], a[x+1], a[x+2], a[x+3]]))
+    Pa.append((x, [0, a[x+1] - a[x], a[x+2] - a[x+1], a[x+3] - a[x+2]]))
 
-b = [1, 0, 0] #ombra del pezzo
+b = [0, 1, 0] #ombra del pezzo
 
 c = [0]*10
-for x in range(10):
+for x in range(-5, 6):
     c[x] =[x, b]
 
 print('ombra b')
