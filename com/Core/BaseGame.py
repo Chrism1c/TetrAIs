@@ -13,7 +13,6 @@ import numpy
 import pygame.locals as keys
 import pyautogui
 
-
 def remove_complete_lines(board):
     ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
     # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
