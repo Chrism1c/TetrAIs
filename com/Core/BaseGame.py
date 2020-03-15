@@ -13,7 +13,6 @@ import numpy
 import pygame.locals as keys
 import pyautogui
 
-
 def remove_complete_lines(board):
     ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
     # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
@@ -74,10 +73,6 @@ class BaseGame(metaclass=ABCMeta):
         current_move = [0, 0]  # Relative Rotation, lateral movement
         self.set_PIece(100)
 
-        # sezione riguardante l'IA genetica
-        # if AI == 2:
-        #     #chromosome = gen.getNewChromosome()
-        #     chromosome = gen.get_chromosome()
         get_new_piece = self.get_new_piece_method()
         self.falling_piece = get_new_piece()
         self.next_piece = get_new_piece()

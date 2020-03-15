@@ -1,8 +1,6 @@
 import matplotlib as mplb
 import networkx as nx
 import matplotlib.pyplot as plt
-import tkinter as tk
-import time
 
 mplb.use('TkAgg')
 
@@ -13,9 +11,7 @@ class TreePlot():
     def addedge(self, a, b):
         self.Graph.add_edge(a, b)
 
-
     def plot(self):
-        # print("Hello")
         options = {
             'with_labels': True,
             'node_color': 'lightblue',  # blue
@@ -36,12 +32,11 @@ class TreePlot():
         elif type == 'spring':
             nx.draw_spring(self.Graph, **options)
 
+        print("Plotting 4 You...")
         plt.draw()
         plt.show()
         # plt.savefig("filename2.png")
         plt.clf()
-        # print("ByBy")
-
 
 # if __name__ == "__main__":
 #     tp = TreePlot()

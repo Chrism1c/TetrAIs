@@ -1,5 +1,6 @@
 # Import libraries
 import os
+
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygameMenu
@@ -28,11 +29,12 @@ sound = None
 surface = None
 main_menu = None
 
-
 AI_Setting_menu = None
 
 pieceType = "r"
 numOfRuns = 1
+plotTree = False
+
 
 # -----------------------------------------------------------------------------
 # Methods
@@ -57,64 +59,69 @@ def check_name_test(value):
     print('User name: {0}'.format(value))
 
 
-def changePieceType(x,y):
+def changePieceType(y):
     global pieceType
     pieceType = y
-    print("pieceType = ",pieceType)
+    print("pieceType = ", pieceType)
+
 
 def update_num_runs(num):
     global numOfRuns
-    if len(num)>0 and int(num)>0 and int(num)<999:
+    if len(num) > 0 and 0 < int(num) < 999:
         numOfRuns = int(num)
         print("numOfRuns = ", numOfRuns)
 
 
+def plotDecisionTree(x, choise):
+    global plotTree
+    plotTree = choise
+    print("plotTree = ", choise)
+
 
 def DFS(x, mode):
-    global pieceType,numOfRuns
-    print("GO --> DFS ",mode," ",pieceType," ",numOfRuns)
-    os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode +' '+ str(numOfRuns))
+    global pieceType, numOfRuns, plotTree
+    print("GO --> DFS ", mode, " ", pieceType, " ", numOfRuns, " ", str(plotTree))
+    os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
+
 
 def Local_Search():
-    global pieceType,numOfRuns
-    print("GO --> LS ",pieceType," ",numOfRuns)
-    os.system('python com/Agents/LocalSearch.py ' + pieceType +' '+ str(numOfRuns))
+    global pieceType, numOfRuns
+    print("GO --> LS ", pieceType, " ", numOfRuns)
+    os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
+
 
 def SDG_QL():
-    global pieceType,numOfRuns
-    # os.system("")
-    print("GO --> SDG_QL ",pieceType," ",numOfRuns)
+    global pieceType, numOfRuns
+    print("GO --> SDG_QL ", pieceType, " ", numOfRuns)
     os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
 
+
 def Genetic(x, mode):
-    global pieceType,numOfRuns
-    # os.system("")
-    print("GO --> Genetic ",mode," ",pieceType)
-    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+    global pieceType, numOfRuns, plotTree
+    print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
+    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
 
 def Rule_Based():
     global pieceType, numOfRuns
-    # os.system("")
-    print("GO --> Rule_Based ", pieceType)
+    print("GO --> Logic_Rule_Based ", pieceType)
+    os.system('python com/Agents/LogicRuleBased.py ' + pieceType + ' ' + str(numOfRuns))
+
 
 def Monte_Carlo(x, mode):
     global pieceType, numOfRuns
-    # os.system("")
-    print("GO --> Monte_Carlo ", mode, " ", pieceType)
+    print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
     os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
+
 def Player():
-    global pieceType,numOfRuns
+    global pieceType, numOfRuns
     print("GO --> Player ", pieceType, " ", numOfRuns)
     os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
 
 
-
-
-
 def cat():
-    #url = "https://www.youtube.com/watch?v=J---aiyznGQ"
+    # url = "https://www.youtube.com/watch?v=J---aiyznGQ"
     url = "https://www.youtube.com/watch?v=3AGqTbqhAU4"
     os.startfile(url)
 
@@ -228,42 +235,40 @@ def main(test=False):
     AI_menu.add_selector('Genetic ',
                          [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)
-    # AI_menu.add_option('Monte Carlo', Monte_Carlo)
     AI_menu.add_selector('Blind Bandit Monte Carlo',
                          [('RandScan', 'random'), ('FullScan', 'full')], onreturn=Monte_Carlo)
 
-
     AI_Setting_menu = pygameMenu.Menu(surface,
-                              bgfun=main_background,
-                              color_selected=COLOR_WHITE,
-                              font=pygameMenu.font.FONT_NEVIS,
-                              font_title=pygameMenu.font.FONT_8BIT,
-                              font_color=COLOR_BLACK,
-                              font_size=25,
-                              font_size_title=40,
-                              menu_alpha=100,
-                              option_shadow=False,
-                              menu_color=MENU_BACKGROUND_COLOR,
-                              menu_color_title=MENU_TITLE_COLOR,
-                              menu_height=int(WINDOW_SIZE[1] * 0.85),
-                              menu_width=int(WINDOW_SIZE[0] * 0.85),
-                              onclose=pygameMenu.events.DISABLE_CLOSE,
-                              title='AI Settings',
-                              widget_alignment=pygameMenu.locals.ALIGN_CENTER,  # .ALIGN_LEFT,
-                              window_height=WINDOW_SIZE[1],
-                              window_width=WINDOW_SIZE[0],
-                              )
+                                      bgfun=main_background,
+                                      color_selected=COLOR_WHITE,
+                                      font=pygameMenu.font.FONT_NEVIS,
+                                      font_title=pygameMenu.font.FONT_8BIT,
+                                      font_color=COLOR_BLACK,
+                                      font_size=25,
+                                      font_size_title=40,
+                                      menu_alpha=100,
+                                      option_shadow=False,
+                                      menu_color=MENU_BACKGROUND_COLOR,
+                                      menu_color_title=MENU_TITLE_COLOR,
+                                      menu_height=int(WINDOW_SIZE[1] * 0.85),
+                                      menu_width=int(WINDOW_SIZE[0] * 0.85),
+                                      onclose=pygameMenu.events.DISABLE_CLOSE,
+                                      title='AI Settings',
+                                      widget_alignment=pygameMenu.locals.ALIGN_CENTER,  # .ALIGN_LEFT,
+                                      window_height=WINDOW_SIZE[1],
+                                      window_width=WINDOW_SIZE[0],
+                                      )
 
-    #AI_Setting_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+    # AI_Setting_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
     AI_Setting_menu.add_selector('Type of Circuit: ',
                                  [('Random', 'r'), ('PI', 'p')], onchange=changePieceType)
+    AI_Setting_menu.add_selector('Plot decision Tree?: ',
+                                 [('No', False), ('Yes', True)], onchange=plotDecisionTree)
     AI_Setting_menu.add_text_input('How many runs?: ',
-                                        default='1',
-                                        onchange=update_num_runs,
-                                        textinput_id='Runs')
-    AI_Setting_menu.add_option("|| AI Agents ||",AI_menu)
-
-
+                                   default='1',
+                                   onchange=update_num_runs,
+                                   textinput_id='Runs')
+    AI_Setting_menu.add_option("|| AI Agents ||", AI_menu)
 
     # About menu
     about_menu = pygameMenu.TextMenu(surface,
@@ -286,7 +291,7 @@ def main(test=False):
                                      window_height=WINDOW_SIZE[1],
                                      window_width=WINDOW_SIZE[0]
                                      )
-    #about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+    # about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
     for m in ABOUT:
         about_menu.add_line(m)
 
@@ -296,7 +301,6 @@ def main(test=False):
     about_menu.add_option('??? ', cat)
 
     # about_menu.add_option('> BACK <', pygameMenu.events.BACK)
-
 
     # Main menu
     main_menu = pygameMenu.Menu(surface,
