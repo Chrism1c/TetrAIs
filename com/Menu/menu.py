@@ -3,6 +3,7 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygameMenu
+from com.Utils.sidePanel import *
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -76,7 +77,9 @@ def update_num_runs(num):
 def DFS(x, mode):
     global pieceType,numOfRuns
     print("GO --> DFS ",mode," ",pieceType," ",numOfRuns)
+    #sidePanel(titoloDFS, descrizioneDFS)
     os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode +' '+ str(numOfRuns))
+
 
 def Local_Search():
     global pieceType,numOfRuns
@@ -88,13 +91,14 @@ def SDG_QL():
     # os.system("")
     print("GO --> SDG_QL ",pieceType," ",numOfRuns)
     os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
+    sidePanel(titoloSDGQL, descrizioneSDGQL)
 
 def Genetic(x, mode):
     global pieceType,numOfRuns
     # os.system("")
     print("GO --> Genetic ",mode," ",pieceType)
     os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
-
+    sidePanel(titoloGen, descrizioneGen)
 
 def Rule_Based():
     global pieceType, numOfRuns
@@ -106,6 +110,7 @@ def Monte_Carlo(x, mode):
     # os.system("")
     print("GO --> Monte_Carlo ", mode, " ", pieceType)
     os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+    sidePanel(titoloMCTS, descrizioneMCTS)
 
 def Player():
     global pieceType,numOfRuns
