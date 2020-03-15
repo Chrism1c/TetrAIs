@@ -14,11 +14,12 @@ ROOTZERO = "ROOT"
 
 class MonteCarlo(BaseGame, ABC):
     global MonteCarloPlot
-    def __init__(self, r_p, mode):
+    def __init__(self, r_p, mode, treePlot):
         super().__init__(r_p)
         self.mode = mode
         self.action = ""
-        self.deepLimit = 3
+        self.deepLimit = 2
+        self.treePlot = treePlot
 
     def get_move(self):
         return self.MonteCarlo_MCTS(self.board, self.falling_piece, self.next_piece)
@@ -70,9 +71,9 @@ class MonteCarlo(BaseGame, ABC):
                         strategy = (rot, sideways, NextScore, selfAction)
                         topStrategies.append(strategy)
 
-        # print("Plotting 4 You")
-        # MonteCarloPlot.plot()
-        # MonteCarloPlot.Graph.clear()
+        if self.treePlot and self.deepLimit < 3:
+            MonteCarloPlot.plot()
+        MonteCarloPlot.Graph.clear()
 
         print("--->> TOP STRATEGIES <<---")
         topStrategies = sorted(topStrategies, key=itemgetter(2), reverse=True)
@@ -81,7 +82,6 @@ class MonteCarlo(BaseGame, ABC):
 
         # print("---X>> Winner STRATEGY <<X---",topStrategies[0])
 
-        # return [strategy[0], strategy[1]]
         return [topStrategies[0][0], topStrategies[0][1]]
 
     def MonteCarlo_MCTS_stepx(self, board, deep, piece, fatherName):
