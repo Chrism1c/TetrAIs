@@ -34,6 +34,7 @@ AI_Setting_menu = None
 pieceType = "r"
 numOfRuns = 1
 plotTree = False
+gdSidePanel = False
 
 
 # -----------------------------------------------------------------------------
@@ -59,7 +60,7 @@ def check_name_test(value):
     print('User name: {0}'.format(value))
 
 
-def changePieceType(y):
+def changePieceType(x, y):
     global pieceType
     pieceType = y
     print("pieceType = ", pieceType)
@@ -72,10 +73,16 @@ def update_num_runs(num):
         print("numOfRuns = ", numOfRuns)
 
 
-def plotDecisionTree(x, choise):
+def guideSidePanel(x, choice):
+    global gdSidePanel
+    gdSidePanel = choice
+    print("guideSidePanel = ", choice)
+
+
+def plotDecisionTree(x, choice):
     global plotTree
-    plotTree = choise
-    print("plotTree = ", choise)
+    plotTree = choice
+    print("plotTree = ", choice)
 
 
 def DFS(x, mode):
@@ -260,6 +267,8 @@ def main(test=False):
                                       )
 
     # AI_Setting_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+    AI_Setting_menu.add_selector('Guide SidePanel?: ',
+                                 [('No', False), ('Yes', True)], onchange=guideSidePanel)
     AI_Setting_menu.add_selector('Type of Circuit: ',
                                  [('Random', 'r'), ('PI', 'p')], onchange=changePieceType)
     AI_Setting_menu.add_selector('Plot decision Tree?: ',
