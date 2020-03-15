@@ -23,6 +23,9 @@ MENU_BACKGROUND_COLOR = ARANCIONE_SCURO
 COLOR_BACKGROUND = COLOR_BLACK
 MENU_TITLE_COLOR = COLOR_WHITE
 WINDOW_SIZE = (500, 380)
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
+
 
 sound = None
 surface = None
@@ -177,7 +180,12 @@ def main(test=False):
     WINDOWHEIGHT = 500
     pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
-    # os.environ['SDL_VIDEO_CENTERED'] = '1'
+    posX = SCREEN_WIDTH / 2
+    posY = SCREEN_HEIGHT / 2
+
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%i,%i" % (posX, posY)
+    os.environ['SDL_VIDEO_CENTERED'] = '0'
+
 
     # Create pygame screen and objects
     surface = pygame.display.set_mode(WINDOW_SIZE)
