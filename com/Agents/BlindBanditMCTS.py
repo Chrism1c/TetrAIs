@@ -55,8 +55,8 @@ class MonteCarlo(BaseGame, ABC):
                 test_board = simulate_board(test_board, test_piece, move)
 
                 fatherName = str(piece['shape'] + ":" + str(sideways) + ":" + str(0))
-                # MonteCarloPlot.addedge(ROOTZERO, fatherName)
-                # print("ROOTZERO X fatherName ===== ", fatherName)
+                MonteCarloPlot.addedge(ROOTZERO, fatherName)
+                print("ROOTZERO X fatherName ===== ", fatherName)
 
                 if test_board is not None:
                     test_score, fullLines = self.get_expected_score(test_board)
@@ -146,8 +146,8 @@ class MonteCarlo(BaseGame, ABC):
                 test_board = simulate_board(test_board, test_piece, move)
 
                 fatherName = str(piece['shape'] + ":" + str(sideways) +  ":" + str(0))
-                # MonteCarloPlot.addedge(ROOTZERO, fatherName)
-                # print("ROOTZERO X fatherName ===== ", fatherName)
+                MonteCarloPlot.addedge(ROOTZERO, fatherName)
+                print("ROOTZERO X fatherName ===== ", fatherName)
 
                 if test_board is not None:
                     test_score, fullLines = self.get_expected_score(test_board)

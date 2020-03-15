@@ -96,12 +96,13 @@ def Genetic(x, mode):
 def Rule_Based():
     global pieceType, numOfRuns
     # os.system("")
-    print("GO --> Rule_Based ", pieceType)
+    print("GO --> Logic_Rule_Based ", pieceType)
+    os.system('python com/Agents/LogicRuleBased.py ' + pieceType + ' ' + str(numOfRuns))
 
 def Monte_Carlo(x, mode):
     global pieceType, numOfRuns
     # os.system("")
-    print("GO --> Monte_Carlo ", mode, " ", pieceType)
+    print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
     os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
 def Player():
@@ -228,7 +229,6 @@ def main(test=False):
     AI_menu.add_selector('Genetic ',
                          [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)
-    # AI_menu.add_option('Monte Carlo', Monte_Carlo)
     AI_menu.add_selector('Blind Bandit Monte Carlo',
                          [('RandScan', 'random'), ('FullScan', 'full')], onreturn=Monte_Carlo)
 
