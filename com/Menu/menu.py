@@ -38,7 +38,7 @@ AI_Setting_menu = None
 pieceType = "r"
 numOfRuns = 1
 plotTree = 'no'
-gdSidePanel = False
+gdSidePanel = 'no'
 
 
 # -----------------------------------------------------------------------------
@@ -89,13 +89,13 @@ def plotDecisionTree(x, choice):
     print("plotTree = ", choice)
 
 
-def DFS(x, mode):
 
+def DFS(x, mode):
     global pieceType, numOfRuns, plotTree
     print("GO --> DFS ", mode, " ", pieceType, " ", numOfRuns, " ", str(plotTree))
-    sidePanel(titoloDFS, descrizioneDFS)
+    if gdSidePanel == 'yes':
+        sidePanel(titoloDFS, descrizioneDFS)
     os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
-
 
 
 def Local_Search():
@@ -107,14 +107,16 @@ def Local_Search():
 def SDG_QL():
     global pieceType, numOfRuns
     print("GO --> SDG_QL ", pieceType, " ", numOfRuns)
-    sidePanel(titoloSDGQL, descrizioneSDGQL)
+    if gdSidePanel == 'yes':
+        sidePanel(titoloSDGQL, descrizioneSDGQL)
     os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
 
 
 def Genetic(x, mode):
     global pieceType, numOfRuns, plotTree
     print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
-    sidePanel(titoloGen, descrizioneGen)
+    if gdSidePanel == 'yes':
+        sidePanel(titoloGen, descrizioneGen)
     os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
 
@@ -122,13 +124,16 @@ def Genetic(x, mode):
 def Rule_Based():
     global pieceType, numOfRuns
     print("GO --> Logic_Rule_Based ", pieceType)
+    if gdSidePanel == 'yes':
+        sidePanel(titoloRB, descrizioneRB)
     os.system('python com/Agents/LogicRuleBased.py ' + pieceType + ' ' + str(numOfRuns))
 
 
 def Monte_Carlo(x, mode):
     global pieceType, numOfRuns
     print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
-    sidePanel(titoloMCTS, descrizioneMCTS)
+    if gdSidePanel == 'yes':
+        sidePanel(titoloMCTS, descrizioneMCTS)
     os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
 
@@ -284,7 +289,7 @@ def main(test=False):
 
     # AI_Setting_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
     AI_Setting_menu.add_selector('Guide SidePanel?: ',
-                                 [('No', False), ('Yes', True)], onchange=guideSidePanel)
+                                 [('No', 'no'), ('Yes', 'yes')], onchange=guideSidePanel)
     AI_Setting_menu.add_selector('Type of Circuit: ',
                                  [('Random', 'r'), ('PI', 'p')], onchange=changePieceType)
     AI_Setting_menu.add_selector('Plot decision Tree?: ',

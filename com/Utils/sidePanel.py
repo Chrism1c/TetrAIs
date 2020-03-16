@@ -47,10 +47,13 @@ titoloDFS = 'DFS Guide'
 descrizioneDFS = 'descrizione dfs'
 
 titoloSDGQL = 'SDGQL Guide'
-descrizioneSDGQL = 'nidsabfdhfi'
+descrizioneSDGQL = 'kkkkk'
 
 titoloGen = 'Genetic Guide'
-descrizioneGen = 'nowdhvds'
+descrizioneGen = 'zzzzz'
 
 titoloMCTS = 'MCTS Guide'
-descrizioneMCTS = 'chidshvodh'
+descrizioneMCTS = 'yyyyy'
+
+titoloRB = 'Rule Based Guide'
+descrizioneRB = 'xxxxxx'
