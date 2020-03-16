@@ -71,7 +71,7 @@ class MonteCarlo(BaseGame, ABC):
                         strategy = (rot, sideways, NextScore, selfAction)
                         topStrategies.append(strategy)
 
-        if self.treePlot and self.deepLimit < 3:
+        if self.treePlot == 'yes' and self.deepLimit < 3:
             MonteCarloPlot.plot()
         MonteCarloPlot.Graph.clear()
 
@@ -147,6 +147,7 @@ class MonteCarlo(BaseGame, ABC):
             'color': PIECES_COLORS[shape]
         }
         return new_piece
+
 
 if __name__ == "__main__":
     r_p =  sys.argv[1]              # 'r' # 'p'

@@ -66,9 +66,9 @@ class DeepFirstSearch(BaseGame, ABC):
         # finish = time.perf_counter()
         # print(f'Finished in {round(finish - start, 2)} second(s) with full')
 
-        if self.treePlot:
+        if self.treePlot == 'yes':
             DFSTreePlot.plot()
-        DFSTreePlot.Graph.clear()
+            DFSTreePlot.Graph.clear()
 
         return [best_rot, best_sideways]
 
@@ -93,9 +93,9 @@ class DeepFirstSearch(BaseGame, ABC):
         # finish = time.perf_counter()
         # print(f'Finished in {round(finish - start, 2)} second(s) with LV1Only')
 
-        if self.treePlot:
+        if self.treePlot == 'yes':
             DFSTreePlot.plot()
-        DFSTreePlot.Graph.clear()
+            DFSTreePlot.Graph.clear()
 
         return [strategy[0], strategy[1]]
 
@@ -109,10 +109,10 @@ class DeepFirstSearch(BaseGame, ABC):
 
 
 if __name__ == "__main__":
-    r_p = 'r'  # sys.argv[1]
-    lv = 'LV2'  # sys.argv[2]
-    numOfRun = 1  # int(sys.argv[3])
-    treePlot = True  # bool(sys.argv[4])
+    r_p = sys.argv[1]
+    lv = sys.argv[2]
+    numOfRun = int(sys.argv[3])
+    treePlot = sys.argv[4]
 
     for x in range(numOfRun):
         dfs = DeepFirstSearch(r_p, lv, treePlot)

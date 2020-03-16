@@ -33,7 +33,7 @@ AI_Setting_menu = None
 
 pieceType = "r"
 numOfRuns = 1
-plotTree = False
+plotTree = 'no'
 gdSidePanel = False
 
 
@@ -272,7 +272,7 @@ def main(test=False):
     AI_Setting_menu.add_selector('Type of Circuit: ',
                                  [('Random', 'r'), ('PI', 'p')], onchange=changePieceType)
     AI_Setting_menu.add_selector('Plot decision Tree?: ',
-                                 [('No', False), ('Yes', True)], onchange=plotDecisionTree)
+                                 [('No', 'no'), ('Yes', 'yes')], onchange=plotDecisionTree)
     AI_Setting_menu.add_text_input('How many runs?: ',
                                    default='1',
                                    onchange=update_num_runs,
