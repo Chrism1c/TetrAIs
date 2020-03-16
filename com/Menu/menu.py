@@ -4,6 +4,7 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygameMenu
+from com.Utils.sidePanel import *
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -24,6 +25,9 @@ MENU_BACKGROUND_COLOR = ARANCIONE_SCURO
 COLOR_BACKGROUND = COLOR_BLACK
 MENU_TITLE_COLOR = COLOR_WHITE
 WINDOW_SIZE = (500, 380)
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
+
 
 sound = None
 surface = None
@@ -86,9 +90,12 @@ def plotDecisionTree(x, choice):
 
 
 def DFS(x, mode):
+
     global pieceType, numOfRuns, plotTree
     print("GO --> DFS ", mode, " ", pieceType, " ", numOfRuns, " ", str(plotTree))
+    sidePanel(titoloDFS, descrizioneDFS)
     os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
+
 
 
 def Local_Search():
@@ -100,13 +107,16 @@ def Local_Search():
 def SDG_QL():
     global pieceType, numOfRuns
     print("GO --> SDG_QL ", pieceType, " ", numOfRuns)
+    sidePanel(titoloSDGQL, descrizioneSDGQL)
     os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
 
 
 def Genetic(x, mode):
     global pieceType, numOfRuns, plotTree
     print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
+    sidePanel(titoloGen, descrizioneGen)
     os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
+
 
 
 def Rule_Based():
@@ -118,6 +128,7 @@ def Rule_Based():
 def Monte_Carlo(x, mode):
     global pieceType, numOfRuns
     print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
+    sidePanel(titoloMCTS, descrizioneMCTS)
     os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
 
@@ -191,7 +202,12 @@ def main(test=False):
     WINDOWHEIGHT = 500
     pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
-    # os.environ['SDL_VIDEO_CENTERED'] = '1'
+    posX = SCREEN_WIDTH / 2
+    posY = SCREEN_HEIGHT / 2
+
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%i,%i" % (posX, posY)
+    os.environ['SDL_VIDEO_CENTERED'] = '0'
+
 
     # Create pygame screen and objects
     surface = pygame.display.set_mode(WINDOW_SIZE)
