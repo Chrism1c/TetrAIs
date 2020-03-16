@@ -40,7 +40,7 @@ def sidePanel(titolo, tipoDescrizione):
     T.pack(padx=2, pady=2)
 
     root.geometry("+{}+{}".format(int(posX), int(posY)))
-    tk.mainloop()
+    root.update()
 
 
 titoloDFS = 'DFS Guide'
