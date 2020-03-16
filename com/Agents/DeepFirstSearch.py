@@ -4,7 +4,6 @@ import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
 import sys
-from com.Utils.sidePanel import *
 
 class DeepFirstSearch(BaseGame, ABC):
     def __init__(self, r_p, lv):
@@ -90,8 +89,6 @@ class DeepFirstSearch(BaseGame, ABC):
 
 
 if __name__ == "__main__":
-
-    sidePanel(titoloDFS, descrizioneDFS)
 
     r_p = sys.argv[1]
     lv = sys.argv[2]

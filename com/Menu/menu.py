@@ -77,7 +77,7 @@ def update_num_runs(num):
 def DFS(x, mode):
     global pieceType,numOfRuns
     print("GO --> DFS ",mode," ",pieceType," ",numOfRuns)
-    #sidePanel(titoloDFS, descrizioneDFS)
+    sidePanel(titoloDFS, descrizioneDFS)
     os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode +' '+ str(numOfRuns))
 
 
@@ -90,15 +90,16 @@ def SDG_QL():
     global pieceType,numOfRuns
     # os.system("")
     print("GO --> SDG_QL ",pieceType," ",numOfRuns)
-    os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
     sidePanel(titoloSDGQL, descrizioneSDGQL)
+    os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
 
 def Genetic(x, mode):
     global pieceType,numOfRuns
     # os.system("")
     print("GO --> Genetic ",mode," ",pieceType)
-    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
     sidePanel(titoloGen, descrizioneGen)
+    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+
 
 def Rule_Based():
     global pieceType, numOfRuns
@@ -109,8 +110,9 @@ def Monte_Carlo(x, mode):
     global pieceType, numOfRuns
     # os.system("")
     print("GO --> Monte_Carlo ", mode, " ", pieceType)
-    os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
     sidePanel(titoloMCTS, descrizioneMCTS)
+    os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+
 
 def Player():
     global pieceType,numOfRuns
