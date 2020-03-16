@@ -109,18 +109,10 @@ class DeepFirstSearch(BaseGame, ABC):
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     r_p = sys.argv[1]
     lv = sys.argv[2]
     numOfRun = int(sys.argv[3])
     treePlot = sys.argv[4]
-=======
-
-    r_p = sys.argv[1]
-    lv = sys.argv[2]
-    numOfRun = int(sys.argv[3])
-    treePlot = bool(sys.argv[4])
->>>>>>> ad1ae9af7f7bd5c14b2b71f8353a20b45b5b1cfa
 
     for x in range(numOfRun):
         dfs = DeepFirstSearch(r_p, lv, treePlot)
