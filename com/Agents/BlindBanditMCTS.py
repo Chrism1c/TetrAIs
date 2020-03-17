@@ -16,7 +16,7 @@ MonteCarloPlot = TreePlot()
 class MonteCarlo(BaseGame, ABC):
     global MonteCarloPlot
     """
-        Main class for MonteCarloTreeSearch algorithm (one object = one move), it implements abstarct move() function of BaseGame
+        Main class for MonteCarloTreeSearch algorithm (one object = one move), it implements abstract move() function of BaseGame
         Attributes
         ----------
                         None
@@ -54,9 +54,6 @@ class MonteCarlo(BaseGame, ABC):
     def get_move(self):
         """
             Return the main function to use (MonteCarlo_MCTS)
-            Parameters
-            ----------
-                        None
         """
         return self.MonteCarlo_MCTS(self.board, self.falling_piece, self.next_piece)
 
@@ -81,13 +78,11 @@ class MonteCarlo(BaseGame, ABC):
             Parameters
             ----------
             board : str
-                type of piece used ('r' = random, 'p' = pi)
-            deep : str
-                type of function to use (randomScan or fullScan)
+                Matrix (lists of lists) of strings
             piece : Object
                 conteining 'shape', 'rotation', 'x', 'y', 'color'
-            fatherName : str
-                str used to have trace of the fatherName to print Tree Graphs
+            NextPiece : Object
+                conteining 'shape', 'rotation', 'x', 'y', 'color'
         """
         deep = 1
         numIter = 0
