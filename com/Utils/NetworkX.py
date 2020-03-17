@@ -7,6 +7,7 @@ mplb.use('TkAgg')
 class TreePlot():
     def __init__(self, *args, **kwargs):
         self.Graph = nx.Graph()
+        self.ROOTZERO = "ROOT"
 
     def addedge(self, a, b):
         self.Graph.add_edge(a, b)

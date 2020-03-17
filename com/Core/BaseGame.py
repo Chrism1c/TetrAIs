@@ -388,27 +388,6 @@ class BaseGame(metaclass=ABCMeta):
             for y in range(BOARDHEIGHT):
                 self.draw_box(x, y, board[x][y])
 
-    def draw_status_OLD(self, score, level, best_move):
-        ### Scrive le informazioni di gioco sullo schermo
-        # draw the score text
-        # randCol = random_color()
-        score_surf = self.BASICFONT.render('# Lines: %s' % score, True, TEXTCOLOR)
-        score_rect = score_surf.get_rect()
-        score_rect.topleft = (WINDOWWIDTH - 150, 20)
-        self.DISPLAYSURF.blit(score_surf, score_rect)
-
-        # draw the level text
-        level_surf = self.BASICFONT.render('Level: %s' % level, True, TEXTCOLOR)
-        level_rect = level_surf.get_rect()
-        level_rect.topleft = (WINDOWWIDTH - 150, 50)
-        self.DISPLAYSURF.blit(level_surf, level_rect)
-
-        # draw the best_move text
-        move_surf = self.BASICFONT.render('Current Move: %s' % best_move, True, TEXTCOLOR)
-        move_rect = move_surf.get_rect()
-        move_rect.topleft = (WINDOWWIDTH - 200, 80)
-        self.DISPLAYSURF.blit(move_surf, move_rect)
-
     def draw_status(self, score, lines, level, best_move):
         ### Scrive le informazioni di gioco sullo schermo
         # draw the score text
