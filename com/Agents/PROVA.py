@@ -8,7 +8,7 @@ from com.Core.Model import PIECES
 import random
 from pyswip import Prolog
 prolog = Prolog()
-prolog.consult("com/Utils/Kb.pl");
+prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl");
 
 
 
@@ -22,7 +22,7 @@ class RuleBased(BaseGame):
         self.crest = self.get_heights(self.board)
         self.writePCrest(self.get_Pcrest())
         #return self.align(self.get_move_by_rule(self.falling_piece, self.get_Pcrest()), self.falling_piece)
-        return self.get_move_by_rule()()
+        return self.get_move_by_rule(self.falling_piece)
 
     def simulate_move(self, move, piece):
         test_board = copy.deepcopy(self.board)
@@ -32,7 +32,16 @@ class RuleBased(BaseGame):
             test_score, _ = self.get_expected_score(test_board)
             return test_score
         else:
-            return -99
+            return -99          #con questo punteggio una mossa non valida non verrà considerata
+
+    def get_expected_score(self, test_board):
+        ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
+        fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
+        test_score = float(
+            (fullLines * 1.8) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5) * 0.002) - (stdDY * 0.01) - (
+                    absDy * 0.2) - (maxDy * 0.3))
+        return test_score, fullLines
+
 
     def align(self, move, piece):
         rot = move[0]
@@ -204,7 +213,7 @@ class RuleBased(BaseGame):
             pre ="inCrest(crest, "
             sequence = self.encodeShadow(window)
             if sequence:            #memorizziamo solo le shadow che si possono incastrare con i pezzi
-                assertion = pre + sequence + "," + str(position)
+                assertion = pre + sequence + "," + str(position) + ")"
                 prolog.assertz(assertion)
 
     def encodeShadow(self, window):
@@ -236,8 +245,10 @@ class RuleBased(BaseGame):
 
 
 if __name__ == "__main__":
-    r_p = sys.argv[1]
-    numOfRun = int(sys.argv[2])
+    #r_p = sys.argv[1]
+    #numOfRun = int(sys.argv[2])
+    r_p = 'r'
+    numOfRun = 1
     for x in range(numOfRun):
         rb = RuleBased(r_p)
         newScore, weights = rb.run()
