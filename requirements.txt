@@ -1,8 +1,8 @@
 networkx
+pyswip
 numpy==1.18.1
-mpmath
+mpmath==1.1.0
 pygame==1.9.3
 pygame-menu==2.1.2
 matplotlib==2.1.2
 pyautogui==0.9.36
-mpmath==1.1.0
