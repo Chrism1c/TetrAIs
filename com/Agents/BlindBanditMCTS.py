@@ -9,12 +9,42 @@ from operator import itemgetter
 import sys
 from com.Utils.NetworkX import TreePlot
 
+#  Create a new istance of TreePlot
 MonteCarloPlot = TreePlot()
-ROOTZERO = "ROOT"
+
 
 class MonteCarlo(BaseGame, ABC):
     global MonteCarloPlot
+    """
+        Main class for MonteCarloTreeSearch algorithm (one object = one move), it implements abstarct move() function of BaseGame
+        Attributes
+        ----------
+                        None
+        Methods
+        -------
+        get_expected_score(test_board)
+            Calculate score of test_board
+        get_move(board, piece, NextPiece)
+            Execute Blind Bandit Monte Carlo Tree Search
+        MonteCarlo_MCTS(board, piece, NextPiece)
+            Execute
+        MonteCarlo_MCTS_stepx(board, deep, piece, fatherName)
+            Execute recursive MCTS function to go deep in the tree of moves
+        get_expected_score(test_board)
+            Calculate score of test_board
+    """
+
     def __init__(self, r_p, mode, treePlot):
+        """
+            Parameters
+            ----------
+            r_p : str
+                type of piece used ('r' = random, 'p' = pi)
+            mode : str
+                type of function to use (randomScan or fullScan)
+            treePlot : TreePlot
+                instance of TreePlot object to print Tree Graphs
+        """
         super().__init__(r_p)
         self.mode = mode
         self.action = ""
@@ -22,9 +52,21 @@ class MonteCarlo(BaseGame, ABC):
         self.treePlot = treePlot
 
     def get_move(self):
+        """
+            Return the main function to use (MonteCarlo_MCTS)
+            Parameters
+            ----------
+                        None
+        """
         return self.MonteCarlo_MCTS(self.board, self.falling_piece, self.next_piece)
 
     def get_expected_score(self, test_board):
+        """
+            Calculate score of test_board with fixed weights
+            Parameters
+            ----------
+                  test_board : Matrix (lists of lists) of strings
+        """
         # Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
         test_score = float(
@@ -34,7 +76,19 @@ class MonteCarlo(BaseGame, ABC):
 
     # MonteCarlo Step 1 (DFS BASED)
     def MonteCarlo_MCTS(self, board, piece, NextPiece):
-        # Main Step1 Branch Analyser
+        """
+            Main Scanning function for Deep LV1
+            Parameters
+            ----------
+            board : str
+                type of piece used ('r' = random, 'p' = pi)
+            deep : str
+                type of function to use (randomScan or fullScan)
+            piece : Object
+                conteining 'shape', 'rotation', 'x', 'y', 'color'
+            fatherName : str
+                str used to have trace of the fatherName to print Tree Graphs
+        """
         deep = 1
         numIter = 0
         # print("Branch Deep :", deep, " Real piece: ", piece['shape'])
@@ -51,8 +105,7 @@ class MonteCarlo(BaseGame, ABC):
                 test_board = simulate_board(test_board, test_piece, move)
 
                 fatherName = str(piece['shape'] + ":" + str(sideways) + ":" + str(0))
-                MonteCarloPlot.addedge(ROOTZERO, fatherName)
-                # print("ROOTZERO X fatherName ===== ", fatherName)
+                MonteCarloPlot.addedge(MonteCarloPlot.ROOTZERO, fatherName)
 
                 if test_board is not None:
                     test_score, fullLines = self.get_expected_score(test_board)
@@ -85,40 +138,42 @@ class MonteCarlo(BaseGame, ABC):
         return [topStrategies[0][0], topStrategies[0][1]]
 
     def MonteCarlo_MCTS_stepx(self, board, deep, piece, fatherName):
-        # Recursive Scanning of Virtual Branches on Deep >2
-        # print("deep, :", deep, " piece: ", piece['shape'])
-        inizio = -5
-        fine = 6
-        self.action = self.action + "-" +piece['shape']
+        """
+            Recursive Scanning of Virtual Branches on Deep > 2
+            Parameters
+            ----------
+            board : str
+                type of piece used ('r' = random, 'p' = pi)
+            deep : str
+                type of function to use (randomScan or fullScan)
+            piece : Object
+                conteining 'shape', 'rotation', 'x', 'y', 'color'
+            fatherName : str
+                str used to have trace of the fatherName to print Tree Graphs
+        """
+        self.action = self.action + "-" + piece['shape']
         strategy = None
 
-        sidewaysIndex = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5] #11 Sideways
+        sidewaysIndex = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]  # 11  Sideways
 
+        # if mode is random, BBMCTS remove a random number of sideways from the Tree Search
         if self.mode == 'random':
             if deep > 2:
-                # print("Random DeathSelection")
                 toRemove = random.randint(0, 8)
-                print("------------------- daRimuovere ",toRemove)
+                # print("------------------- toKill ", toRemove)
                 for z in range(toRemove):
                     deathindex = random.randint(0, len(sidewaysIndex) - 1)
-                    #print("*** deathindex: ",deathindex-1)
                     sidewaysIndex.pop(deathindex)
-                lenindex = len(sidewaysIndex)
-                # print('@@@ sidewaysIndex : ',sidewaysIndex," W len of :",lenindex)
-                # inizio = random.randint(-5, 0)
-                # fine = random.randint(1, 6)
 
         for rot in range(0, len(PIECES[piece['shape']])):
-            for sideways in sidewaysIndex: #range(inizio, fine):
-                # print("sideways and rot",sideways, " ",rot)
+            for sideways in sidewaysIndex:
                 move = [rot, sideways]
                 test_board = copy.deepcopy(board)
                 test_piece = copy.deepcopy(piece)
                 test_board = simulate_board(test_board, test_piece, move)
 
-                NameNode = str(piece['shape'] + ":" + str(sideways) +  ":" + str(deep))
+                NameNode = str(piece['shape'] + ":" + str(sideways) + ":" + str(deep))
                 MonteCarloPlot.addedge(fatherName, fatherName + "_" + NameNode)
-                # print("fatherName === ", fatherName, " NodeNameX === ", fatherName + "_" + NameNode)
 
                 if test_board is not None:
                     test_score, fullLines = self.get_expected_score(test_board)
@@ -128,7 +183,8 @@ class MonteCarlo(BaseGame, ABC):
                     if deep < self.deepLimit:
                         # print("dxxxxx: ", deep)
                         RandPiece = self.__random()
-                        deepScore, pieceType = self.MonteCarlo_MCTS_stepx(board, deep+1, RandPiece, fatherName+"_"+NameNode)
+                        deepScore, pieceType = self.MonteCarlo_MCTS_stepx(board, deep + 1, RandPiece,
+                                                                          fatherName + "_" + NameNode)
                         test_score = test_score + deepScore
 
                     if not strategy or strategy[2] < test_score:
@@ -136,7 +192,9 @@ class MonteCarlo(BaseGame, ABC):
         return strategy[2], self.action
 
     def __random(self):
-        # return a random new piece
+        """
+            Generate one of 7 random pieces
+        """
         shape = random.choice(list(PIECES.keys()))
         new_piece = {
             'shape': shape,
@@ -150,10 +208,11 @@ class MonteCarlo(BaseGame, ABC):
 
 
 if __name__ == "__main__":
-    r_p =  sys.argv[1]              # 'r' # 'p'
-    mode =  sys.argv[2]               # 'full' # 'random'
-    numOfRun = int(sys.argv[3])    # 1
-
+    #  get arguments when AI file is executed by the menu
+    r_p = sys.argv[1]  # 'r' / 'p'
+    mode = sys.argv[2]  # 'full' / 'random'
+    numOfRun = int(sys.argv[3])  # 1
+    #  loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         mc = MonteCarlo(r_p, mode)
         newScore, _ = mc.run()

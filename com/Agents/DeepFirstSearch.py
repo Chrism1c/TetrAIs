@@ -37,7 +37,7 @@ class DeepFirstSearch(BaseGame, ABC):
             lv : str
                 type of function to use (LV1 or LV2)
             treePlot : TreePlot
-                istance of TreePlot object to print Tree Graphs
+                instance of TreePlot object to print Tree Graphs
         """
         super().__init__(r_p)
         self.lv = lv
@@ -145,7 +145,6 @@ class DeepFirstSearch(BaseGame, ABC):
             ----------
                   test_board : Matrix (lists of lists) of strings
         """
-        # Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
         test_score = float(
             (fullLines * 1.8) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5) * 0.002) - (stdDY * 0.01) - (
@@ -159,7 +158,7 @@ if __name__ == "__main__":
     lv = sys.argv[2]
     numOfRun = int(sys.argv[3])
     treePlot = sys.argv[4]
-    # for to run  the game with AI for numOfRun executions
+    #  loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         dfs = DeepFirstSearch(r_p, lv, treePlot)
         newScore, weights = dfs.run()
