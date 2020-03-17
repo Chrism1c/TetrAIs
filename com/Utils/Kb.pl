@@ -4,22 +4,35 @@
 
 %da implementare gli errori controllati
 shadow(s0, s_0_0_1).
-%shadow(s0, s_0_0_0).
+shadow(s0, s_0_0_0).
 shadow(s1, s_0_m1).
-%shadow(s1, s_0_0).
+shadow(s1, s_0_0).
 
 shadow(z0, s_0_m1_m1).
+shadow(s0, s_0_0_0).
 shadow(z1, s_0_1).
-%shadow(z1, s_0_0).
+shadow(z1, s_0_0).
 
 shadow(i0, s_0).
 shadow(i1, s_0_0_0_0).
+shadow(i1, s_0_1_1_1).
+shadow(i1, s_0_0_0_m1).
+shadow(i1, s_0_0_m1_m1).
+shadow(i1, s_0_0_1_1).
+shadow(i1, s_0_0_0_1).
+shadow(i1, s_0_0_m1_0).
+shadow(i1, s_0_m1_0_0).
+
 
 shadow(o0, s_0_0).
+shadow(o0, s_0_m1).
+shadow(o0, s_0_1).
 
 shadow(t0, s_0_0_0).
 shadow(t1, s_0_1).
 shadow(t2, s_0_m1_0).
+shadow(t2, s_0_m1_m1).
+shadow(t2, s_0_1_1).
 shadow(t3, s_0_m1).
 
 shadow(l0, s_0_0_0).
