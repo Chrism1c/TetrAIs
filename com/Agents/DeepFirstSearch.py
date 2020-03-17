@@ -115,7 +115,7 @@ class DeepFirstSearch(BaseGame, ABC):
             Parameters
             ----------
                   board : Matrix (lists of lists) of strings
-                  piece : Object conteining: 'shape', 'rotation', 'x', 'y', 'color'
+                  piece : Object containing: 'shape', 'rotation', 'x', 'y', 'color'
         """
         strategy = None
         for rot in range(0, len(PIECES[piece['shape']])):
