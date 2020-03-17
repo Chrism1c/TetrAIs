@@ -1,3 +1,4 @@
+pyswip
 numpy==1.18.1
 mpmath
 pygame==1.9.3
