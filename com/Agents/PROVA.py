@@ -5,7 +5,7 @@ import sys
 import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
-
+import random
 from pyswip import Prolog
 prolog = Prolog()
 prolog.consult("com/Utils/Kb.pl");
@@ -24,63 +24,143 @@ class RuleBased(BaseGame):
         #return self.align(self.get_move_by_rule(self.falling_piece, self.get_Pcrest()), self.falling_piece)
         return self.get_move_by_rule()()
 
+    def simulate_move(self, move, piece):
+        test_board = copy.deepcopy(self.board)
+        test_piece = copy.deepcopy(piece)
+        test_board = simulate_board(test_board, test_piece, move)
+        if test_board is not None:
+            test_score, _ = self.get_expected_score(test_board)
+            return test_score
+        else:
+            return -99
+
+    def align(self, move, piece):
+        rot = move[0]
+        sideway = move[1]
+        if piece['shape'] == 'S' or piece['shape'] == 'Z' or piece['shape'] == 'I':
+            new_rot = abs(rot - piece['rotation'])
+        elif piece['shape'] == 'J' or piece['shape'] == 'L' or piece['shape'] == 'T':
+            if piece['rotation'] == 3:
+                if rot == 3:
+                    new_rot = 0
+                elif rot == 2:
+                    new_rot = 3
+                elif rot == 1:
+                    new_rot = 2
+                else:
+                    new_rot = 1
+            if piece['rotation'] == 2:
+                if rot == 3:
+                    new_rot = 1
+                elif rot == 2:
+                    new_rot = 0
+                elif rot == 1:
+                    new_rot = 3
+                else:
+                    new_rot = 2
+            if piece['rotation'] == 1:
+                if rot == 3:
+                    new_rot = 2
+                elif rot == 2:
+                    new_rot = 3
+                elif rot == 1:
+                    new_rot = 0
+                else:
+                    new_rot = 1
+            else:
+                new_rot = rot
+        else:
+            new_rot = 0
+
+        new_sideway = sideway - 5
+        return[new_rot, new_sideway]
+
 
     def get_move_by_rule(self, piece):
-
-        def rule_S():
-            query = list()
-            query.append('bestFit(s0, X0);')
-            query.append('bestFit(s1, X1);')
-            for q in query:
-                results = list(prolog.query(q))
-                while True:
-                    result = results.pop(len(results) - 1)
-                    try:
-                        posX0 = result['X0']
-                    except:
-                        posX1 = result['X1']
-
-            # return [self.get_rot(best_rotation), self.get_sideway(best_sideway)]
-            pass
-
-        def rule_Z():
-            # return [self.get_rot(best_rotation), self.get_sideway(best_sideway)]
-            pass
-
-        def rule_J():
-            # return [self.get_rot(best_rotation), self.get_sideway(best_sideway)]
-            pass
-
-        def rule_L():
-            # return [self.get_rot(best_rotation), self.get_sideway(best_sideway)]
-            pass
-
-        def rule_I():
-            # return [self.get_rot(best_rotation), self.get_sideway(best_sideway)]
-            pass
-
-        def rule_O():
-            # return [self.get_rot(best_rotation), self.get_sideway(best_sideway)]
-            pass
-
-        def rule_T():
-            # return [self.get_rot(best_rotation), self.get_sideway(best_sideway)]
-            pass
-
+        query = list()
         if piece['shape'] == 'S':
-            return rule_S
-        if piece['shape'] == 'Z':
-            return rule_Z
-        if piece['shape'] == 'J':
-            return rule_J
-        if piece['shape'] == 'L':
-            return rule_L
-        if piece['shape'] == 'I':
-            return rule_I
-        if piece['shape'] == 'O':
-            return rule_O
-        if piece['shape'] == 'T':
-            return rule_T
+            query.append('bestFit(s0, X0)')
+            query.append('bestFit(s1, X1)')
+        elif piece['shape'] == 'Z':
+            query.append('bestFit(z0, X0)')
+            query.append('bestFit(z1, X1)')
+        elif piece['shape'] == 'J':
+            query.append('bestFit(j0, X0)')
+            query.append('bestFit(j1, X1)')
+            query.append('bestFit(j2, X2)')
+            query.append('bestFit(j3, X3)')
+        elif piece['shape'] == 'L':
+            query.append('bestFit(l0, X0)')
+            query.append('bestFit(l1, X1)')
+            query.append('bestFit(l2, X2)')
+            query.append('bestFit(l3, X3)')
+        elif piece['shape'] == 'I':
+            query.append('bestFit(i0, X0)')
+            query.append('bestFit(i1, X1)')
+        elif piece['shape'] == 'O':
+            query.append('bestFit(o0, X0)')
+        elif piece['shape'] == 'T':
+            query.append('bestFit(t0, X0)')
+            query.append('bestFit(t1, X1)')
+            query.append('bestFit(t2, X2)')
+            query.append('bestFit(t3, X3)')
+
+        scores = list()
+        for q in query:
+            results = list(prolog.query(q))
+            while len(results) > 0:
+                posX0 = False
+                posX1 = False
+                posX2 = False
+                posX3 = False
+                result = results.pop(len(results) - 1)
+
+                try:
+                    posX0 = result['X0']
+                except:
+                    pass
+
+                try:
+                    posX1 = result['X1']
+                except:
+                    pass
+
+                try:
+                    posX2 = result['X2']
+                except:
+                    pass
+
+                try:
+                    posX3 = result['X3']
+                except:
+                    pass
+
+                if posX0:
+                    #simula con X0 e salva il risultato
+                    move = self.align([0, posX0], piece)
+                    scores.append((move, self.simulate_move(move, piece)))
+                elif posX1:
+                    #simula con X1
+                    move = self.align([1, posX1], piece)
+                    scores.append((move, self.simulate_move(move, piece)))
+                elif posX2:
+                    #simula con X2
+                    move = self.align([2, posX2], piece)
+                    scores.append((move, self.simulate_move(move, piece)))
+                elif posX3:
+                    #simula con X3
+                    move = self.align([3, posX3], piece)
+                    scores.append((move, self.simulate_move(move, piece)))
+
+        if len(scores) == 0:
+            return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
+        else:
+            maxScore = -99
+            for x in scores:
+                move, score = x
+                if score > maxScore:
+                    bestMove = move
+            return bestMove
 
 
     def get_heights(self, board):
