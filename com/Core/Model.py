@@ -102,7 +102,7 @@ PIECES = {
     'L': L_SHAPE_TEMPLATE,
     'I': I_SHAPE_TEMPLATE,
     'O': O_SHAPE_TEMPLATE,
-    'T': T_SHAPE_TEMPLATE
+    'T': T_SHAPE_TEMPLATE,
 }
 
 PIECES_COLORS = {
@@ -112,7 +112,7 @@ PIECES_COLORS = {
     'L': 8,  # ORANGE
     'I': 6,  # CYAN
     'O': 5,  # YELLOW
-    'T': 9  # PURPLE
+    'T': 9   # PURPLE
 }
 
 
