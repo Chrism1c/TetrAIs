@@ -27,7 +27,7 @@ class ansi:
 
 
 prolog = Prolog()
-prolog.consult("com/Agents/tetris.pl");
+prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Agents/tetris.pl");
 
 
 def show(x, y, stone, field):
@@ -303,7 +303,7 @@ class RuleBased(BaseGame, ABC):
 
 
 if __name__ == "__main__":
-    r_p = 'r'  # sys.argv[1]
+    r_p = 'p'  # sys.argv[1]
     numOfRun = 1  # int(sys.argv[2])
 
     for x in range(numOfRun):

@@ -81,7 +81,7 @@ class RuleBased(BaseGame):
         else:
             new_rot = 0
 
-        new_sideway = sideway - 4
+        new_sideway = sideway - 5
         return[new_rot, new_sideway]
 
 
@@ -101,7 +101,8 @@ class RuleBased(BaseGame):
                     if seq_s == seq_x :
                         current_start = start_
                         current_rot = rot
-                        move = self.align([current_rot, current_start], piece)
+                        #move = self.align([current_rot, current_start], piece)
+                        move = [current_rot, current_start - 5]
                         test_board = copy.deepcopy(self.board)
                         test_piece = copy.deepcopy(piece)
                         test_board = simulate_board(test_board, test_piece, move)
@@ -113,13 +114,25 @@ class RuleBased(BaseGame):
                         best_score = NextScore[2]  # aggiorno il best local score (LV1+LV2)
                         best_sideways = NextScore[1]  # aggiorno il best sideway (LV1)
                         best_rot = NextScore[0]  # aggiorno il best rot (LV1)
-
-            if best_score == -99:
-
+        if self.too_much_difference():
+            dfs_rot, dfs_sideways, dfs_score = self.get_DFS_move()
+            if best_score <= dfs_score:
+                best_rot = dfs_rot
+                best_sideways = dfs_sideways
                 print('uso dfs')
             else:
                 print('uso rule')
+        else:
+            print('uso rule con diff < 2')
         return [best_rot, best_sideways]
+
+    def too_much_difference(self):
+        flag = False
+        for x in range(1, len(self.crest)):
+            if abs(self.crest[x-1] - self.crest[x]) > 2:
+                flag = True
+                break
+        return flag
 
     def get_DFS_move(self):
         best_rot = 0
@@ -157,7 +170,7 @@ class RuleBased(BaseGame):
         # finish = time.perf_counter()
         # print(f'Finished in {round(finish - start, 2)} second(s) with full')
 
-        return best_rot, best_sideways
+        return best_rot, best_sideways, best_score
 
 
     def get_move_by_rule_old(self, piece, Pa):
