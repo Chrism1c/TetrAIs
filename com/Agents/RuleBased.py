@@ -1,10 +1,15 @@
 from com.Core.BaseGame import BaseGame
-from com.Utils.KnowledgeBase import *
 from com.Core.Model import BOARDHEIGHT, BOARDWIDTH, is_on_board
 import sys
 import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
+import random
+from pyswip import Prolog
+prolog = Prolog()
+prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl");
+
+
 
 class RuleBased(BaseGame):
     def __init__(self, r_p):
@@ -14,31 +19,25 @@ class RuleBased(BaseGame):
     def get_move(self):
         #self.update_crest(self.get_heights(self.board))
         self.crest = self.get_heights(self.board)
+        self.writePCrest(self.get_Pcrest())
         #return self.align(self.get_move_by_rule(self.falling_piece, self.get_Pcrest()), self.falling_piece)
-        return self.get_move_by_rule(self.falling_piece, self.get_Pcrest())
+        return self.get_move_by_rule(self.falling_piece)
 
-    def update_crest(self, heights):
-        self.crest[0] = 0
-        for x in range(1, len(heights)):
-            self.crest[x] = heights[x] - heights[x - 1]
-
-    def get_heights(self, board):
-        heights = [0] * BOARDWIDTH
-        # Calculate all tougether to optimize calculation
-        for i in range(0, BOARDWIDTH):  # Select a column
-            Hflag = False
-            for j in range(0, BOARDHEIGHT):  # Search down starting from the top of the board
-                if int(board[i][j]) > 0:  # Is the cell occupied?
-                    if not Hflag:
-                        heights[i] = BOARDHEIGHT - j  # Store the height value
-                        Hflag = True
-        return heights
+    def simulate_move(self, move, piece):
+        test_board = copy.deepcopy(self.board)
+        test_piece = copy.deepcopy(piece)
+        test_board = simulate_board(test_board, test_piece, move)
+        if test_board is not None:
+            test_score, _ = self.get_expected_score(test_board)
+            return test_score
+        else:
+            return -99          #con questo punteggio una mossa non valida non verrà considerata
 
     def get_expected_score(self, test_board):
         ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
         test_score = float(
-            (fullLines * 1.8) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5) * 0.002) - (stdDY * 0.01) - (
+            (fullLines * 2) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5) * 0.02) - (stdDY * 0.01) - (
                     absDy * 0.2) - (maxDy * 0.3))
         return test_score, fullLines
 
@@ -78,61 +77,140 @@ class RuleBased(BaseGame):
                     new_rot = 1
             else:
                 new_rot = rot
+
         else:
             new_rot = 0
 
-        new_sideway = sideway - 5
+        #new_rot = abs(rot - piece['rotation'])
+        if piece['shape'] == 'I':
+            new_sideway = sideway - 5
+        elif piece['shape'] == 'O' or piece['shape'] == 'Z' or piece['shape'] == 'S' or piece['shape'] == 'T' or piece['shape'] == 'L' or piece['shape'] == 'J':
+            new_sideway = sideway - 4
+        else:
+            new_sideway = sideway - 6
         return[new_rot, new_sideway]
 
 
-    def get_move_by_rule(self, piece, Pa_):
-        current_start = 0
-        current_rot = 1
-        current_priority = 0
-        best_rot = 0
-        best_sideways = 0
-        best_score = - 99
-        NextScore = [best_rot, best_sideways, best_score]
-        for shadow in shadows:
-            shape, rot, seq_s, priority = shadow
-            if shape == piece['shape']:
-                for scenario in Pa_:
-                    start_, seq_x = scenario
-                    if seq_s == seq_x :
-                        current_start = start_
-                        current_rot = rot
-                        #move = self.align([current_rot, current_start], piece)
-                        move = [current_rot, current_start - 5]
-                        test_board = copy.deepcopy(self.board)
-                        test_piece = copy.deepcopy(piece)
-                        test_board = simulate_board(test_board, test_piece, move)
-                        if test_board is not None:
-                            test_score, _ = self.get_expected_score(test_board)
-                            if NextScore[2] < test_score:
-                                NextScore = [move[0], move[1], test_score]  # aggiorno il best local score (LV2)
-                    if best_score < NextScore[2]:  # confronto
-                        best_score = NextScore[2]  # aggiorno il best local score (LV1+LV2)
-                        best_sideways = NextScore[1]  # aggiorno il best sideway (LV1)
-                        best_rot = NextScore[0]  # aggiorno il best rot (LV1)
-        if self.too_much_difference():
-            dfs_rot, dfs_sideways, dfs_score = self.get_DFS_move()
-            if best_score <= dfs_score:
-                best_rot = dfs_rot
-                best_sideways = dfs_sideways
-                print('uso dfs')
-            else:
-                print('uso rule')
-        else:
-            print('uso rule con diff < 2')
-        return [best_rot, best_sideways]
+    def get_move_by_rule(self, piece):
+        iFlag = False
+        query = list()
+        if piece['shape'] == 'S':
+            query.append('bestFit(s0, X0)')
+            query.append('bestFit(s1, X1)')
+        elif piece['shape'] == 'Z':
+            query.append('bestFit(z0, X0)')
+            query.append('bestFit(z1, X1)')
+        elif piece['shape'] == 'J':
+            query.append('bestFit(j0, X0)')
+            query.append('bestFit(j1, X1)')
+            query.append('bestFit(j2, X2)')
+            query.append('bestFit(j3, X3)')
+        elif piece['shape'] == 'L':
+            query.append('bestFit(l0, X0)')
+            query.append('bestFit(l1, X1)')
+            query.append('bestFit(l2, X2)')
+            query.append('bestFit(l3, X3)')
+        elif piece['shape'] == 'I':
+            query.append('bestFit(i0, X0)')
+            query.append('bestFit(i1, X1)')
+        elif piece['shape'] == 'O':
+            query.append('bestFit(o0, X0)')
+        elif piece['shape'] == 'T':
+            query.append('bestFit(t0, X0)')
+            query.append('bestFit(t1, X1)')
+            query.append('bestFit(t2, X2)')
+            query.append('bestFit(t3, X3)')
 
-    def too_much_difference(self):
-        flag = False
-        for x in range(1, len(self.crest)):
-            if abs(self.crest[x-1] - self.crest[x]) > 2:
-                flag = True
-                break
-        return flag
+        scores = list()
+        print('----------')
+        for q in query:
+            results = list(prolog.query(q))
+            while len(results) > 0:
+                X0 = 0
+                X1 = 0
+                X2 = 0
+                X3 = 0
+                posX0 = False
+                posX1 = False
+                posX2 = False
+                posX3 = False
+                result = results.pop(len(results) - 1)
+                print(result)
+                try:
+                    X0 = result['X0']
+                    posX0 = True
+                except:
+                    pass
+
+                try:
+                    X1 = result['X1']
+                    posX1 = True
+                except:
+                    pass
+
+                try:
+                    X2 = result['X2']
+                    posX2 = True
+                except:
+                    pass
+
+                try:
+                    X3 = result['X3']
+                    posX3 = True
+                except:
+                    pass
+
+                if posX0 != False:
+                    #simula con X0 e salva il risultato
+                    move = self.align([0, X0], piece)
+                    scores.append((move, self.simulate_move(move, piece), self.crest[X0]))
+                    print('altezza di ', str(X0), ' = ', str(self.crest[X0]))
+                    iFlag = True
+                elif posX1 != False:
+                    #simula con X1
+                    move = self.align([1, X1], piece)
+                    scores.append((move, self.simulate_move(move, piece), self.crest[X1]))
+                    print('altezza di ', str(X1), ' = ', str(self.crest[X1]))
+                elif posX2 != False:
+                    #simula con X2
+                    move = self.align([2, X2], piece)
+                    scores.append((move, self.simulate_move(move, piece), self.crest[X2]))
+                    print('altezza di ', str(X2), ' = ', str(self.crest[X2]))
+                elif posX3 != False:
+                    #simula con X3
+                    move = self.align([3, X3], piece)
+                    scores.append((move, self.simulate_move(move, piece), self.crest[X3]))
+                    print('altezza di ', str(X3), ' = ', str(self.crest[X3]))
+
+        #if piece['shape'] == 'I' and iFlag:
+            #minh = 20
+            #for x in scores:
+                #move, score, h = x
+                # print(score)
+                #if h < minh:
+                    #minh = h
+                    #bestMove = move
+            #print(bestMove)
+            #return bestMove
+
+        if len(scores) == 0:
+            #return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
+            #print('dfs')
+            return self.get_DFS_move()
+        else:
+            #print('rule')
+            maxScore = -999
+            minh = 20
+            print(scores)
+            for x in scores:
+                move, score, h = x
+                #print(score)
+                if h < minh or maxScore < score:
+                    minh = h
+                    maxScore = score
+                    bestMove = move
+            print(bestMove)
+            return bestMove
 
     def get_DFS_move(self):
         best_rot = 0
@@ -173,50 +251,18 @@ class RuleBased(BaseGame):
         return best_rot, best_sideways, best_score
 
 
-    def get_move_by_rule_old(self, piece, Pa):
-
-        def rule_S():
-            current_start = 0
-            current_rot = 1
-            current_priority = 0
-            for shadow in shadows:
-                shape, rot, seq_s, priority = shadow
-                if shape == piece['shape']:
-                    for pax in Pa:
-                        start, seq_x = pax
-                        if seq_s == seq_x and current_priority < priority:
-                            current_start = start
-                            current_rot = rot
-            return current_rot, current_start
-
-        def rule_Z():
-            pass
-        def rule_J():
-            pass
-        def rule_L():
-            pass
-        def rule_I():
-            pass
-        def rule_O():
-            pass
-        def rule_T():
-            pass
-
-        if piece['shape'] == 'S':
-            return rule_S
-        if piece['shape'] == 'Z':
-            return rule_Z
-        if piece['shape'] == 'J':
-            return rule_J
-        if piece['shape'] == 'L':
-            return rule_L
-        if piece['shape'] == 'I':
-            return rule_I
-        if piece['shape'] == 'O':
-            return rule_O
-        if piece['shape'] == 'T':
-            return rule_T
-
+    def get_heights(self, board):
+        heights = [0] * BOARDWIDTH
+        # Calculate all tougether to optimize calculation
+        for i in range(0, BOARDWIDTH):  # Select a column
+            Hflag = False
+            for j in range(0, BOARDHEIGHT):  # Search down starting from the top of the board
+                if int(board[i][j]) > 0:  # Is the cell occupied?
+                    if not Hflag:
+                        heights[i] = BOARDHEIGHT - j  # Store the height value
+                        Hflag = True
+        #print(heights)
+        return heights
 
     def get_Pcrest(self):
         Pcrest = list()
@@ -225,28 +271,61 @@ class RuleBased(BaseGame):
         for x in range(int(len(self.crest) - 1)):  # 2
             Pcrest.append((x, [0, self.crest[x + 1] - self.crest[x]]))
         for x in range(int(len(self.crest) - 2)):  # 3
-            Pcrest.append((x, [0, self.crest[x + 1] - self.crest[x], self.crest[x + 2] - self.crest[x + 1]]))
+            Pcrest.append((x, [0, self.crest[x + 1] - self.crest[x], self.crest[x + 2] - self.crest[x]]))
         for x in range(int(len(self.crest) - 3)):  # 4
-            Pcrest.append((x, [0, self.crest[x + 1] - self.crest[x], self.crest[x + 2] - self.crest[x + 1], self.crest[x + 3] - self.crest[x + 2]]))
+            Pcrest.append((x, [0, self.crest[x + 1] - self.crest[x], self.crest[x + 2] - self.crest[x],
+                               self.crest[x + 3] - self.crest[x]]))
         return Pcrest
 
+    #get the aligned rotation
+    def get_rot(self, rotation):
+        pass
 
-    def get_heights_old(self):
-        heights = [0]*BOARDWIDTH
-        for x in range(BOARDWIDTH):
-            for y in range(BOARDHEIGHT):
-                if is_on_board(x, y):
-                    heights[x] = y
-                else:
-                    print('no')
-        #print(heights)
-        return heights
+    #get the aligned sideway
+    def get_sideway(self, x):
+        pass
+
+    #write assert on Kb for the crest encoding
+    def writePCrest(self, Pcrest):
+        self.deletePCrest()
+        for elem in Pcrest:
+            position, window = elem
+            pre ="inCrest(crest, "
+            sequence = self.encodeShadow(window)
+            if sequence:            #memorizziamo solo le shadow che si possono incastrare con i pezzi
+                assertion = pre + sequence + "," + str(position) + ")"
+                prolog.assertz(assertion)
+
+    def encodeShadow(self, window):
+        str_ = 's'  #in prolog le variabili cominciano per lettera maiuscola o per underscore
+        for x in range(len(window)):
+            if window[x] == 0:
+                str_ += '_0'
+            elif window[x] == 1:
+                str_ += '_1'
+            elif window[x] == 2:
+                str_ += '_2'
+            elif window[x] == -1:
+                str_ += '_m1'
+            elif window[x] == -2:
+                str_ += '_m2'
+            else:
+                return False
+        return str_
+
+    #delete the previus crest
+    def deletePCrest(self):
+        prolog.retractall('inCrest(crest, S, X)')
+
+
 
 
 
 if __name__ == "__main__":
-    r_p = sys.argv[1]
-    numOfRun = int(sys.argv[2])
+    #r_p = sys.argv[1]
+    #numOfRun = int(sys.argv[2])
+    r_p = 'p'
+    numOfRun = 1
     for x in range(numOfRun):
         rb = RuleBased(r_p)
         newScore, weights = rb.run()
