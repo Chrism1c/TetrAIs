@@ -5,8 +5,18 @@ import sys
 
 
 class Player(BaseGame, ABC):
+    """
+        Main class for simple run of a new Game played by an Human
+        Methods
+        -------
+        get_move()
+            Execute the move given by the player
+    """
 
     def __init__(self, r_p):
+        """
+        :param r_p: type of piece used ('r' = random, 'p' = pi)
+        """
         super().__init__(r_p)
         self.player = True
 
@@ -15,10 +25,12 @@ class Player(BaseGame, ABC):
 
 
 if __name__ == "__main__":
+    #  get arguments when AI file is executed by the menu
     caption = "Game {game}".format(game=1)
     pygame.display.set_caption(caption)
     r_p = sys.argv[1]
     numOfRun = int(sys.argv[2])
+    #  loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         p = Player(r_p)
         newScore, weights = p.run()
