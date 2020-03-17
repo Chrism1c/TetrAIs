@@ -11,18 +11,88 @@ weights = [-1, -1, -1, -30]  # Initial weight vector
 
 
 class SDG_QL(BaseGame, ABC):
+    """
+        Main class for SDG_QL reinforcement learning algorithm (one object = one move), it implements abstarct move() function of BaseGame
+        Attributes
+        ----------
+                        None
+
+        Methods
+        -------
+        get_move(board, piece)
+            Execute sdg to get the move
+
+        get_parameters_x(board)
+            It calculates some parameters useful to the algorithm, in order to make it work correctly
+
+        get_expected_score_x(test_board)
+            This function calculates the score of a given board state, given weights and the number of lines previously
+            cleared.
+
+        simulate_board_x(test_board, test_piece, move)
+            This function simulate placing the current falling piece onto the board.
+
+        find_best_move(board, piece)
+            It finds the best fitting on the board for a tetramino
+
+        sdg(board, piece)
+            This function uses previous functions in order to get the best move according to weights given by previous
+            tetramino
+    """
 
     def __init__(self, r_p):
+        """
+               Parameters
+               ----------
+               r_p : str
+                   type of piece used ('r' = random, 'p' = pi)
+
+               alpha : float
+                   constant used in the formula to get the score in sdg
+
+               gamma : float
+                    constant used in the formula to get the score in sdg
+        """
+
         super().__init__(r_p)
         self.alpha = 0.01
         self.gamma = 0.9
         self.explore_change = 0
-        #self.weights = globalWeights  #[-1, -1, -1, -30]
 
     def get_move(self):
+        """
+            Returns sdg to get the move
+
+            Parameters
+            ----------
+                        None
+            Returns
+            -------
+            Returns the call to the sdg method
+
+        """
         return self.sdg(self.board, self.falling_piece)
 
     def get_parameters_x(self, board):
+        """
+            It calculates some parameters useful to the algorithm, in order to make it work correctly
+            Parameters
+            ----------
+                  board : Matrix (lists of lists) of strings
+            Returns
+            -------
+            height_sum
+                an int variable representing the sum of the heights of the various pieces
+
+            diff_sum
+                an int variable representing the sum of the difference of consecutive heights
+
+            max_height
+                an int variable representing the max height in the board
+
+            holes
+                an int variable representing the number of holes made by the tetraminoes in the board
+        """
         # This function will calculate different parameters of the current board
 
         # Initialize some stuff
@@ -60,6 +130,19 @@ class SDG_QL(BaseGame, ABC):
         return height_sum, diff_sum, max_height, holes
 
     def get_expected_score_x(self, test_board):
+        """
+            This function calculates the score of a given board state, given weights and the number of lines previously
+            cleared.
+
+            Parameters
+            ----------
+                 test_board : Matrix (lists of lists) of strings
+            Returns
+            -------
+
+            test_score
+                a float variable representing the score obtained with the test_board
+        """
         global weights
         # This function calculates the score of a given board state, given weights and the number of lines previously
         # cleared.
@@ -72,6 +155,19 @@ class SDG_QL(BaseGame, ABC):
         return test_score
 
     def simulate_board_x(self, test_board, test_piece, move):
+        """
+            This function simulate placing the current falling piece onto the board.
+
+            Parameters
+            ----------
+                 test_board : Matrix (lists of lists) of strings
+            Returns
+            -------
+
+            test_score
+                a float variable representing the score obtained with the test_board
+        """
+
         # This function simulates placing the current falling piece onto the
         # board, specified by 'move,' an array with two elements, 'rot' and 'sideways'.
         # 'rot' gives the number of times the piece is to be rotated ranging in [0:3]
@@ -112,6 +208,21 @@ class SDG_QL(BaseGame, ABC):
         return test_board, one_step_reward
 
     def find_best_move(self, board, piece):
+        """
+            It finds the best fitting on the board for a tetramino
+            Parameters
+            ----------
+                 board : Matrix (lists of lists) of strings
+
+                 piece : Object containing: 'shape', 'rotation', 'x', 'y', 'color'
+            Returns
+            -------
+
+            move
+                it is a list containing which rotation and sideway the tetramino must have to make a play
+
+        """
+
         move_list = []
         score_list = []
         for rot in range(0, len(PIECES[piece['shape']])):
@@ -134,6 +245,23 @@ class SDG_QL(BaseGame, ABC):
         return move
 
     def sdg(self, board, piece):
+        """
+        This function uses previous functions in order to get the best move according to weights given by previous
+        tetramino
+
+        Parameters
+        ----------
+            board : Matrix (lists of lists) of strings
+
+            piece : Object containing: 'shape', 'rotation', 'x', 'y', 'color'
+        Returns
+        -------
+
+        move
+            it is a list containing which rotation and sideway the tetramino must have to make a play
+
+    """
+
         global weights
         move = self.find_best_move(board, piece)
         old_params = self.get_parameters_x(board)
@@ -159,10 +287,12 @@ class SDG_QL(BaseGame, ABC):
 
 
 if __name__ == "__main__":
+    #  get arguments when AI file is executed by the menu
     print("START SDG QL ")
     r_p = sys.argv[1]
     numOfRun = int(sys.argv[2])
-    print("globalWeights ",weights)
+    print("globalWeights ", weights)
+    # loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         SdgQL = SDG_QL(r_p)
         newScore, _ = SdgQL.run()
