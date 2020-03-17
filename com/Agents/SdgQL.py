@@ -161,6 +161,8 @@ class SDG_QL(BaseGame, ABC):
             Parameters
             ----------
                  test_board : Matrix (lists of lists) of strings
+                 test_piece : Object containing: 'shape', 'rotation', 'x', 'y', 'color'
+                 move: List containing: 'rot' and 'sideways'
             Returns
             -------
 

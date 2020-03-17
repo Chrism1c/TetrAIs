@@ -15,15 +15,13 @@ posY = (SCREEN_HEIGHT / 2) - 260
 windTitle = 'Guide'
 
 
-def loadTextFromFile(fileName):
-    file = open(fileName, 'r', encoding="utf8")
-    if file.mode == 'r':
-        text = file.read()
-
-    return text
-
-
 def sidePanel(titolo, tipoDescrizione):
+    """
+    This function makes a side panel. It shows the description of the algorithm executed
+
+    :param titolo: a string that contains the name of the IA
+    :param tipoDescrizione: a string that contains the description of the IA
+    """
     # titolo = "Questo è un titolo"
     root = tk.Tk()
     root.title(windTitle)
@@ -42,6 +40,8 @@ def sidePanel(titolo, tipoDescrizione):
     root.geometry("+{}+{}".format(int(posX), int(posY)))
     root.update()
 
+
+# strings that contain the text that must be shown during execution
 
 titoloDFS = 'DFS Guide'
 descrizioneDFS = 'descrizione dfs'

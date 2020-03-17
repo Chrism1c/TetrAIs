@@ -5,6 +5,14 @@ import math
 
 
 def simulate_board(test_board, test_piece, move):
+    """
+    This function simulates the placing of a tetramino on the board with a given move
+
+    :param test_board: Matrix (lists of lists) of strings
+    :param test_piece: Object conteining: 'shape', 'rotation', 'x', 'y', 'color'
+    :param move: List containing: 'rot' and 'sideways'
+    :return: test_board modified with the new tetramino
+    """
     # Simula la board di test piazzando il tetramino di test e la mossa scelta
 
     # This function simulates placing the current falling piece onto the
@@ -51,6 +59,18 @@ def simulate_board(test_board, test_piece, move):
 
 
 def get_parameters(board):
+    """
+    This function calculates some parameters useful for the understanding the state of the board
+
+    :param board: Matrix (lists of lists) of strings
+    :return:fullLines: an int variable containing the number of cleared lines
+            holes: an int variable containing the number of holes in the board
+            numTetraminoes: an int variable containing the number of tetraminoes placed
+            max_height: an int variable containing the max height got by the highest column of tetraminoes
+            standardDvHeights: a float variable containing the value of standard deviation of each column of tetraminoes
+            abs_diffCol: an int variable containing the sum of the difference between consecutive piles of tetraminoes
+            max_diffCol: an int variable containing the highest difference between column
+    """
     global DeepLines
     ### Calcola le metriche sulla board corrente
 
@@ -107,6 +127,14 @@ def get_parameters(board):
 
 # metriche per l'IA Monte Carlo
 def getParametersMC(board):
+    """
+    This function calculates some parameters useful for the understanding the state of the board, it is used in the BBMCTS
+
+    :param board: Matrix (lists of lists) of strings
+    :return:holes: an int variable containing the number of holes in the board
+            aggrHeight: an int variable containing the value of aggregate heights
+            fullLines: an int variable containing the number of cleared lines
+    """
     global DeepLines
     ### Calcola le metriche sulla board corrente
 
@@ -141,11 +169,23 @@ def getParametersMC(board):
 
 # calcola aggrheight pari alla radice quadrata della sommatoria delle altezze al quadrato
 def calcAggrHeight(heights):
+    """
+    It calculates the aggregate heights
+
+    :param heights:list of height values
+    :return: the square root of the sum of the squared of each height
+    """
     return sum(getSquareH(heights)) ** 0.5
 
 
 # calcola il quadrato del vettore delle altezze
 def getSquareH(heights):
+    """
+    It calculates the squared of each height values contained in the heights list
+
+    :param heights:list of height values
+    :return:tempHeight: it is the squared of each height value
+    """
     tempHeight = []
     for i in range(len(heights)):
         tempHeight[i] = heights[i] ** 2
@@ -155,6 +195,8 @@ def getSquareH(heights):
 
 # numero di tetramini piazzati, dato che conta il numero di blocchi presenti
 # ho diviso per 4 il totale in modo da avere il vero numero di tetramini
+"""
+
 def numTetraminoes(board):
     countTetra = 0
     for i in range(0, BOARDWIDTH):
@@ -172,14 +214,26 @@ def max_diffCol(roofRelativeY):
 def abs_diffCol(roofRelativeY):
     absh = sum([abs(x) for x in roofRelativeY])
     return absh
-
+"""
 
 def roofRelativeY(heights):
+    """
+    It calculates the relative height difference between each consecutive height
+
+    :param heights: list of height values
+    :return: the relative height difference between each consecutive height
+    """
     return [heights[i] - heights[i + 1] for i in range(len(heights) - 1)]
 
 
 # calcola la deviazione standard dell'altezza di ogni colonna
 def standard_deviation_heights(heights):
+    """
+    It calculates the standard deviation of each column
+
+    :param heights:  list of height values
+    :return: standard deviation of each column
+    """
     if len(heights) <= 0:
         return 0
     else:
@@ -187,6 +241,11 @@ def standard_deviation_heights(heights):
 
 
 def count_full_lines(board):
+    """
+    It calculates the number of full lines made in the game
+    :param board: Matrix (lists of lists) of strings
+    :return: count: is an int variable containing the number of full lines made in the game
+    """
     # Count the number of lines
     count = 0
     for i in range(0, BOARDHEIGHT):
@@ -204,6 +263,11 @@ def count_full_lines(board):
 
 
 def maxHeight(board):
+    """
+    It calculates the max height got by the highest column of tetraminoes
+    :param board: Matrix (lists of lists) of strings
+    :return: max: an int variable containing the max height got by the highest column of tetraminoes
+    """
     max = 0
     heights = [0] * BOARDWIDTH
     # Calculate the maximum height of each column

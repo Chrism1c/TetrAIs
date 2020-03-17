@@ -8,6 +8,7 @@ import sys
 
 #  Create a new istance of TreePlot
 DFSTreePlot = TreePlot()
+ROOTZERO = "ROOT"
 
 class DeepFirstSearch(BaseGame, ABC):
     global DFSTreePlot
