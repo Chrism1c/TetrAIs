@@ -147,29 +147,68 @@ class RuleBased(BaseGame):
                 if posX0:
                     #simula con X0 e salva il risultato
                     move = self.align([0, posX0], piece)
-                    scores.append((move, self.simulate_move(move, piece)))
                 elif posX1:
                     #simula con X1
                     move = self.align([1, posX1], piece)
-                    scores.append((move, self.simulate_move(move, piece)))
                 elif posX2:
                     #simula con X2
                     move = self.align([2, posX2], piece)
-                    scores.append((move, self.simulate_move(move, piece)))
                 elif posX3:
                     #simula con X3
                     move = self.align([3, posX3], piece)
-                    scores.append((move, self.simulate_move(move, piece)))
+
+                scores.append((move, self.simulate_move(move, piece)))
 
         if len(scores) == 0:
-            return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
+            #return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
+            print('dfs')
+            return self.get_DFS_move()
         else:
+            print('rule')
             maxScore = -99
             for x in scores:
                 move, score = x
                 if score > maxScore:
                     bestMove = move
             return bestMove
+
+    def get_DFS_move(self):
+        best_rot = 0
+        best_sideways = 0
+        best_score = - 99
+
+        NextScore = (0, 0, -99)  # rot,sideways, score
+
+        # rot =  1-'O':    2-'I': 2-'Z':    4-'J': 4-'L': 4-'T'
+
+        for rot in range(0, len(PIECES[self.falling_piece['shape']])):  # per le rotazioni possibili su lpezzo corrente
+            for sideways in range(-5, 6):  # per i drop possibili sulla board
+                move = [rot, sideways]  # salvo la coppia corrente
+                test_board = copy.deepcopy(self.board)  # duplico la board corrente
+                test_piece = copy.deepcopy(self.falling_piece)  # duplico il pezzo corrente
+                test_board = simulate_board(test_board, test_piece, move)  # simulo il pezzo e la mossa sulla board test
+                # Check NEXT
+                if test_board is not None:  # se la simulazione è andata a buon fine
+                    ## Chose the best after next                                # effettuo il calcolo con il pezzo successivo
+                    for rot2 in range(0, len(PIECES[self.next_piece['shape']])):
+                        for sideways2 in range(-5, 6):
+                            move2 = [rot2, sideways2]
+                            test_board2 = copy.deepcopy(test_board)
+                            test_piece2 = copy.deepcopy(self.next_piece)
+                            test_board2 = simulate_board(test_board2, test_piece2, move2)
+                            if test_board2 is not None:
+                                test_score2, nextLines = self.get_expected_score(test_board2)
+                                if NextScore[2] < test_score2:
+                                    NextScore = [rot2, sideways2, test_score2]  # aggiorno il best local score (LV2)
+                    if best_score < NextScore[2]:  # confronto
+                        best_score = NextScore[2]  # aggiorno il best local score (LV1+LV2)
+                        best_sideways = sideways  # aggiorno il best sideway (LV1)
+                        best_rot = rot  # aggiorno il best rot (LV1)
+
+        # finish = time.perf_counter()
+        # print(f'Finished in {round(finish - start, 2)} second(s) with full')
+
+        return best_rot, best_sideways, best_score
 
 
     def get_heights(self, board):
