@@ -1,6 +1,5 @@
 # Import libraries
 import os
-
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygameMenu
@@ -10,7 +9,7 @@ from com.Utils.sidePanel import *
 # Constants and global variables
 # -----------------------------------------------------------------------------
 
-ABOUT = ['TetrAIs: v1.0', 'Authors: ']
+ABOUT = ['TetrAIs: v2.0', 'Authors: ']
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
@@ -27,7 +26,6 @@ MENU_TITLE_COLOR = COLOR_WHITE
 WINDOW_SIZE = (500, 380)
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
-
 
 sound = None
 surface = None
@@ -64,13 +62,24 @@ def check_name_test(value):
     print('User name: {0}'.format(value))
 
 
-def changePieceType(x, y):
+def changePieceType(x, choice):
+    """
+    function to set the type of Piece (PI or Random)
+    :param x: Not uded
+    :param chose: chose 'p' or 'r'
+    :return: None
+    """
     global pieceType
-    pieceType = y
+    pieceType = choice
     print("pieceType = ", pieceType)
 
 
 def update_num_runs(num):
+    """
+    function to set the number of run to execute
+    :param num: int value
+    :return: None
+    """
     global numOfRuns
     if len(num) > 0 and 0 < int(num) < 999:
         numOfRuns = int(num)
@@ -78,19 +87,36 @@ def update_num_runs(num):
 
 
 def guideSidePanel(x, choice):
+    """
+    function to activate or not the Guide AI Panel
+    :param x: not used
+    :param choice: str value 'yes' / 'no'
+    :return: None
+    """
     global gdSidePanel
     gdSidePanel = choice
     print("guideSidePanel = ", choice)
 
 
 def plotDecisionTree(x, choice):
+    """
+    function to activate or not the TreePlot on DFS LV1 / DFS LV2 / MonteCarlo (<LV2) / Genetic genealogicalTree
+    :param x: not used
+    :param choice: str value 'yes' / 'no'
+    :return: None
+    """
     global plotTree
     plotTree = choice
     print("plotTree = ", choice)
 
 
-
 def DFS(x, mode):
+    """
+    function to execute a Tetris run with DFS AI
+    :param x: not used
+    :param mode: execution modality 'LV1' / 'LV2'
+    :return: None
+    """
     global pieceType, numOfRuns, plotTree
     print("GO --> DFS ", mode, " ", pieceType, " ", numOfRuns, " ", str(plotTree))
     if gdSidePanel == 'yes':
@@ -105,6 +131,10 @@ def Local_Search():
 
 
 def SDG_QL():
+    """
+
+    :return: None
+    """
     global pieceType, numOfRuns
     print("GO --> SDG_QL ", pieceType, " ", numOfRuns)
     if gdSidePanel == 'yes':
@@ -113,6 +143,12 @@ def SDG_QL():
 
 
 def Genetic(x, mode):
+    """
+    function to execute a Tetris run with Genetic AI
+    :param x: not used
+    :param mode: execution modality 'Training' / 'PerfectChromosome'
+    :return: None
+    """
     global pieceType, numOfRuns, plotTree
     print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
     if gdSidePanel == 'yes':
@@ -122,6 +158,10 @@ def Genetic(x, mode):
 
 
 def Rule_Based():
+    """
+    function to execute a Tetris run with Rule_Based AI
+    :return: None
+    """
     global pieceType, numOfRuns
     print("GO --> Logic_Rule_Based ", pieceType)
     if gdSidePanel == 'yes':
@@ -130,36 +170,62 @@ def Rule_Based():
 
 
 def Monte_Carlo(x, mode):
-    global pieceType, numOfRuns
+    """
+    function to execute a Tetris run with Monte_Carlo AI
+    :param x: not used
+    :param mode: execution modality 'RandScan' / 'FullScan'
+    :return: None
+    """
+    global pieceType, numOfRuns, plotTree
     print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
     if gdSidePanel == 'yes':
         sidePanel(titoloMCTS, descrizioneMCTS)
-    os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+    os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
 
 def Player():
+    """
+    function to execute a Tetris run with HI (Human Intelligence)    XD
+    :return: None
+    """
     global pieceType, numOfRuns
     print("GO --> Player ", pieceType, " ", numOfRuns)
     os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
 
 
 def cat():
+    """
+    function to execute... meow ?????
+    :return: !!! let's play !!!
+    """
     # url = "https://www.youtube.com/watch?v=J---aiyznGQ"
     url = "https://www.youtube.com/watch?v=3AGqTbqhAU4"
     os.startfile(url)
 
 
 def CM():
+    """
+    function to open TetrAIs creators personal Page
+    :return: None
+    """
     url = "https://github.com/Chrism1c"
     os.startfile(url)
 
 
 def DP():
+    """
+    function to open TetrAIs creators personal Page
+    :return: None
+    """
     url = "https://github.com/W1l50n2208"
     os.startfile(url)
 
 
 def MP():
+    """
+    function to open TetrAIs creators personal Page
+    :return: None
+    """
     url = "https://github.com/m3ttiw"
     os.startfile(url)
 

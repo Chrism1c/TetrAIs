@@ -125,7 +125,7 @@ class DeepFirstSearch(BaseGame, ABC):
                 test_piece = copy.deepcopy(piece)
                 test_board = simulate_board(test_board, test_piece, move)
 
-                DFSTreePlot.addedge(ROOTZERO, str(piece['shape'] + ":" + str(sideways) + ":" + str(0)))
+                DFSTreePlot.addedge(DFSTreePlot.ROOTZERO, str(piece['shape'] + ":" + str(sideways) + ":" + str(0)))
 
                 if test_board is not None:
                     test_score = self.get_expected_score(test_board)

@@ -207,9 +207,10 @@ if __name__ == "__main__":
     r_p = sys.argv[1]  # 'r' / 'p'
     mode = sys.argv[2]  # 'full' / 'random'
     numOfRun = int(sys.argv[3])  # 1
+    treePlot = sys.argv[4]  # 'si' / 'no'
     #  loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
-        mc = MonteCarlo(r_p, mode)
+        mc = MonteCarlo(r_p, mode, treePlot)
         newScore, _ = mc.run()
         print("Game achieved a score of: ", newScore)
 
