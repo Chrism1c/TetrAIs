@@ -6,14 +6,45 @@ from com.Core.Model import PIECES
 import sys,time
 
 class LocalSearch(BaseGame, ABC):
+    """
+        Main class for LS search algorithm (one object = one move), it implements abstarct move() function of BaseGame
+        Attributes
+        ----------
+                        None
+        Methods
+        -------
+        get_move(board, piece, NextPiece)
+            Execute the main method to get the move according to the LS AI
+        find_best_moveLS(board, piece,NextPiece)
+            It finds the best move to do according to the passed weights
+        get_expected_score(test_board)
+            It calculates the score on the test board
+    """
+
     def __init__(self, r_p):
+        """
+        :param r_p: str
+                type of piece used ('r' = random, 'p' = pi)
+        """
         super().__init__(r_p)
 
     def get_move(self):
+        """
+        Return the main function to use (find_best_moveLS)
+        :return:
+        """
         return self.find_best_moveLS(self.board, self.falling_piece, self.next_piece)
 
 
     def find_best_moveLS(self, board, piece,NextPiece):
+        """
+         It finds the best move to do according to the passed weights
+
+        :param board:  Matrix (lists of lists) of strings
+        :param piece:  Object containing: 'shape', 'rotation', 'x', 'y', 'color'
+        :param NextPiece: Object containing: 'shape', 'rotation', 'x', 'y', 'color'
+        :return:strategy2: a list that contains rot and sideway
+        """
         ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
 
         #print("-----------------------------------------------------------------------------")
@@ -61,6 +92,12 @@ class LocalSearch(BaseGame, ABC):
 
 
     def get_expected_score(self, test_board):
+        """
+        It calculates the score on the test board
+        :param test_board: Matrix (lists of lists) of strings
+        :return: test_score: it contains the score of the passed test_board
+                 fullLines: an int variable containing the number of cleared lines
+        """
         ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
         test_score = float(
@@ -70,8 +107,10 @@ class LocalSearch(BaseGame, ABC):
 
 
 if __name__ == "__main__":
+    #  get arguments when AI file is executed by the menu
     r_p = sys.argv[1]
     numOfRun = int(sys.argv[2])
+    #  loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         ls = LocalSearch(r_p)
         newScore, weights = ls.run()
