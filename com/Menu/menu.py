@@ -1,13 +1,16 @@
 # Import libraries
 import os
+
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygameMenu
+from com.Utils.sidePanel import *
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
 
-ABOUT = ['TetrAIs: v0.5', 'Authors: ']
+ABOUT = ['TetrAIs: v1.0', 'Authors: ']
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
@@ -22,16 +25,21 @@ MENU_BACKGROUND_COLOR = ARANCIONE_SCURO
 COLOR_BACKGROUND = COLOR_BLACK
 MENU_TITLE_COLOR = COLOR_WHITE
 WINDOW_SIZE = (500, 380)
+SCREEN_WIDTH = 1920
+SCREEN_HEIGHT = 1080
+
 
 sound = None
 surface = None
 main_menu = None
 
-
 AI_Setting_menu = None
 
 pieceType = "r"
 numOfRuns = 1
+plotTree = 'no'
+gdSidePanel = 'no'
+
 
 # -----------------------------------------------------------------------------
 # Methods
@@ -56,40 +64,60 @@ def check_name_test(value):
     print('User name: {0}'.format(value))
 
 
-def changePieceType(x,y):
+def changePieceType(x, y):
     global pieceType
     pieceType = y
-    print("pieceType = ",pieceType)
+    print("pieceType = ", pieceType)
+
 
 def update_num_runs(num):
     global numOfRuns
-    if len(num)>0 and int(num)>0 and int(num)<999:
+    if len(num) > 0 and 0 < int(num) < 999:
         numOfRuns = int(num)
         print("numOfRuns = ", numOfRuns)
 
 
+def guideSidePanel(x, choice):
+    global gdSidePanel
+    gdSidePanel = choice
+    print("guideSidePanel = ", choice)
+
+
+def plotDecisionTree(x, choice):
+    global plotTree
+    plotTree = choice
+    print("plotTree = ", choice)
+
+
 
 def DFS(x, mode):
-    global pieceType,numOfRuns
-    print("GO --> DFS ",mode," ",pieceType," ",numOfRuns)
-    os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode +' '+ str(numOfRuns))
+    global pieceType, numOfRuns, plotTree
+    print("GO --> DFS ", mode, " ", pieceType, " ", numOfRuns, " ", str(plotTree))
+    if gdSidePanel == 'yes':
+        sidePanel(titoloDFS, descrizioneDFS)
+    os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
+
 
 def Local_Search():
-    global pieceType,numOfRuns
-    print("GO --> LS ",pieceType," ",numOfRuns)
-    os.system('python com/Agents/LocalSearch.py ' + pieceType +' '+ str(numOfRuns))
+    global pieceType, numOfRuns
+    print("GO --> LS ", pieceType, " ", numOfRuns)
+    os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
+
 
 def SDG_QL():
-    global pieceType,numOfRuns
-    # os.system("")
-    print("GO --> SDG_QL ",pieceType," ",numOfRuns)
+    global pieceType, numOfRuns
+    print("GO --> SDG_QL ", pieceType, " ", numOfRuns)
+    if gdSidePanel == 'yes':
+        sidePanel(titoloSDGQL, descrizioneSDGQL)
     os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
 
+
 def Genetic(x, mode):
-    global pieceType,numOfRuns
-    # os.system("")
-    print("GO --> Genetic ",mode," ",pieceType)
-    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+    global pieceType, numOfRuns, plotTree
+    print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
+    if gdSidePanel == 'yes':
+        sidePanel(titoloGen, descrizioneGen)
+    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
 
 def Rule_Based():
@@ -98,22 +126,31 @@ def Rule_Based():
     print("GO --> Rule_Based ", pieceType)
     os.system('python com/Agents/RuleBased.py ' + pieceType + " " + str(numOfRuns))
 
-def Monte_Carlo():
-    global pieceType,numOfRuns
-    # os.system("")
-    print("GO --> Monte_Carlo ",pieceType)
+
+def Rule_Based():
+    global pieceType, numOfRuns
+    print("GO --> Logic_Rule_Based ", pieceType)
+    if gdSidePanel == 'yes':
+        sidePanel(titoloRB, descrizioneRB)
+    os.system('python com/Agents/LogicRuleBased.py ' + pieceType + ' ' + str(numOfRuns))
+
+
+def Monte_Carlo(x, mode):
+    global pieceType, numOfRuns
+    print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
+    if gdSidePanel == 'yes':
+        sidePanel(titoloMCTS, descrizioneMCTS)
+    os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+
 
 def Player():
-    global pieceType,numOfRuns
-    print("GO --> Player ", pieceType, " ",numOfRuns)
+    global pieceType, numOfRuns
+    print("GO --> Player ", pieceType, " ", numOfRuns)
     os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
 
 
-
-
-
 def cat():
-    #url = "https://www.youtube.com/watch?v=J---aiyznGQ"
+    # url = "https://www.youtube.com/watch?v=J---aiyznGQ"
     url = "https://www.youtube.com/watch?v=3AGqTbqhAU4"
     os.startfile(url)
 
@@ -172,7 +209,16 @@ def main(test=False):
     # Init pygame
     # -------------------------------------------------------------------------
     pygame.init()
-    os.environ['SDL_VIDEO_CENTERED'] = '1'
+    WINDOWWIDTH = 400
+    WINDOWHEIGHT = 500
+    pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
+
+    posX = SCREEN_WIDTH / 2
+    posY = SCREEN_HEIGHT / 2
+
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%i,%i" % (posX, posY)
+    os.environ['SDL_VIDEO_CENTERED'] = '0'
+
 
     # Create pygame screen and objects
     surface = pygame.display.set_mode(WINDOW_SIZE)
@@ -223,42 +269,42 @@ def main(test=False):
     AI_menu.add_selector('Genetic ',
                          [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)
-    AI_menu.add_option('Monte Carlo', Monte_Carlo)
-
-    # AI_menu.add_option('|| BACK ||', pygameMenu.events.BACK)
-
+    AI_menu.add_selector('Blind Bandit Monte Carlo',
+                         [('RandScan', 'random'), ('FullScan', 'full')], onreturn=Monte_Carlo)
 
     AI_Setting_menu = pygameMenu.Menu(surface,
-                              bgfun=main_background,
-                              color_selected=COLOR_WHITE,
-                              font=pygameMenu.font.FONT_NEVIS,
-                              font_title=pygameMenu.font.FONT_8BIT,
-                              font_color=COLOR_BLACK,
-                              font_size=25,
-                              font_size_title=40,
-                              menu_alpha=100,
-                              option_shadow=False,
-                              menu_color=MENU_BACKGROUND_COLOR,
-                              menu_color_title=MENU_TITLE_COLOR,
-                              menu_height=int(WINDOW_SIZE[1] * 0.85),
-                              menu_width=int(WINDOW_SIZE[0] * 0.85),
-                              onclose=pygameMenu.events.DISABLE_CLOSE,
-                              title='AI Settings',
-                              widget_alignment=pygameMenu.locals.ALIGN_CENTER,  # .ALIGN_LEFT,
-                              window_height=WINDOW_SIZE[1],
-                              window_width=WINDOW_SIZE[0],
-                              )
+                                      bgfun=main_background,
+                                      color_selected=COLOR_WHITE,
+                                      font=pygameMenu.font.FONT_NEVIS,
+                                      font_title=pygameMenu.font.FONT_8BIT,
+                                      font_color=COLOR_BLACK,
+                                      font_size=25,
+                                      font_size_title=40,
+                                      menu_alpha=100,
+                                      option_shadow=False,
+                                      menu_color=MENU_BACKGROUND_COLOR,
+                                      menu_color_title=MENU_TITLE_COLOR,
+                                      menu_height=int(WINDOW_SIZE[1] * 0.85),
+                                      menu_width=int(WINDOW_SIZE[0] * 0.85),
+                                      onclose=pygameMenu.events.DISABLE_CLOSE,
+                                      title='AI Settings',
+                                      widget_alignment=pygameMenu.locals.ALIGN_CENTER,  # .ALIGN_LEFT,
+                                      window_height=WINDOW_SIZE[1],
+                                      window_width=WINDOW_SIZE[0],
+                                      )
 
-    #AI_Setting_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+    # AI_Setting_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+    AI_Setting_menu.add_selector('Guide SidePanel?: ',
+                                 [('No', 'no'), ('Yes', 'yes')], onchange=guideSidePanel)
     AI_Setting_menu.add_selector('Type of Circuit: ',
                                  [('Random', 'r'), ('PI', 'p')], onchange=changePieceType)
+    AI_Setting_menu.add_selector('Plot decision Tree?: ',
+                                 [('No', 'no'), ('Yes', 'yes')], onchange=plotDecisionTree)
     AI_Setting_menu.add_text_input('How many runs?: ',
-                                        default='1',
-                                        onchange=update_num_runs,
-                                        textinput_id='Runs')
-    AI_Setting_menu.add_option("|| AI Agents ||",AI_menu)
-
-
+                                   default='1',
+                                   onchange=update_num_runs,
+                                   textinput_id='Runs')
+    AI_Setting_menu.add_option("|| AI Agents ||", AI_menu)
 
     # About menu
     about_menu = pygameMenu.TextMenu(surface,
@@ -281,7 +327,7 @@ def main(test=False):
                                      window_height=WINDOW_SIZE[1],
                                      window_width=WINDOW_SIZE[0]
                                      )
-    #about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
+    # about_menu.add_line(pygameMenu.locals.TEXT_NEWLINE)
     for m in ABOUT:
         about_menu.add_line(m)
 
@@ -291,7 +337,6 @@ def main(test=False):
     about_menu.add_option('??? ', cat)
 
     # about_menu.add_option('> BACK <', pygameMenu.events.BACK)
-
 
     # Main menu
     main_menu = pygameMenu.Menu(surface,

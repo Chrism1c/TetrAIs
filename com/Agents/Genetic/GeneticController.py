@@ -111,28 +111,6 @@ class GeneticController:
             print(" - BestK - ", chromToStr(chromosome, self.dimChromomsome) + " --- WScore Of: ", str(_))
         return bestK
 
-    # def kChoice(self, populationWScore):
-    #
-    #     orderedPopulation = sorted(populationWScore, key=itemgetter(6), reverse=True)
-    #     lenP = len(orderedPopulation)
-    #     avgScore = 0
-    #     k = 0
-    #     pow2 = [2 ** x for x in range(0, 7)]
-    #     for x in range(lenP):
-    #         avgScore += orderedPopulation[x][6]
-    #     avgScore /= lenP
-    #     print(avgScore)
-    #     for x in range(lenP):
-    #         if orderedPopulation[x][6] >= avgScore:
-    #             k += 1
-    #     print(k)
-    #     pow2.append(k)
-    #     pow2.sort()
-    #     indexK = pow2.index(k)
-    #     k = pow2[indexK + 1]
-    #     print(k)
-    #     return k
-
     def mutation(self, a):
         if random.randint(1, 10) == 10:  # 10% di possibilità di mutazione
             if a >= 4.5 and a <= 5.0:

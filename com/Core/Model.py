@@ -112,6 +112,10 @@ PIECES = {
     'T': T_SHAPE_TEMPLATE,
 }
 
+# PIECES = {
+#     'O': O_SHAPE_TEMPLATE
+# }
+
 PIECES_COLORS = {
     'S': 3,  # GREEN
     'Z': 4,  # RED
