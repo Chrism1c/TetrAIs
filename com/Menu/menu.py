@@ -191,10 +191,10 @@ def Monte_Carlo(x, mode):
     :return: None
     """
     global pieceType, numOfRuns, plotTree
-    print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
+    print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType, " ", plotTree)
     if gdSidePanel == 'yes':
         sidePanel(titoloMCTS, descrizioneMCTS)
-    bbmcts_main(pieceType, numOfRuns, plotTree)
+    bbmcts_main(pieceType, mode, numOfRuns, plotTree)
     # os.system(
     #     'python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
