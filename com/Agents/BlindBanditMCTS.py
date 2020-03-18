@@ -48,7 +48,7 @@ class MonteCarlo(BaseGame, ABC):
         super().__init__(r_p)
         self.mode = mode
         self.action = ""
-        self.deepLimit = 2
+        self.deepLimit = 3
         self.treePlot = treePlot
 
     def get_move(self):
@@ -86,7 +86,7 @@ class MonteCarlo(BaseGame, ABC):
         """
         deep = 1
         numIter = 0
-        # print("Branch Deep :", deep, " Real piece: ", piece['shape'])
+        print("Branch Deep :", deep, " Real piece: ", piece['shape'])
         self.action = str(piece['shape'])
         topStrategies = list()
         strategy = None
@@ -106,11 +106,10 @@ class MonteCarlo(BaseGame, ABC):
                     test_score, fullLines = self.get_expected_score(test_board)
                     NextScore = 0
                     selfAction = ""
-
+                    #  print("Tested branch : [ rot= ", rot, "/sideway=", sideways, "] : scored = ", round(test_score, 3))
                     if self.deepLimit > 1:
                         NextScore, selfAction = self.MonteCarlo_MCTS_stepx(board, deep + 1, NextPiece, fatherName)
-                    else:
-                        # print("EXECPTION = self.action : ", self.action)
+                        print("Dreamed action : ", self.action)
                         selfAction = self.action
                         self.action = str(piece['shape'])
                     NextScore = NextScore + test_score
@@ -128,7 +127,7 @@ class MonteCarlo(BaseGame, ABC):
         for x in range(len(topStrategies)):
             print(topStrategies[x])
 
-        # print("---X>> Winner STRATEGY <<X---",topStrategies[0])
+        print("---X>> Winner STRATEGY <<X---", topStrategies[0])
 
         return [topStrategies[0][0], topStrategies[0][1]]
 
@@ -146,7 +145,8 @@ class MonteCarlo(BaseGame, ABC):
             fatherName : str
                 str used to have trace of the fatherName to print Tree Graphs
         """
-        self.action = self.action + "-" + piece['shape']
+        if len(self.action.strip('-')) <= self.deepLimit:
+            self.action = self.action + "-" + piece['shape']
         strategy = None
 
         sidewaysIndex = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5]  # 11  Sideways
@@ -172,7 +172,7 @@ class MonteCarlo(BaseGame, ABC):
 
                 if test_board is not None:
                     test_score, fullLines = self.get_expected_score(test_board)
-                    # print("STEPX: test_score: ",test_score)
+                    #  print("Tested branch : [ rot= ",rot ,"/sideway=",sideways," // deep= ",deep,"] : scored = ",round(test_score,3))
 
                     # print("yyyy: ", deep, " ",self.deepLimit)
                     if deep < self.deepLimit:
