@@ -7,8 +7,8 @@ import sys
 import random
 import math
 
-weights = [-1, -1, -1, -30]  # Initial weight vector
-
+wx = [-1, -1, -1, -30]  # Initial weight vector
+explore_change = 0
 
 class SDG_QL(BaseGame, ABC):
     """
@@ -40,7 +40,7 @@ class SDG_QL(BaseGame, ABC):
             tetramino
     """
 
-    def __init__(self, r_p, mode):
+    def __init__(self, r_p):
         """
                Parameters
                ----------
@@ -57,7 +57,6 @@ class SDG_QL(BaseGame, ABC):
         super().__init__(r_p)
         self.alpha = 0.01
         self.gamma = 0.9
-        self.explore_change = mode
 
     def get_move(self):
         """
@@ -143,14 +142,14 @@ class SDG_QL(BaseGame, ABC):
             test_score
                 a float variable representing the score obtained with the test_board
         """
-        global weights
+        global wx
         # This function calculates the score of a given board state, given weights and the number of lines previously
         # cleared.
         height_sum, diff_sum, max_height, holes = self.get_parameters_x(test_board)
-        A = weights[0]
-        B = weights[1]
-        C = weights[2]
-        D = weights[3]
+        A = wx[0]
+        B = wx[1]
+        C = wx[2]
+        D = wx[3]
         test_score = float(A * height_sum + B * diff_sum + C * max_height + D * holes)
         return test_score
 
@@ -210,6 +209,7 @@ class SDG_QL(BaseGame, ABC):
         return test_board, one_step_reward
 
     def find_best_move(self, board, piece):
+        global explore_change
         """
             It finds the best fitting on the board for a tetramino
             Parameters
@@ -240,7 +240,7 @@ class SDG_QL(BaseGame, ABC):
         best_score = max(score_list)
         best_move = move_list[score_list.index(best_score)]
 
-        if random.random() < self.explore_change:
+        if random.random() < explore_change:
             move = move_list[random.randint(0, len(move_list) - 1)]
         else:
             move = best_move
@@ -264,7 +264,7 @@ class SDG_QL(BaseGame, ABC):
 
     """
 
-        global weights
+        global wx, explore_change
         move = self.find_best_move(board, piece)
         old_params = self.get_parameters_x(board)
         test_board = copy.deepcopy(board)
@@ -273,31 +273,30 @@ class SDG_QL(BaseGame, ABC):
         if test_board is not None:
             new_params = self.get_parameters_x(test_board[0])
             one_step_reward = test_board[1]
-        for i in range(0, len(weights)):
-            weights[i] = weights[i] + self.alpha * weights[i] * (one_step_reward - old_params[i] + self.gamma * new_params[i])
-        regularization_term = abs(sum(weights))
-        for i in range(0, len(weights)):
-            weights[i] = 100 * weights[i] / regularization_term
-            weights[i] = math.floor(1e4 * weights[i]) / 1e4  # Rounds the weights
-
-        if self.explore_change > 0.001:
-            self.explore_change = self.explore_change * 0.99
+        for i in range(0, len(wx)):
+            wx[i] = wx[i] + self.alpha * wx[i] * (one_step_reward - old_params[i] + self.gamma * new_params[i])
+        regularization_term = abs(sum(wx))
+        for i in range(0, len(wx)):
+            wx[i] = 100 * wx[i] / regularization_term
+            wx[i] = math.floor(1e4 * wx[i]) / 1e4  # Rounds the weights
+        print("-- Updated wx: ", wx)
+        if explore_change > 0.001:
+            explore_change = explore_change * 0.99
         else:
-            self.explore_change = 0
-        #print("byby: ", weights)
+            explore_change = 0
+        print("-- explore_change wx: ", explore_change)
         return move
 
 
 if __name__ == "__main__":
+    global external
     #  get arguments when AI file is executed by the menu
-    print("START SDG QL ")
     r_p = sys.argv[1]
-    mode = float(sys.argv[2])
+    explore_change = float(sys.argv[2])
     numOfRun = int(sys.argv[3])
-    print("globalWeights ", weights)
+    print("First wx: ", wx)
     # loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
-        SdgQL = SDG_QL(r_p, mode)
+        SdgQL = SDG_QL(r_p)
         newScore, _ = SdgQL.run()
         print("Game achieved a score of: ", newScore)
-        #print("weights ", SdgQL.weights)

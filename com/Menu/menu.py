@@ -158,7 +158,6 @@ def Genetic(x, mode):
 
 def Rule_Based():
     global pieceType, numOfRuns
-    # os.system("")
     print("GO --> Rule_Based ", pieceType)
     os.system('python com/Agents/RuleBased.py ' + pieceType + " " + str(numOfRuns))
 
@@ -331,9 +330,8 @@ def main(test=False):
     AI_menu.add_selector('Deep First Search ',
                          [('LV1 Deep', 'LV1'), ('LV2 Deep', 'LV2')], onreturn=DFS)
     AI_menu.add_option('Local Search ', Local_Search)
-    # AI_menu.add_option('SGD Q-Learning ', SDG_QL)
     AI_menu.add_selector('SGD Q-Learning ',
-                         [('P0.5', '0.5'), ('P0.0', '0.0')], onreturn=SDG_QL)
+                         [('P0.5', '0.5'), ('P1', '1')], onreturn=SDG_QL)
     AI_menu.add_selector('Genetic ',
                          [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)

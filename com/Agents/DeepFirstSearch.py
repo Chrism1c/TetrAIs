@@ -70,8 +70,8 @@ class DeepFirstSearch(BaseGame, ABC):
         best_sideways = 0
         best_score = - 99
         NextScore = (0, 0, -99)  # rot, sideways, score
-
         # rot =  1-'O':    2-'I': 2-'Z':    4-'J': 4-'L': 4-'T'
+        print("Shape: ", piece['shape'])
         for rot in range(0, len(PIECES[piece['shape']])):  # per le rotazioni possibili su lpezzo corrente
             for sideways in range(-5, 6):  # per i drop possibili sulla board
                 move = [rot, sideways]  # salvo la coppia corrente
@@ -90,12 +90,13 @@ class DeepFirstSearch(BaseGame, ABC):
                             test_board2 = copy.deepcopy(test_board)
                             test_piece2 = copy.deepcopy(NextPiece)
                             test_board2 = simulate_board(test_board2, test_piece2, move2)
-
                             NameNode = str(NextPiece['shape'] + ":" + str(sideways2) + ":" + str(1))
                             DFSTreePlot.addedge(fatherName, fatherName + "_" + NameNode)
-
                             if test_board2 is not None:
                                 test_score2, nextLines = self.get_expected_score(test_board2)
+                                print("Tested branch : LV1[ rot= ", rot, "/sideway=", sideways, "] : LV2[ rot2= ",
+                                      rot2, "/sideway2=", sideways2, "] : scored = ",
+                                      round(test_score2,3))
                                 if NextScore[2] < test_score2:
                                     NextScore = [rot2, sideways2, test_score2]  # aggiorno il best local score (LV2)
                     if best_score < NextScore[2]:  # confronto
@@ -107,6 +108,7 @@ class DeepFirstSearch(BaseGame, ABC):
             DFSTreePlot.plot()
             DFSTreePlot.Graph.clear()
 
+        print("-- Winner Strategy = <", best_rot, "/", best_sideways, ">\n")
         return [best_rot, best_sideways]
 
 
@@ -118,6 +120,7 @@ class DeepFirstSearch(BaseGame, ABC):
                   board : Matrix (lists of lists) of strings
                   piece : Object containing: 'shape', 'rotation', 'x', 'y', 'color'
         """
+        print("Shape: ",piece['shape'])
         strategy = None
         for rot in range(0, len(PIECES[piece['shape']])):
             for sideways in range(-5, 6):
@@ -125,11 +128,10 @@ class DeepFirstSearch(BaseGame, ABC):
                 test_board = copy.deepcopy(board)
                 test_piece = copy.deepcopy(piece)
                 test_board = simulate_board(test_board, test_piece, move)
-
                 DFSTreePlot.addedge(DFSTreePlot.ROOTZERO, str(piece['shape'] + ":" + str(sideways) + ":" + str(0)))
-
                 if test_board is not None:
-                    test_score = self.get_expected_score(test_board)
+                    test_score, _ = self.get_expected_score(test_board)
+                    print("Tested branch : [ rot= ",rot ,"/sideway=",sideways,"] : scored = ",round(test_score,3))
                     if not strategy or strategy[2] < test_score:
                         strategy = (rot, sideways, test_score)
 
@@ -137,6 +139,7 @@ class DeepFirstSearch(BaseGame, ABC):
             DFSTreePlot.plot()
             DFSTreePlot.Graph.clear()
 
+        print("-- Winner Strategy = <", strategy[0], "/", strategy[1], ">\n")
         return [strategy[0], strategy[1]]
 
     def get_expected_score(self, test_board):
