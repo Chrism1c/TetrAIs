@@ -1,9 +1,17 @@
 # Import libraries
 import os
+
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygameMenu
 from com.Utils.sidePanel import *
+from com.Agents.DeepFirstSearch import dfs_main
+from com.Agents.SdgQL import sdgql_main
+from com.Agents.BlindBanditMCTS import bbmcts_main
+from com.Agents.LocalSearch import ls_main
+from com.Agents.Player import pl_main
+from com.Agents.RuleBased import rb_main
+from com.Agents.Genetic.__main__ import gen_main
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
@@ -121,13 +129,17 @@ def DFS(x, mode):
     print("GO --> DFS ", pieceType, " ", mode, " ", numOfRuns, " ", str(plotTree))
     if gdSidePanel == 'yes':
         sidePanel(titoloDFS, descrizioneDFS)
-    os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
+    dfs_main(pieceType, mode, numOfRuns, str(plotTree))
+
+    # os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(
+    # plotTree))
 
 
 def Local_Search():
     global pieceType, numOfRuns
     print("GO --> LS ", pieceType, " ", numOfRuns)
-    os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
+    ls_main(pieceType, numOfRuns)
+    # os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
 
 
 def SDG_QL(x, mode):
@@ -139,7 +151,8 @@ def SDG_QL(x, mode):
     print("GO --> SDG_QL ", pieceType, " ", mode, " ", numOfRuns)
     if gdSidePanel == 'yes':
         sidePanel(titoloSDGQL, descrizioneSDGQL)
-    os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+    sdgql_main(pieceType, mode, numOfRuns)
+    # os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
 
 def Genetic(x, mode):
@@ -153,13 +166,9 @@ def Genetic(x, mode):
     print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
     if gdSidePanel == 'yes':
         sidePanel(titoloGen, descrizioneGen)
-    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
-
-
-def Rule_Based():
-    global pieceType, numOfRuns
-    print("GO --> Rule_Based ", pieceType)
-    os.system('python com/Agents/RuleBased.py ' + pieceType + " " + str(numOfRuns))
+    gen_main(pieceType, mode, numOfRuns)
+    # os.system(
+    #     'python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
 
 def Rule_Based():
@@ -168,10 +177,10 @@ def Rule_Based():
     :return: None
     """
     global pieceType, numOfRuns
-    print("GO --> Logic_Rule_Based ", pieceType)
+    print("GO --> Rule_Based ", pieceType)
     if gdSidePanel == 'yes':
         sidePanel(titoloRB, descrizioneRB)
-    os.system('python com/Agents/LogicRuleBased.py ' + pieceType + ' ' + str(numOfRuns))
+    rb_main(pieceType, numOfRuns)
 
 
 def Monte_Carlo(x, mode):
@@ -185,7 +194,9 @@ def Monte_Carlo(x, mode):
     print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
     if gdSidePanel == 'yes':
         sidePanel(titoloMCTS, descrizioneMCTS)
-    os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
+    bbmcts_main(pieceType, numOfRuns, plotTree)
+    # os.system(
+    #     'python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
 
 def Player():
@@ -195,7 +206,8 @@ def Player():
     """
     global pieceType, numOfRuns
     print("GO --> Player ", pieceType, " ", numOfRuns)
-    os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
+    # os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
+    pl_main(pieceType, numOfRuns)
 
 
 def cat():
@@ -283,7 +295,6 @@ def main(test=False):
 
     os.environ['SDL_VIDEO_WINDOW_POS'] = "%i,%i" % (posX, posY)
     os.environ['SDL_VIDEO_CENTERED'] = '0'
-
 
     # Create pygame screen and objects
     surface = pygame.display.set_mode(WINDOW_SIZE)

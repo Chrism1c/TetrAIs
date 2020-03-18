@@ -6,6 +6,7 @@ from com.Core.Model import PIECES, BOARDWIDTH, BOARDHEIGHT, is_valid_position, a
 import sys
 import random
 import math
+from com.Menu import menu
 
 wx = [-1, -1, -1, -30]  # Initial weight vector
 explore_change = 0
@@ -286,6 +287,19 @@ class SDG_QL(BaseGame, ABC):
             explore_change = 0
         print("-- explore_change wx: ", explore_change)
         return move
+
+
+def sdgql_main(r_p, mode, numOfRun):
+    global explore_change
+    explore_change = float(mode)
+    numOfRun = int(numOfRun)
+    print("First wx: ", wx)
+    # loop to run  the game with AI for numOfRun executions
+    for x in range(numOfRun):
+        SdgQL = SDG_QL(r_p)
+        newScore, _ = SdgQL.run()
+        print("Game achieved a score of: ", newScore)
+    menu.main()
 
 
 if __name__ == "__main__":

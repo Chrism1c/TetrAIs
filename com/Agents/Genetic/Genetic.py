@@ -95,7 +95,6 @@ class Genetic(BaseGame, ABC):
 
         return [best_rot, best_sideways]
 
-
     # restituisce il vettore con le metriche calcolate
     def getScore(self, board):
         """
@@ -157,6 +156,7 @@ def perfectRun(pieceType):
         gen = Genetic(r_p, perfectChromosome)
         newScore, _ = gen.run()
         print("Game achieved a score of: ", newScore)
+        menu.main()
     else:
         print("Needs to be Trained!")
         exit(0)

@@ -4,6 +4,7 @@ import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Utils.NetworkX import *
 from com.Core.Model import PIECES
+from com.Menu import menu
 import sys
 
 #  Create a new istance of TreePlot
@@ -154,6 +155,18 @@ class DeepFirstSearch(BaseGame, ABC):
             (fullLines * 1.8) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5) * 0.002) - (stdDY * 0.01) - (
                     absDy * 0.2) - (maxDy * 0.3))
         return test_score, fullLines
+
+
+def dfs_main(r_p, lv, numOfRun, treePlot):
+    #  loop to run  the game with AI for numOfRun executions
+    numOfRun = int(numOfRun)
+    for x in range(numOfRun):
+        dfs = DeepFirstSearch(r_p, lv, treePlot)
+        newScore, weights = dfs.run()
+        print("Game achieved a score of: ", newScore)
+        print("weights ", weights)
+    menu.main()
+
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@ from abc import ABC
 import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES, BOARDWIDTH, BOARDHEIGHT, PIECES_COLORS, TEMPLATEWIDTH
+from com.Menu import menu
 import random
 import time
 from operator import itemgetter
@@ -201,6 +202,15 @@ class MonteCarlo(BaseGame, ABC):
         }
         return new_piece
 
+
+def bbmcts_main(r_p, mode, numOfRun, treePlot):
+    #  loop to run  the game with AI for numOfRun executions
+    numOfRun = int(numOfRun)
+    for x in range(numOfRun):
+        mc = MonteCarlo(r_p, mode, treePlot)
+        newScore, _ = mc.run()
+        print("Game achieved a score of: ", newScore)
+    menu.main()
 
 if __name__ == "__main__":
     #  get arguments when AI file is executed by the menu

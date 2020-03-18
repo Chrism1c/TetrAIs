@@ -4,23 +4,25 @@ import sys
 import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
+from com.Menu import menu
 import random
 from pyswip import Prolog
-prolog = Prolog()
-prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl");
 
+prolog = Prolog()
+# prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl");
+prolog.consult("com/Utils/Kb.pl")
 
 
 class RuleBased(BaseGame):
     def __init__(self, r_p):
         super().__init__(r_p)
-        self.crest = [0]*BOARDWIDTH                 #cresta relativa
+        self.crest = [0] * BOARDWIDTH  # cresta relativa
 
     def get_move(self):
-        #self.update_crest(self.get_heights(self.board))
+        # self.update_crest(self.get_heights(self.board))
         self.crest = self.get_heights(self.board)
         self.writePCrest(self.get_Pcrest())
-        #return self.align(self.get_move_by_rule(self.falling_piece, self.get_Pcrest()), self.falling_piece)
+        # return self.align(self.get_move_by_rule(self.falling_piece, self.get_Pcrest()), self.falling_piece)
         return self.get_move_by_rule(self.falling_piece)
 
     def simulate_move(self, move, piece):
@@ -31,7 +33,7 @@ class RuleBased(BaseGame):
             test_score, _ = self.get_expected_score(test_board)
             return test_score
         else:
-            return -99          #con questo punteggio una mossa non valida non verrà considerata
+            return -99  # con questo punteggio una mossa non valida non verrà considerata
 
     def get_expected_score(self, test_board):
         ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
@@ -40,7 +42,6 @@ class RuleBased(BaseGame):
             (fullLines * 2) - (vHoles) - (vBlocks * 0.5) - ((maxHeight ** 1.5) * 0.02) - (stdDY * 0.01) - (
                     absDy * 0.2) - (maxDy * 0.3))
         return test_score, fullLines
-
 
     def align(self, move, piece):
         rot = move[0]
@@ -81,15 +82,15 @@ class RuleBased(BaseGame):
         else:
             new_rot = 0
 
-        #new_rot = abs(rot - piece['rotation'])
+        # new_rot = abs(rot - piece['rotation'])
         if piece['shape'] == 'I':
             new_sideway = sideway - 5
-        elif piece['shape'] == 'O' or piece['shape'] == 'Z' or piece['shape'] == 'S' or piece['shape'] == 'T' or piece['shape'] == 'L' or piece['shape'] == 'J':
+        elif piece['shape'] == 'O' or piece['shape'] == 'Z' or piece['shape'] == 'S' or piece['shape'] == 'T' or piece[
+            'shape'] == 'L' or piece['shape'] == 'J':
             new_sideway = sideway - 4
         else:
             new_sideway = sideway - 6
-        return[new_rot, new_sideway]
-
+        return [new_rot, new_sideway]
 
     def get_move_by_rule(self, piece):
         iFlag = False
@@ -161,50 +162,50 @@ class RuleBased(BaseGame):
                     pass
 
                 if posX0 != False:
-                    #simula con X0 e salva il risultato
+                    # simula con X0 e salva il risultato
                     move = self.align([0, X0], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X0]))
                     print('altezza di ', str(X0), ' = ', str(self.crest[X0]))
                     iFlag = True
                 elif posX1 != False:
-                    #simula con X1
+                    # simula con X1
                     move = self.align([1, X1], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X1]))
                     print('altezza di ', str(X1), ' = ', str(self.crest[X1]))
                 elif posX2 != False:
-                    #simula con X2
+                    # simula con X2
                     move = self.align([2, X2], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X2]))
                     print('altezza di ', str(X2), ' = ', str(self.crest[X2]))
                 elif posX3 != False:
-                    #simula con X3
+                    # simula con X3
                     move = self.align([3, X3], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X3]))
                     print('altezza di ', str(X3), ' = ', str(self.crest[X3]))
 
-        #if piece['shape'] == 'I' and iFlag:
-            #minh = 20
-            #for x in scores:
-                #move, score, h = x
-                # print(score)
-                #if h < minh:
-                    #minh = h
-                    #bestMove = move
-            #print(bestMove)
-            #return bestMove
+        # if piece['shape'] == 'I' and iFlag:
+        # minh = 20
+        # for x in scores:
+        # move, score, h = x
+        # print(score)
+        # if h < minh:
+        # minh = h
+        # bestMove = move
+        # print(bestMove)
+        # return bestMove
 
         if len(scores) == 0:
-            #return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
-            #print('dfs')
+            # return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
+            # print('dfs')
             return self.get_DFS_move()
         else:
-            #print('rule')
+            # print('rule')
             maxScore = -999
             minh = 20
             print(scores)
             for x in scores:
                 move, score, h = x
-                #print(score)
+                # print(score)
                 if h < minh or maxScore < score:
                     minh = h
                     maxScore = score
@@ -250,7 +251,6 @@ class RuleBased(BaseGame):
 
         return best_rot, best_sideways, best_score
 
-
     def get_heights(self, board):
         heights = [0] * BOARDWIDTH
         # Calculate all tougether to optimize calculation
@@ -261,7 +261,7 @@ class RuleBased(BaseGame):
                     if not Hflag:
                         heights[i] = BOARDHEIGHT - j  # Store the height value
                         Hflag = True
-        #print(heights)
+        # print(heights)
         return heights
 
     def get_Pcrest(self):
@@ -277,27 +277,27 @@ class RuleBased(BaseGame):
                                self.crest[x + 3] - self.crest[x]]))
         return Pcrest
 
-    #get the aligned rotation
+    # get the aligned rotation
     def get_rot(self, rotation):
         pass
 
-    #get the aligned sideway
+    # get the aligned sideway
     def get_sideway(self, x):
         pass
 
-    #write assert on Kb for the crest encoding
+    # write assert on Kb for the crest encoding
     def writePCrest(self, Pcrest):
         self.deletePCrest()
         for elem in Pcrest:
             position, window = elem
-            pre ="inCrest(crest, "
+            pre = "inCrest(crest, "
             sequence = self.encodeShadow(window)
-            if sequence:            #memorizziamo solo le shadow che si possono incastrare con i pezzi
+            if sequence:  # memorizziamo solo le shadow che si possono incastrare con i pezzi
                 assertion = pre + sequence + "," + str(position) + ")"
                 prolog.assertz(assertion)
 
     def encodeShadow(self, window):
-        str_ = 's'  #in prolog le variabili cominciano per lettera maiuscola o per underscore
+        str_ = 's'  # in prolog le variabili cominciano per lettera maiuscola o per underscore
         for x in range(len(window)):
             if window[x] == 0:
                 str_ += '_0'
@@ -313,17 +313,23 @@ class RuleBased(BaseGame):
                 return False
         return str_
 
-    #delete the previus crest
+    # delete the previus crest
     def deletePCrest(self):
         prolog.retractall('inCrest(crest, S, X)')
 
 
-
-
+def rb_main(r_p, numOfRun):
+    numOfRun = int(numOfRun)
+    for x in range(numOfRun):
+        rb = RuleBased(r_p)
+        newScore, weights = rb.run()
+        print("Game achieved a score of: ", newScore)
+        print("weights ", weights)
+    menu.main()
 
 if __name__ == "__main__":
-    #r_p = sys.argv[1]
-    #numOfRun = int(sys.argv[2])
+    # r_p = sys.argv[1]
+    # numOfRun = int(sys.argv[2])
     r_p = 'p'
     numOfRun = 1
     for x in range(numOfRun):
@@ -331,6 +337,3 @@ if __name__ == "__main__":
         newScore, weights = rb.run()
         print("Game achieved a score of: ", newScore)
         print("weights ", weights)
-
-
-

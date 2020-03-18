@@ -3,7 +3,8 @@ from abc import ABC
 import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
-import sys, time
+from com.Menu import menu
+import sys
 
 
 class LocalSearch(BaseGame, ABC):
@@ -94,6 +95,16 @@ class LocalSearch(BaseGame, ABC):
                     absDy * 0.2) - (maxDy * 0.3))
         return test_score, fullLines
 
+
+def ls_main(r_p, numOfRun):
+    #  loop to run  the game with AI for numOfRun executions
+    numOfRun = int(numOfRun)
+    for x in range(numOfRun):
+        ls = LocalSearch(r_p)
+        newScore, weights = ls.run()
+        print("Game achieved a score of: ", newScore)
+        print("weights ", weights)
+    menu.main()
 
 if __name__ == "__main__":
     #  get arguments when AI file is executed by the menu

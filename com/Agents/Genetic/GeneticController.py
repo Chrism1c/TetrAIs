@@ -1,5 +1,6 @@
 from com.Agents.Genetic.Genetic import Genetic
 from com.Utils.fileManager import *
+from com.Menu import menu
 import numpy as np
 import random
 import time
@@ -79,6 +80,7 @@ class GeneticController:
                 continue
         destroy(fileName)
         saveOnFile(fileName, self.generation)
+        menu.main()
         print('end training')
 
 

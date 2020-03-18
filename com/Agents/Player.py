@@ -1,5 +1,6 @@
 from abc import ABC
 from com.Core.BaseGame import BaseGame
+from com.Menu import menu
 import pygame
 import sys
 
@@ -23,6 +24,19 @@ class Player(BaseGame, ABC):
     def get_move(self):
         pass
 
+
+def pl_main(r_p, numOfRun):
+    #  get arguments when AI file is executed by the menu
+    caption = "Game {game}".format(game=1)
+    pygame.display.set_caption(caption)
+    numOfRun = int(numOfRun)
+    #  loop to run  the game with AI for numOfRun executions
+    for x in range(numOfRun):
+        p = Player(r_p)
+        newScore, weights = p.run()
+        print("Game achieved a score of: ", newScore)
+        print("weights ", weights)
+    menu.main()
 
 if __name__ == "__main__":
     #  get arguments when AI file is executed by the menu
