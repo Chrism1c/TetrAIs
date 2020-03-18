@@ -118,7 +118,7 @@ def DFS(x, mode):
     :return: None
     """
     global pieceType, numOfRuns, plotTree
-    print("GO --> DFS ", mode, " ", pieceType, " ", numOfRuns, " ", str(plotTree))
+    print("GO --> DFS ", pieceType, " ", mode, " ", numOfRuns, " ", str(plotTree))
     if gdSidePanel == 'yes':
         sidePanel(titoloDFS, descrizioneDFS)
     os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
@@ -130,16 +130,16 @@ def Local_Search():
     os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
 
 
-def SDG_QL():
+def SDG_QL(x, mode):
     """
-
+    function to execute a Tetris run with Genetic AI
     :return: None
     """
     global pieceType, numOfRuns
-    print("GO --> SDG_QL ", pieceType, " ", numOfRuns)
+    print("GO --> SDG_QL ", pieceType, " ", mode, " ", numOfRuns)
     if gdSidePanel == 'yes':
         sidePanel(titoloSDGQL, descrizioneSDGQL)
-    os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
+    os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
 
 def Genetic(x, mode):
@@ -331,7 +331,9 @@ def main(test=False):
     AI_menu.add_selector('Deep First Search ',
                          [('LV1 Deep', 'LV1'), ('LV2 Deep', 'LV2')], onreturn=DFS)
     AI_menu.add_option('Local Search ', Local_Search)
-    AI_menu.add_option('SGD Q-Learning ', SDG_QL)
+    # AI_menu.add_option('SGD Q-Learning ', SDG_QL)
+    AI_menu.add_selector('SGD Q-Learning ',
+                         [('P0.5', '0.5'), ('P0.0', '0.0')], onreturn=SDG_QL)
     AI_menu.add_selector('Genetic ',
                          [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)

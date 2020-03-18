@@ -40,7 +40,7 @@ class SDG_QL(BaseGame, ABC):
             tetramino
     """
 
-    def __init__(self, r_p):
+    def __init__(self, r_p, mode):
         """
                Parameters
                ----------
@@ -57,7 +57,7 @@ class SDG_QL(BaseGame, ABC):
         super().__init__(r_p)
         self.alpha = 0.01
         self.gamma = 0.9
-        self.explore_change = 0
+        self.explore_change = mode
 
     def get_move(self):
         """
@@ -292,11 +292,12 @@ if __name__ == "__main__":
     #  get arguments when AI file is executed by the menu
     print("START SDG QL ")
     r_p = sys.argv[1]
-    numOfRun = int(sys.argv[2])
+    mode = float(sys.argv[2])
+    numOfRun = int(sys.argv[3])
     print("globalWeights ", weights)
     # loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
-        SdgQL = SDG_QL(r_p)
+        SdgQL = SDG_QL(r_p, mode)
         newScore, _ = SdgQL.run()
         print("Game achieved a score of: ", newScore)
         #print("weights ", SdgQL.weights)
