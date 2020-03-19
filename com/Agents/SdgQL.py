@@ -7,6 +7,7 @@ import sys
 import random
 import math
 from com.Menu import menu
+from com.Utils.Plot import plot_learning_curve
 
 wx = [-1, -1, -1, -30]  # Initial weight vector
 explore_change = 0
@@ -294,6 +295,7 @@ def sdgql_main(r_p, mode, numOfRun):
     explore_change = float(mode)
     numOfRun = int(numOfRun)
     print("First wx: ", wx)
+    scoreArray = list()
     # loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         SdgQL = SDG_QL(r_p)
@@ -304,6 +306,8 @@ def sdgql_main(r_p, mode, numOfRun):
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
+        scoreArray.append(newScore)
+    plot_learning_curve(scoreArray, numOfRun, wx, 'ql')(SdgQL.alpha, SdgQL.gamma, float(mode))
     menu.main()
 
 
