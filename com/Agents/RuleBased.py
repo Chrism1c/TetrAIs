@@ -9,11 +9,32 @@ import random
 from pyswip import Prolog
 
 prolog = Prolog()
-prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl");
-#prolog.consult("com/Utils/Kb.pl")
+#prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl")
+prolog.consult("com/Utils/Kb.pl")
 
 
 class RuleBased(BaseGame):
+    """
+    Main class for Rule Base algorithm, it implements abstarct get_move() function of BaseGame
+        Attributes
+        ----------
+                        None
+        Methods
+        -------
+        get_move()
+            abstract method of BaseGame
+        simulate_move(move, piece)
+            test the move of the piece in a test_board
+        get_expected_score(test_board)
+            return the score of the test_board
+        align(move, piece)
+        get_move_by_rule(piece)
+        get_heights(board)
+        get_Pcrest()
+        writePCrest(Pcrest)
+        encodeShadow(window)
+        deletePCrest(self)
+    """
     def __init__(self, r_p):
         super().__init__(r_p)
         self.crest = [0] * BOARDWIDTH  # cresta relativa
@@ -123,7 +144,6 @@ class RuleBased(BaseGame):
             query.append('bestFit(t3, X3)')
 
         scores = list()
-        print('----------')
         for q in query:
             results = list(prolog.query(q))
             while len(results) > 0:
@@ -136,7 +156,6 @@ class RuleBased(BaseGame):
                 posX2 = False
                 posX3 = False
                 result = results.pop(len(results) - 1)
-                print(result)
                 try:
                     X0 = result['X0']
                     posX0 = True
@@ -165,23 +184,19 @@ class RuleBased(BaseGame):
                     # simula con X0 e salva il risultato
                     move = self.align([0, X0], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X0]))
-                    print('altezza di ', str(X0), ' = ', str(self.crest[X0]))
                     iFlag = True
                 elif posX1 != False:
                     # simula con X1
                     move = self.align([1, X1], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X1]))
-                    print('altezza di ', str(X1), ' = ', str(self.crest[X1]))
                 elif posX2 != False:
                     # simula con X2
                     move = self.align([2, X2], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X2]))
-                    print('altezza di ', str(X2), ' = ', str(self.crest[X2]))
                 elif posX3 != False:
                     # simula con X3
                     move = self.align([3, X3], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X3]))
-                    print('altezza di ', str(X3), ' = ', str(self.crest[X3]))
 
         # if piece['shape'] == 'I' and iFlag:
         # minh = 20
@@ -202,7 +217,6 @@ class RuleBased(BaseGame):
             # print('rule')
             maxScore = -999
             minh = 20
-            print(scores)
             for x in scores:
                 move, score, h = x
                 # print(score)
@@ -210,7 +224,6 @@ class RuleBased(BaseGame):
                     minh = h
                     maxScore = score
                     bestMove = move
-            print(bestMove)
             return bestMove
 
     def get_DFS_move(self):
@@ -276,14 +289,6 @@ class RuleBased(BaseGame):
             Pcrest.append((x, [0, self.crest[x + 1] - self.crest[x], self.crest[x + 2] - self.crest[x],
                                self.crest[x + 3] - self.crest[x]]))
         return Pcrest
-
-    # get the aligned rotation
-    def get_rot(self, rotation):
-        pass
-
-    # get the aligned sideway
-    def get_sideway(self, x):
-        pass
 
     # write assert on Kb for the crest encoding
     def writePCrest(self, Pcrest):
