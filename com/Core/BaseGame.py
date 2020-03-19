@@ -45,12 +45,12 @@ class BaseGame(metaclass=ABCMeta):
         :return:    score : int
                     weighted array : float[]
                     tot run time : float
-                    #moves : int
+                    #tetramino : int
                     avg time per move : float
-                    #moves per second (moves/s) : float
+                    #tetramino per second (moves/s) : float
         """
         start_tot_time = time.time()
-        avg_move_time = 0
+        avg_tetr_time = 0
         if self.timeKiller == True:
             start = time.time()
         # setup variables for the start of the game
@@ -71,17 +71,17 @@ class BaseGame(metaclass=ABCMeta):
         get_new_piece = self.get_new_piece_method()
         self.falling_piece = get_new_piece()
         self.next_piece = get_new_piece()
-        num_move = 0
+        num_tetr = 1
         while True:  # game loop
 
             if self.timeKiller == True:  # se ha superato il tempo limite killiamo il gioco
                 current_time = time.time()
                 if round(current_time - start) > 60 * self.minutes:
-                    tot_time = time.time() - start_tot_time()
-                    return score, weights, round(tot_time, 2), num_move, round(avg_move_time/num_move, 2), round(num_move/tot_time, 2)
+                    tot_time = time.time() - start_tot_time
+                    return score, weights, round(tot_time, 2), num_tetr, round(avg_tetr_time/num_tetr, 2), round(num_tetr/(tot_time*10), 2)
 
             if self.falling_piece is None:
-                num_move += 1
+                num_tetr += 1
                 # No falling piece in play, so start a new piece at the top
                 self.falling_piece = self.next_piece
                 self.next_piece = get_new_piece()
@@ -89,13 +89,14 @@ class BaseGame(metaclass=ABCMeta):
                 # ENDGAME
                 if not is_valid_position(self.board, self.falling_piece):
                     # can't fit a new piece on the board, so game over
-                    tot_time = time.time() - start_tot_time()
-                    return score, weights, round(tot_time, 2), num_move, round(avg_move_time/num_move, 2), round(num_move/tot_time, 2)
+                    tot_time = time.time() - start_tot_time
+                    return score, weights, round(tot_time, 2), num_tetr, round(avg_tetr_time/num_tetr, 2), round(num_tetr/(tot_time*10), 2)
                 # MOVE
-                start_move = time.time()
+                start_tetr = time.time()
                 current_move = self.get_move()
-                end_mossa = time.time()
-                avg_move_time += (end_mossa - start_move)
+                end_tetr = time.time()
+                avg_tetr_time += (end_tetr - start_tetr)
+
 
             self.check_for_quit()  ### Verifica se è stato premuto ESC per chiudere il gioco
             if self.player == False:
@@ -350,16 +351,15 @@ class BaseGame(metaclass=ABCMeta):
         # Interrompe il gioco quando viene premuto il tasto 'ESC'
         :return:
         """
+        from com.Menu.menu import main
         try:
             for event in pygame.event.get(keys.QUIT):  # get all the QUIT events
                 self.terminate()  # terminate if any QUIT events are present
             for event in pygame.event.get(keys.KEYUP):  # get all the KEYUP events
                 if event.key == keys.K_ESCAPE:
-
                     self.terminate()  # terminate if the KEYUP event was for the Esc key
-                    from com.Menu.menu import main
                     main()
-                    pygame.event.post(event)  # put the other KEYUP event objects back
+                pygame.event.post(event)  # put the other KEYUP event objects back
         except SystemExit:
             print("Closing Soppressed")
 

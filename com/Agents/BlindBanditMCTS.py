@@ -208,21 +208,17 @@ def bbmcts_main(r_p, mode, numOfRun, treePlot):
     numOfRun = int(numOfRun)
     for x in range(numOfRun):
         mc = MonteCarlo(r_p, mode, treePlot)
-        newScore, _ = mc.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = mc.run()
         print("Game achieved a score of: ", newScore)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_tetr)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", tetr_s)
     menu.main()
 
 if __name__ == "__main__":
-    #  get arguments when AI file is executed by the menu
-    r_p = sys.argv[1]  # 'r' / 'p'
-    mode = sys.argv[2]  # 'full' / 'random'
-    numOfRun = int(sys.argv[3])  # 1
-    treePlot = sys.argv[4]  # 'si' / 'no'
-    #  loop to run  the game with AI for numOfRun executions
-    for x in range(numOfRun):
-        mc = MonteCarlo(r_p, mode, treePlot)
-        newScore, _ = mc.run()
-        print("Game achieved a score of: ", newScore)
+    bbmcts_main('r', 'full', 1,'no')
 
 
 """

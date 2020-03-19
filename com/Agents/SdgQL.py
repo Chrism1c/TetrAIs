@@ -297,20 +297,15 @@ def sdgql_main(r_p, mode, numOfRun):
     # loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         SdgQL = SDG_QL(r_p)
-        newScore, _ = SdgQL.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = SdgQL.run()
         print("Game achieved a score of: ", newScore)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_tetr)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", tetr_s)
     menu.main()
 
 
 if __name__ == "__main__":
-    global external
-    #  get arguments when AI file is executed by the menu
-    r_p = sys.argv[1]
-    explore_change = float(sys.argv[2])
-    numOfRun = int(sys.argv[3])
-    print("First wx: ", wx)
-    # loop to run  the game with AI for numOfRun executions
-    for x in range(numOfRun):
-        SdgQL = SDG_QL(r_p)
-        newScore, _ = SdgQL.run()
-        print("Game achieved a score of: ", newScore)
+    sdgql_main('r', '0.5', 1)

@@ -162,22 +162,16 @@ def dfs_main(r_p, lv, numOfRun, treePlot):
     numOfRun = int(numOfRun)
     for x in range(numOfRun):
         dfs = DeepFirstSearch(r_p, lv, treePlot)
-        newScore, weights = dfs.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = dfs.run()
         print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_tetr)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", tetr_s)
     menu.main()
 
 
 
 if __name__ == "__main__":
-    #  get arguments when AI file is executed by the menu
-    r_p = sys.argv[1]
-    lv = sys.argv[2]
-    numOfRun = int(sys.argv[3])
-    treePlot = sys.argv[4]
-    #  loop to run  the game with AI for numOfRun executions
-    for x in range(numOfRun):
-        dfs = DeepFirstSearch(r_p, lv, treePlot)
-        newScore, weights = dfs.run()
-        print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+    dfs_main('r', 'LV1', 1, 'no')

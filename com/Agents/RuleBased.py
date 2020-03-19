@@ -322,18 +322,14 @@ def rb_main(r_p, numOfRun):
     numOfRun = int(numOfRun)
     for x in range(numOfRun):
         rb = RuleBased(r_p)
-        newScore, weights = rb.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = rb.run()
         print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_tetr)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", tetr_s)
     menu.main()
 
 if __name__ == "__main__":
-    # r_p = sys.argv[1]
-    # numOfRun = int(sys.argv[2])
-    r_p = 'p'
-    numOfRun = 1
-    for x in range(numOfRun):
-        rb = RuleBased(r_p)
-        newScore, weights = rb.run()
-        print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+    rb_main('r', 1)

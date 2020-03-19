@@ -114,7 +114,7 @@ class GeneticController:
         for i in range(self.numRun):
             g = Genetic(self.r_p, chromosome, True)
             start = time.time()
-            score, weights = g.run()
+            score, _, _, _, _, _ = g.run()
             finish = time.time()
             tempo = round(finish - start)
             avgFitness += (score + tempo)

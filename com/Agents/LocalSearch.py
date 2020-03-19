@@ -101,18 +101,14 @@ def ls_main(r_p, numOfRun):
     numOfRun = int(numOfRun)
     for x in range(numOfRun):
         ls = LocalSearch(r_p)
-        newScore, weights = ls.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = ls.run()
         print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_tetr)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", tetr_s)
     menu.main()
 
 if __name__ == "__main__":
-    #  get arguments when AI file is executed by the menu
-    r_p = sys.argv[1]
-    numOfRun = int(sys.argv[2])
-    #  loop to run  the game with AI for numOfRun executions
-    for x in range(numOfRun):
-        ls = LocalSearch(r_p)
-        newScore, weights = ls.run()
-        print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+    ls_main('r', 1)

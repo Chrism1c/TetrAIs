@@ -2,10 +2,10 @@ from abc import ABC
 from com.Core.BaseGame import BaseGame
 from com.Menu import menu
 import pygame
-import sys
+import time
 
 
-class Player(BaseGame, ABC):
+class Player(BaseGame):
     """
         Main class for simple run of a new Game played by an Human
         Methods
@@ -22,7 +22,7 @@ class Player(BaseGame, ABC):
         self.player = True
 
     def get_move(self):
-        pass
+        time.sleep(0.5)
 
 
 def pl_main(r_p, numOfRun):
@@ -33,13 +33,13 @@ def pl_main(r_p, numOfRun):
     #  loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         p = Player(r_p)
-        newScore, weights, tot_time, n_moves, avg_move_time, moves_s = p.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = p.run()
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
-        print("#moves:  ", n_moves)
+        print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
-        print("moves/sec:  ", moves_s)
+        print("moves/sec:  ", tetr_s)
     menu.main()
 
 if __name__ == "__main__":

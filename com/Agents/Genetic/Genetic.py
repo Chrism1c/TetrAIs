@@ -155,8 +155,13 @@ def perfectRun(pieceType):
     r_p = pieceType
     if perfectChromosome is not None:
         gen = Genetic(r_p, perfectChromosome)
-        newScore, _ = gen.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = gen.run()
         print("Game achieved a score of: ", newScore)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_tetr)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", tetr_s)
         menu.main()
     else:
         print("Needs to be Trained!")
