@@ -4,18 +4,18 @@ Plot result function
 
 import matplotlib.pyplot as plt
 
-#plot_learning_curve(...)(...)
 
-def plot_learning_curve(scoreArray, n_run, weights, type_='def'):
+# plot_learning_curve(...)(...)
 
+def plot_learning_curve(scoreArray, game_index_array, weights, type_='def'):
     def __init_plot():
         plt.figure(1)
         plt.subplot(211)
-        plt.plot(n_run, scoreArray, 'k-')
+        plt.plot(game_index_array, scoreArray, 'k-')
         plt.xlabel('Game Number')
         plt.ylabel('Game Score')
         plt.title('Curve')
-        plt.xlim(1, max(n_run))
+        plt.xlim(1, max(game_index_array))
         plt.ylim(0, max(scoreArray) * 1.1)
 
     def plot_default():
@@ -33,35 +33,35 @@ def plot_learning_curve(scoreArray, n_run, weights, type_='def'):
                   ' n_gen0=', str(n_gen0))
         ax = plt.gca()
         ax.set_yscale('log')
-        plt.plot(n_run, weights[0], label='fullLines')
-        plt.plot(n_run, weights[1], label='vHoles')
-        plt.plot(n_run, weights[2], label='vBlocks')
-        plt.plot(n_run, weights[3], label='maxHeight')
-        plt.plot(n_run, weights[4], label='stdDY')
-        plt.plot(n_run, weights[5], label='absDy')
-        plt.plot(n_run, weights[6], label='maxDy')
+        plt.plot(game_index_array, weights[0], label='fullLines')
+        plt.plot(game_index_array, weights[1], label='vHoles')
+        plt.plot(game_index_array, weights[2], label='vBlocks')
+        plt.plot(game_index_array, weights[3], label='maxHeight')
+        plt.plot(game_index_array, weights[4], label='stdDY')
+        plt.plot(game_index_array, weights[5], label='absDy')
+        plt.plot(game_index_array, weights[6], label='maxDy')
         plt.legend(loc='lower left')
-        plt.xlim(0, max(n_run))
+        plt.xlim(0, max(game_index_array))
         plt.ylim(0.0001, 100)
         plt.show()
 
     def plot_ql(alpha: float, gamma: float, explore_change: float):
         __init_plot()
-
         # Plot the weights over time
         plt.subplot(212)
         plt.xlabel('Game Number')
         plt.ylabel('Weights')
-        plt.title('QLearning Curve: alpha=', str(round(alpha, 2)), ' gamma=', str(round(gamma, 2)),
-                  ' explore_change=', str(round(explore_change, 2)))
+        title = str('QLearning Curve: alpha=' + str(round(alpha, 2)) + ' gamma=' + str(round(gamma, 2)) +
+                    ' explore_change=' + str(round(explore_change, 2)))
+        plt.title(title)
         ax = plt.gca()
         ax.set_yscale('log')
-        plt.plot(n_run, weights[0], label='height_sum')
-        plt.plot(n_run, weights[1], label='diff_sum')
-        plt.plot(n_run, weights[2], label='max_height')
-        plt.plot(n_run, weights[3], label='holes')
+        plt.plot(game_index_array, weights[0], label='height_sum')
+        plt.plot(game_index_array, weights[1], label='diff_sum')
+        plt.plot(game_index_array, weights[2], label='max_height')
+        plt.plot(game_index_array, weights[3], label='holes')
         plt.legend(loc='lower left')
-        plt.xlim(0, max(n_run))
+        plt.xlim(0, max(game_index_array))
         plt.ylim(0.0001, 100)
         plt.show()
 
@@ -73,7 +73,32 @@ def plot_learning_curve(scoreArray, n_run, weights, type_='def'):
     else:
         return plot_default
 
-
+# def plot_ql(scoreArray, game_index_array, weightsMatrix, alpha, gamma, explore_change):
+#     plt.subplot(211)
+#     plt.plot(game_index_array, scoreArray, 'k-')
+#     plt.xlabel('Game Number')
+#     plt.ylabel('Game Score')
+#     plt.title('Curve')
+#     plt.xlim(1, max(game_index_array))
+#     plt.ylim(0, max(scoreArray) * 1.1)
+#
+#     # Plot the weights over time
+#     plt.subplot(212)
+#     plt.xlabel('Game Number')
+#     plt.ylabel('Weights')
+#     title = str('QLearning Curve: alpha=' + str(round(alpha, 2)) + ' gamma=' + str(round(gamma, 2)) +
+#                 ' explore_change=' + str(round(explore_change, 2)))
+#     plt.title(title)
+#     ax = plt.gca()
+#     ax.set_yscale('log')
+#     plt.plot(game_index_array, weightsMatrix[0], label='height_sum')
+#     plt.plot(game_index_array, weightsMatrix[1], label='diff_sum')
+#     plt.plot(game_index_array, weightsMatrix[2], label='max_height')
+#     plt.plot(game_index_array, weightsMatrix[3], label='holes')
+#     plt.legend(loc='lower left')
+#     plt.xlim(0, max(game_index_array))
+#     plt.ylim(0.0001, 100)
+#     plt.show()
 
 
 def plot_results(scoreArray, game_index_array, weights):

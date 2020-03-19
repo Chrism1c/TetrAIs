@@ -12,6 +12,7 @@ from com.Utils.Plot import plot_learning_curve
 wx = [-1, -1, -1, -30]  # Initial weight vector
 explore_change = 0
 
+
 class SDG_QL(BaseGame, ABC):
     """
         Main class for SDG_QL reinforcement learning algorithm (one object = one move), it implements abstarct move() function of BaseGame
@@ -271,7 +272,7 @@ class SDG_QL(BaseGame, ABC):
         old_params = self.get_parameters_x(board)
         test_board = copy.deepcopy(board)
         test_piece = copy.deepcopy(piece)
-        test_board = self.simulate_board_x( test_board, test_piece, move)
+        test_board = self.simulate_board_x(test_board, test_piece, move)
         if test_board is not None:
             new_params = self.get_parameters_x(test_board[0])
             one_step_reward = test_board[1]
@@ -295,19 +296,37 @@ def sdgql_main(r_p, mode, numOfRun):
     explore_change = float(mode)
     numOfRun = int(numOfRun)
     print("First wx: ", wx)
+    games_completed = 0
     scoreArray = list()
+    weightsMatrix = list()
+    weight0Array = list()
+    weight1Array = list()
+    weight2Array = list()
+    weight3Array = list()
+    game_index_array = []
     # loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
+        games_completed += 1
+        weight0Array.append(-wx[0])
+        weight1Array.append(-wx[1])
+        weight2Array.append(-wx[2])
+        weight3Array.append(-wx[3])
         SdgQL = SDG_QL(r_p)
-        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = SdgQL.run()
+        newScore, _, tot_time, n_tetr, avg_move_time, tetr_s = SdgQL.run()
+        game_index_array.append(games_completed)
         print("Game achieved a score of: ", newScore)
-        print("weights: ", weights)
+        print("weights: ", wx)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
         scoreArray.append(newScore)
-    plot_learning_curve(scoreArray, numOfRun, wx, 'ql')(SdgQL.alpha, SdgQL.gamma, float(mode))
+    weightsMatrix.append(weight0Array)
+    weightsMatrix.append(weight1Array)
+    weightsMatrix.append(weight2Array)
+    weightsMatrix.append(weight3Array)
+    # plot_ql(scoreArray, game_index_array, weightsMatrix, 0.01, 0.9, 0.5)
+    plot_learning_curve(scoreArray, game_index_array, weightsMatrix, 'ql')(SdgQL.alpha, SdgQL.gamma, float(mode))
     menu.main()
 
 
