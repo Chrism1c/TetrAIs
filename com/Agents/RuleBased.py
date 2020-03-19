@@ -28,18 +28,29 @@ class RuleBased(BaseGame):
         get_expected_score(test_board)
             return the score of the test_board
         align(move, piece)
+            aling the move of the piece in the BaseGame.make_move() logic
         get_move_by_rule(piece)
+            return the best move consulting the Knowledge Base
         get_heights(board)
+            return the array of heights of the board
         get_Pcrest()
+            return the set of parts of the crest
         writePCrest(Pcrest)
+            write the set of parts of the crest in the Knowledge Base
         encodeShadow(window)
+            encode the window in a prolog format
         deletePCrest(self)
+            delete the deprecated set of parts of the crest in the Knowledge Base
     """
     def __init__(self, r_p):
         super().__init__(r_p)
         self.crest = [0] * BOARDWIDTH  # cresta relativa
 
     def get_move(self):
+        """
+        implementation of the abstract method of BaseGame
+        :return: move[rotation, sideways]
+        """
         # self.update_crest(self.get_heights(self.board))
         self.crest = self.get_heights(self.board)
         self.writePCrest(self.get_Pcrest())
@@ -47,6 +58,12 @@ class RuleBased(BaseGame):
         return self.get_move_by_rule(self.falling_piece)
 
     def simulate_move(self, move, piece):
+        """
+        test the move of the piece in a test_board
+        :param move: [rotation, sideway]
+        :param piece: current falling piece
+        :return: score:int
+        """
         test_board = copy.deepcopy(self.board)
         test_piece = copy.deepcopy(piece)
         test_board = simulate_board(test_board, test_piece, move)
@@ -57,6 +74,11 @@ class RuleBased(BaseGame):
             return -99  # con questo punteggio una mossa non valida non verrà considerata
 
     def get_expected_score(self, test_board):
+        """
+        return the score of the test_board
+        :param test_board: a game board
+        :return: test_score: int, fullLines: int
+        """
         ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
         test_score = float(
@@ -65,6 +87,12 @@ class RuleBased(BaseGame):
         return test_score, fullLines
 
     def align(self, move, piece):
+        """
+        aling the move of the piece in the BaseGame.make_move() logic
+        :param move: [rotation, sideway]
+        :param piece: current falling piece
+        :return: [aligned rotation, aligned sideways]
+        """
         rot = move[0]
         sideway = move[1]
         if piece['shape'] == 'S' or piece['shape'] == 'Z' or piece['shape'] == 'I':
@@ -114,6 +142,11 @@ class RuleBased(BaseGame):
         return [new_rot, new_sideway]
 
     def get_move_by_rule(self, piece):
+        """
+        get the move using the bestFit prolog rule consulting the Knowledge Base
+        :param piece: current falling piece
+        :return: [best rotation, best sideways]
+        """
         iFlag = False
         query = list()
         if piece['shape'] == 'S':
@@ -265,6 +298,11 @@ class RuleBased(BaseGame):
         return best_rot, best_sideways, best_score
 
     def get_heights(self, board):
+        """
+        return the array of heights of the board
+        :param board: board of the current game
+        :return: int[]
+        """
         heights = [0] * BOARDWIDTH
         # Calculate all tougether to optimize calculation
         for i in range(0, BOARDWIDTH):  # Select a column
@@ -278,6 +316,10 @@ class RuleBased(BaseGame):
         return heights
 
     def get_Pcrest(self):
+        """
+        return the set of parts of the crest
+        :return: tuple[]
+        """
         Pcrest = list()
         for x in range(int(len(self.crest))):  # 1
             Pcrest.append((x, [0]))
@@ -292,6 +334,11 @@ class RuleBased(BaseGame):
 
     # write assert on Kb for the crest encoding
     def writePCrest(self, Pcrest):
+        """
+        write the set of parts of the crest in the Knowledge Base
+        :param Pcrest: set of parts of the crest
+        :return: None
+        """
         self.deletePCrest()
         for elem in Pcrest:
             position, window = elem
@@ -302,6 +349,12 @@ class RuleBased(BaseGame):
                 prolog.assertz(assertion)
 
     def encodeShadow(self, window):
+        """
+        encode the window in a prolog format
+        ex [0,0,1] => s_0_0_1
+        :param window: the array to encode
+        :return: str
+        """
         str_ = 's'  # in prolog le variabili cominciano per lettera maiuscola o per underscore
         for x in range(len(window)):
             if window[x] == 0:
@@ -320,6 +373,10 @@ class RuleBased(BaseGame):
 
     # delete the previus crest
     def deletePCrest(self):
+        """
+        delete the deprecated set of parts of the crest in the Knowledge Base
+        :return: None
+        """
         prolog.retractall('inCrest(crest, S, X)')
 
 
