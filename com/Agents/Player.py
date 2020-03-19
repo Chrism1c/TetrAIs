@@ -33,20 +33,14 @@ def pl_main(r_p, numOfRun):
     #  loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         p = Player(r_p)
-        newScore, weights = p.run()
+        newScore, weights, tot_time, n_moves, avg_move_time, moves_s = p.run()
         print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_moves)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", moves_s)
     menu.main()
 
 if __name__ == "__main__":
-    #  get arguments when AI file is executed by the menu
-    caption = "Game {game}".format(game=1)
-    pygame.display.set_caption(caption)
-    r_p = sys.argv[1]
-    numOfRun = int(sys.argv[2])
-    #  loop to run  the game with AI for numOfRun executions
-    for x in range(numOfRun):
-        p = Player(r_p)
-        newScore, weights = p.run()
-        print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+    pl_main('r', 1)

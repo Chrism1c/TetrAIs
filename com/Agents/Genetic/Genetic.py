@@ -6,6 +6,7 @@ from operator import itemgetter
 from com.Core.BaseGame import *
 from com.Utils.Utils import *
 from com.Utils.fileManager import chromToStr, getPerfectChromosome
+from com.Menu import menu
 
 
 class Genetic(BaseGame, ABC):

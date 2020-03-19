@@ -9,8 +9,8 @@ import random
 from pyswip import Prolog
 
 prolog = Prolog()
-# prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl");
-prolog.consult("com/Utils/Kb.pl")
+prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl");
+#prolog.consult("com/Utils/Kb.pl")
 
 
 class RuleBased(BaseGame):

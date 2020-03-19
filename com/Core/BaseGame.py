@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from mpmath import mp
 from com.Core.Model import *
-from com.Core.Plot import *
 
 import random
 import time
@@ -9,10 +8,6 @@ import os
 
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
-import sys
-import math
-import copy
-import numpy
 import pygame.locals as keys
 import pyautogui
 
@@ -46,9 +41,16 @@ class BaseGame(metaclass=ABCMeta):
 
     def run(self):
         """
-        TetrAIs Soul function, execute all main operation of the game and use the 'overrided' move function by the AI
-        :return: None
+        TetrAIs Soul function, execute all main operations of the game and use the 'overrided' move function by the AI
+        :return:    score : int
+                    weighted array : float[]
+                    tot run time : float
+                    #moves : int
+                    avg time per move : float
+                    #moves per second (moves/s) : float
         """
+        start_tot_time = time.time()
+        avg_move_time = 0
         if self.timeKiller == True:
             start = time.time()
         # setup variables for the start of the game
@@ -69,15 +71,17 @@ class BaseGame(metaclass=ABCMeta):
         get_new_piece = self.get_new_piece_method()
         self.falling_piece = get_new_piece()
         self.next_piece = get_new_piece()
-
+        num_move = 0
         while True:  # game loop
 
             if self.timeKiller == True:  # se ha superato il tempo limite killiamo il gioco
                 current_time = time.time()
                 if round(current_time - start) > 60 * self.minutes:
-                    return score, weights
+                    tot_time = time.time() - start_tot_time()
+                    return score, weights, round(tot_time, 2), num_move, round(avg_move_time/num_move, 2), round(num_move/tot_time, 2)
 
             if self.falling_piece is None:
+                num_move += 1
                 # No falling piece in play, so start a new piece at the top
                 self.falling_piece = self.next_piece
                 self.next_piece = get_new_piece()
@@ -85,9 +89,13 @@ class BaseGame(metaclass=ABCMeta):
                 # ENDGAME
                 if not is_valid_position(self.board, self.falling_piece):
                     # can't fit a new piece on the board, so game over
-                    return score, weights
+                    tot_time = time.time() - start_tot_time()
+                    return score, weights, round(tot_time, 2), num_move, round(avg_move_time/num_move, 2), round(num_move/tot_time, 2)
                 # MOVE
+                start_move = time.time()
                 current_move = self.get_move()
+                end_mossa = time.time()
+                avg_move_time += (end_mossa - start_move)
 
             self.check_for_quit()  ### Verifica se è stato premuto ESC per chiudere il gioco
             if self.player == False:
