@@ -51,10 +51,11 @@ class GeneticController:
                 None
         """
         print("start creation gen:0")
-        #numGen0 = 2 ** self.numGen
-        self.numGen0 = 8
+        # numGen0 = 2 ** self.numGen
+        self.numGen0 = 4
         self.generation = self.createGen0(self.numGen0)
         # self.generation = self.createGen01(numGen0)
+        game_index_array = []
         scoreArray = list()
         gene0Array = list()
         gene1Array = list()
@@ -81,13 +82,14 @@ class GeneticController:
                 gene4Array.append(self.generation[x][4])
                 gene5Array.append(self.generation[x][5])
                 gene6Array.append(self.generation[x][6])
+                game_index_array.append(n_run)
                 print("Gen ", i, " Run ", x, " AvgScore ", str(avgScoreChromosome))
             # k = round(len(self.generation)/2)
             k = len(self.generation)
             print("Full Generation = ", self.generation)
             print("end gen:", i)
             i += 1
-            #self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
+            # self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
             self.generation = self.crossingFixedPopulation(self.generation, i)
             # save
             for x in range(len(population)):
@@ -99,12 +101,11 @@ class GeneticController:
                 continue
         destroy(fileName)
         saveOnFile(fileName, self.generation)
-        plot_learning_curve(scoreArray, n_run,
+        plot_learning_curve(scoreArray, game_index_array,
                             [gene0Array, gene1Array, gene2Array, gene3Array, gene4Array, gene5Array, gene6Array],
                             'gen')(self.numGen, self.numRun, self.numGen0)
         menu.main()
         print('end training')
-
 
     def fitnessFunction(self, numTetraminoes, score):
         """
@@ -120,7 +121,6 @@ class GeneticController:
         Newscore = (score + numTetraminoes) * 0.1
         # print("***************************************** fitnessFunctionAlt = ", Newscore)
         return Newscore
-
 
     def AVGfitnesingSing(self, chromosome):
         """
@@ -237,7 +237,6 @@ class GeneticController:
                 newPopulation.append(self.crossingchromosome(population[x], population[x + 1]))
         return newPopulation
 
-
     def crossingFixedPopulation(self, population, numGen):
         """
         # fixed number of Chromosomes
@@ -254,15 +253,14 @@ class GeneticController:
             cross = self.crossingTournmentPopulation(orderedPopulation, round((len(orderedPopulation)) / 2))
             for x in range(round(len(orderedPopulation) / 2)):  # 1/2 best
                 newPopulation.append(orderedPopulation[x])
-            for x in range(round(len(cross))):                  # 1/4 crossed
+            for x in range(round(len(cross))):  # 1/4 crossed
                 newPopulation.append(cross[x])
             new = round(len(population) - len(newPopulation))
-            for x in range(new):                                # 1/4 new
+            for x in range(new):  # 1/4 new
                 newPopulation.append(self.getNewChromosome())
         return newPopulation
 
-
-#### Deprecated code ####
+    #### Deprecated code ####
 
     def avgFitness(self, vFitness):
         mFitness = 0
