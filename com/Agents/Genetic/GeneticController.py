@@ -107,6 +107,7 @@ class GeneticController:
         menu.main()
         print('end training')
 
+
     def fitnessFunction(self, numTetraminoes, score):
         """
             Alternative fitness function that use numTetraminoes to alterate the score value
@@ -121,6 +122,7 @@ class GeneticController:
         Newscore = (score + numTetraminoes) * 0.1
         # print("***************************************** fitnessFunctionAlt = ", Newscore)
         return Newscore
+
 
     def AVGfitnesingSing(self, chromosome):
         """
@@ -237,6 +239,7 @@ class GeneticController:
                 newPopulation.append(self.crossingchromosome(population[x], population[x + 1]))
         return newPopulation
 
+
     def crossingFixedPopulation(self, population, numGen):
         """
         # fixed number of Chromosomes
@@ -253,14 +256,15 @@ class GeneticController:
             cross = self.crossingTournmentPopulation(orderedPopulation, round((len(orderedPopulation)) / 2))
             for x in range(round(len(orderedPopulation) / 2)):  # 1/2 best
                 newPopulation.append(orderedPopulation[x])
-            for x in range(round(len(cross))):  # 1/4 crossed
+            for x in range(round(len(cross))):                  # 1/4 crossed
                 newPopulation.append(cross[x])
             new = round(len(population) - len(newPopulation))
-            for x in range(new):  # 1/4 new
+            for x in range(new):                                # 1/4 new
                 newPopulation.append(self.getNewChromosome())
         return newPopulation
 
-    #### Deprecated code ####
+
+#### Deprecated code ####
 
     def avgFitness(self, vFitness):
         mFitness = 0
