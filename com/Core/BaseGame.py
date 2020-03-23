@@ -362,6 +362,7 @@ class BaseGame(metaclass=ABCMeta):
             for event in pygame.event.get(keys.KEYUP):  # get all the KEYUP events
                 if event.key == keys.K_ESCAPE:
                     self.terminate()  # terminate if the KEYUP event was for the Esc key
+                    from com.Menu.menu import  main
                     main()
                 pygame.event.post(event)  # put the other KEYUP event objects back
         except SystemExit:

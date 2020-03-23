@@ -53,8 +53,9 @@ def plot_learning_curve(scoreArray, game_index_array, weights, type_='def'):
         plt.subplot(212)
         plt.xlabel('Game Number')
         plt.ylabel('Weights')
-        plt.title('Genetic Learning Curve: numGen=', str(numGen), 'n run per chromosoma=', str(n_run_x_chromosome),
-                  ' n_gen0=', str(n_gen0))
+        title = str('Genetic Learning Curve: numGen=' + str(numGen) + 'n run per chromosoma=' + str(n_run_x_chromosome) +
+                  ' n_gen0='+ str(n_gen0))
+        plt.title(title)
         ax = plt.gca()
         ax.set_yscale('log')
         plt.plot(game_index_array, weights[0], label='fullLines')

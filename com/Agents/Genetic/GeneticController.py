@@ -51,10 +51,11 @@ class GeneticController:
                 None
         """
         print("start creation gen:0")
-        #numGen0 = 2 ** self.numGen
-        self.numGen0 = 8
+        # numGen0 = 2 ** self.numGen
+        self.numGen0 = 4
         self.generation = self.createGen0(self.numGen0)
         # self.generation = self.createGen01(numGen0)
+        game_index_array = []
         scoreArray = list()
         gene0Array = list()
         gene1Array = list()
@@ -81,13 +82,14 @@ class GeneticController:
                 gene4Array.append(self.generation[x][4])
                 gene5Array.append(self.generation[x][5])
                 gene6Array.append(self.generation[x][6])
+                game_index_array.append(n_run)
                 print("Gen ", i, " Run ", x, " AvgScore ", str(avgScoreChromosome))
             # k = round(len(self.generation)/2)
             k = len(self.generation)
             print("Full Generation = ", self.generation)
             print("end gen:", i)
             i += 1
-            #self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
+            # self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
             self.generation = self.crossingFixedPopulation(self.generation, i)
             # save
             for x in range(len(population)):
@@ -99,7 +101,7 @@ class GeneticController:
                 continue
         destroy(fileName)
         saveOnFile(fileName, self.generation)
-        plot_learning_curve(scoreArray, self.numGen0*n_run,
+        plot_learning_curve(scoreArray, game_index_array,
                             [gene0Array, gene1Array, gene2Array, gene3Array, gene4Array, gene5Array, gene6Array],
                             'gen')(self.numGen, self.numRun, self.numGen0)
         menu.main()
