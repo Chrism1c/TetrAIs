@@ -217,9 +217,9 @@ def bbmcts_main(r_p, mode, numOfRun, treePlot):
         print("moves/sec:  ", tetr_s)
     menu.main()
 
-if __name__ == "__main__":
-    bbmcts_main('r', 'full', 1,'no')
 
+if __name__ == "__main__":
+    bbmcts_main('r', 'full', 1, 'no')
 
 """
 ** Implementazione **
