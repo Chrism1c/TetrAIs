@@ -99,7 +99,7 @@ class GeneticController:
                 continue
         destroy(fileName)
         saveOnFile(fileName, self.generation)
-        plot_learning_curve(scoreArray, n_run,
+        plot_learning_curve(scoreArray, self.numGen0*n_run,
                             [gene0Array, gene1Array, gene2Array, gene3Array, gene4Array, gene5Array, gene6Array],
                             'gen')(self.numGen, self.numRun, self.numGen0)
         menu.main()
