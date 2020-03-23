@@ -15,7 +15,6 @@ def gen_main(r_p, mode, numGen):
     if mode == 'Training':
         train = GeneticController(r_p, numGen)
         train.workGenetic()
-        menu.main()
     else:
         perfectRun(r_p)
 

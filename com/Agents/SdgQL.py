@@ -327,7 +327,6 @@ def sdgql_main(r_p, mode, numOfRun):
     weightsMatrix.append(weight3Array)
     # plot_ql(scoreArray, game_index_array, weightsMatrix, 0.01, 0.9, 0.5)
     plot_learning_curve(scoreArray, game_index_array, weightsMatrix, 'ql')(SdgQL.alpha, SdgQL.gamma, float(mode))
-    menu.main()
 
 
 if __name__ == "__main__":

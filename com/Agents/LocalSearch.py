@@ -108,7 +108,6 @@ def ls_main(r_p, numOfRun):
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-    menu.main()
 
 if __name__ == "__main__":
     ls_main('r', 1)

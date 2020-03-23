@@ -169,7 +169,6 @@ def dfs_main(r_p, lv, numOfRun, treePlot):
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-    menu.main()
 
 
 

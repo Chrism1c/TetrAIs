@@ -128,9 +128,12 @@ def DFS(x, mode):
     global pieceType, numOfRuns, plotTree
     print("GO --> DFS ", pieceType, " ", mode, " ", numOfRuns, " ", str(plotTree))
     if gdSidePanel == 'yes':
-        sidePanel(titoloDFS, descrizioneDFS)
+        root = tk.Tk()
+        showSidePanel(root, titoloDFS, descrizioneDFS)
     dfs_main(pieceType, mode, numOfRuns, str(plotTree))
-
+    if gdSidePanel == 'yes':
+        root.destroy()
+        main()
     # os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(
     # plotTree))
 
@@ -139,6 +142,7 @@ def Local_Search():
     global pieceType, numOfRuns
     print("GO --> LS ", pieceType, " ", numOfRuns)
     ls_main(pieceType, numOfRuns)
+    main()
     # os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
 
 
@@ -150,8 +154,12 @@ def SDG_QL(x, mode):
     global pieceType, numOfRuns
     print("GO --> SDG_QL ", pieceType, " ", mode, " ", numOfRuns)
     if gdSidePanel == 'yes':
-        sidePanel(titoloSDGQL, descrizioneSDGQL)
+        root = tk.Tk()
+        showSidePanel(root, titoloSDGQL, descrizioneSDGQL)
     sdgql_main(pieceType, mode, numOfRuns)
+    if gdSidePanel == 'yes':
+        root.destroy()
+    main()
     # os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
 
@@ -165,8 +173,12 @@ def Genetic(x, mode):
     global pieceType, numOfRuns, plotTree
     print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
     if gdSidePanel == 'yes':
-        sidePanel(titoloGen, descrizioneGen)
+        root = tk.Tk()
+        showSidePanel(root, titoloGen, descrizioneGen)
     gen_main(pieceType, mode, numOfRuns)
+    if gdSidePanel == 'yes':
+        root.destroy()
+    main()
     # os.system(
     #     'python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
@@ -179,8 +191,12 @@ def Rule_Based():
     global pieceType, numOfRuns
     print("GO --> Rule_Based ", pieceType)
     if gdSidePanel == 'yes':
-        sidePanel(titoloRB, descrizioneRB)
+        root = tk.Tk()
+        showSidePanel(root, titoloRB, descrizioneRB)
     rb_main(pieceType, numOfRuns)
+    if gdSidePanel == 'yes':
+        root.destroy()
+    main()
 
 
 def Monte_Carlo(x, mode):
@@ -193,8 +209,12 @@ def Monte_Carlo(x, mode):
     global pieceType, numOfRuns, plotTree
     print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType, " ", plotTree)
     if gdSidePanel == 'yes':
-        sidePanel(titoloMCTS, descrizioneMCTS)
+        root = tk.Tk()
+        showSidePanel(root, titoloMCTS, descrizioneMCTS)
     bbmcts_main(pieceType, mode, numOfRuns, plotTree)
+    if gdSidePanel == 'yes':
+        root.destroy()
+    main()
     # os.system(
     #     'python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
@@ -208,6 +228,7 @@ def Player():
     print("GO --> Player ", pieceType, " ", numOfRuns)
     # os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
     pl_main(pieceType, numOfRuns)
+    main()
 
 
 def cat():
@@ -293,7 +314,7 @@ def main(test=False):
     posX = SCREEN_WIDTH / 2
     posY = SCREEN_HEIGHT / 2
 
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "%i,%i" % (posX, posY)
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (posX, posY)
     os.environ['SDL_VIDEO_CENTERED'] = '0'
 
     # Create pygame screen and objects
