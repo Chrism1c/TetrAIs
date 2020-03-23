@@ -319,6 +319,11 @@ class BaseGame(metaclass=ABCMeta):
                     if event.key == keys.K_p:
                         pygame.mixer.music.unpause()
                         self.pause = False
+                    elif event.key == keys.K_ESCAPE:
+                        self.terminate()
+                        from com.Menu.menu import main
+                        main()
+                        print("ESC from PAUSED")
         print("************************* End PAUSE **************************")
 
     def terminate(self):
@@ -351,7 +356,6 @@ class BaseGame(metaclass=ABCMeta):
         # Interrompe il gioco quando viene premuto il tasto 'ESC'
         :return:
         """
-        from com.Menu.menu import main
         try:
             for event in pygame.event.get(keys.QUIT):  # get all the QUIT events
                 self.terminate()  # terminate if any QUIT events are present
