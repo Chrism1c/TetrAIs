@@ -217,19 +217,31 @@ class RuleBased(BaseGame):
                     # simula con X0 e salva il risultato
                     move = self.align([0, X0], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X0]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X0))
+                    print(' - rotazione: ', str(0))
                     iFlag = True
                 elif posX1 != False:
                     # simula con X1
                     move = self.align([1, X1], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X1]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X1))
+                    print(' - rotazione: ', str(1))
                 elif posX2 != False:
                     # simula con X2
                     move = self.align([2, X2], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X2]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X2))
+                    print(' - rotazione: ', str(2))
                 elif posX3 != False:
                     # simula con X3
                     move = self.align([3, X3], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X3]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X3))
+                    print(' - rotazione: ', str(3))
 
         # if piece['shape'] == 'I' and iFlag:
         # minh = 20
@@ -246,6 +258,7 @@ class RuleBased(BaseGame):
             # return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
             # print('dfs')
             return self.get_DFS_move()
+            print('fit non trovato nella base di conoscenza: mossa random')
         else:
             # print('rule')
             maxScore = -999
@@ -257,6 +270,7 @@ class RuleBased(BaseGame):
                     minh = h
                     maxScore = score
                     bestMove = move
+            print('mossa migliore: ', str(bestMove), ' con uno score di: ', str(maxScore))
             return bestMove
 
     def get_DFS_move(self):
