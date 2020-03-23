@@ -3,9 +3,12 @@
 # Bibliografia
 "Artificial Intelligence: Foundations of Computational Agents"
 
+# Reinforcement learning
+"https://www.geeksforgeeks.org/what-is-reinforcement-learning/"
 # Q-Learning
 "Deeplizard Reinforcement Learning - Goal Oriented Intelligence"
 "https://it.wikipedia.org/wiki/Q-learning"
+"https://www.geeksforgeeks.org/q-learning-in-python/"
 "https://towardsdatascience.com/reinforcement-learning-temporal-difference-sarsa-q-learning-expected-sarsa-on-python-9fecfda7467e"
 # SDG
 "https://it.wikipedia.org/wiki/Discesa_stocastica_del_gradiente"
