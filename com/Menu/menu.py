@@ -5,12 +5,19 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 import pygameMenu
 from com.Utils.sidePanel import *
+from com.Agents.DeepFirstSearch import dfs_main
+from com.Agents.SdgQL import sdgql_main
+from com.Agents.BlindBanditMCTS import bbmcts_main
+from com.Agents.LocalSearch import ls_main
+from com.Agents.Player import pl_main
+from com.Agents.RuleBased import rb_main
+from com.Agents.Genetic.__main__ import gen_main
 
 # -----------------------------------------------------------------------------
 # Constants and global variables
 # -----------------------------------------------------------------------------
 
-ABOUT = ['TetrAIs: v1.0', 'Authors: ']
+ABOUT = ['TetrAIs: v2.0', 'Authors: ']
 
 COLOR_BLACK = (0, 0, 0)
 COLOR_WHITE = (255, 255, 255)
@@ -27,7 +34,6 @@ MENU_TITLE_COLOR = COLOR_WHITE
 WINDOW_SIZE = (500, 380)
 SCREEN_WIDTH = 1920
 SCREEN_HEIGHT = 1080
-
 
 sound = None
 surface = None
@@ -64,13 +70,24 @@ def check_name_test(value):
     print('User name: {0}'.format(value))
 
 
-def changePieceType(x, y):
+def changePieceType(x, choice):
+    """
+    function to set the type of Piece (PI or Random)
+    :param x: Not uded
+    :param chose: chose 'p' or 'r'
+    :return: None
+    """
     global pieceType
-    pieceType = y
+    pieceType = choice
     print("pieceType = ", pieceType)
 
 
 def update_num_runs(num):
+    """
+    function to set the number of run to execute
+    :param num: int value
+    :return: None
+    """
     global numOfRuns
     if len(num) > 0 and 0 < int(num) < 999:
         numOfRuns = int(num)
@@ -78,94 +95,173 @@ def update_num_runs(num):
 
 
 def guideSidePanel(x, choice):
+    """
+    function to activate or not the Guide AI Panel
+    :param x: not used
+    :param choice: str value 'yes' / 'no'
+    :return: None
+    """
     global gdSidePanel
     gdSidePanel = choice
     print("guideSidePanel = ", choice)
 
 
 def plotDecisionTree(x, choice):
+    """
+    function to activate or not the TreePlot on DFS LV1 / DFS LV2 / MonteCarlo (<LV2) / Genetic genealogicalTree
+    :param x: not used
+    :param choice: str value 'yes' / 'no'
+    :return: None
+    """
     global plotTree
     plotTree = choice
     print("plotTree = ", choice)
 
 
-
 def DFS(x, mode):
+    """
+    function to execute a Tetris run with DFS AI
+    :param x: not used
+    :param mode: execution modality 'LV1' / 'LV2'
+    :return: None
+    """
     global pieceType, numOfRuns, plotTree
-    print("GO --> DFS ", mode, " ", pieceType, " ", numOfRuns, " ", str(plotTree))
+    print("GO --> DFS ", pieceType, " ", mode, " ", numOfRuns, " ", str(plotTree))
     if gdSidePanel == 'yes':
-        sidePanel(titoloDFS, descrizioneDFS)
-    os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
+        root = tk.Tk()
+        showSidePanel(root, titoloDFS, descrizioneDFS)
+    dfs_main(pieceType, mode, numOfRuns, str(plotTree))
+    if gdSidePanel == 'yes':
+        root.destroy()
+        main()
+    # os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(
+    # plotTree))
 
 
 def Local_Search():
     global pieceType, numOfRuns
     print("GO --> LS ", pieceType, " ", numOfRuns)
-    os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
+    ls_main(pieceType, numOfRuns)
+    main()
+    # os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
 
 
-def SDG_QL():
+def SDG_QL(x, mode):
+    """
+    function to execute a Tetris run with Genetic AI
+    :return: None
+    """
     global pieceType, numOfRuns
-    print("GO --> SDG_QL ", pieceType, " ", numOfRuns)
+    print("GO --> SDG_QL ", pieceType, " ", mode, " ", numOfRuns)
     if gdSidePanel == 'yes':
-        sidePanel(titoloSDGQL, descrizioneSDGQL)
-    os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + str(numOfRuns))
+        root = tk.Tk()
+        showSidePanel(root, titoloSDGQL, descrizioneSDGQL)
+    sdgql_main(pieceType, mode, numOfRuns)
+    if gdSidePanel == 'yes':
+        root.destroy()
+    main()
+    # os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
 
 def Genetic(x, mode):
+    """
+    function to execute a Tetris run with Genetic AI
+    :param x: not used
+    :param mode: execution modality 'Training' / 'PerfectChromosome'
+    :return: None
+    """
     global pieceType, numOfRuns, plotTree
     print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
     if gdSidePanel == 'yes':
-        sidePanel(titoloGen, descrizioneGen)
-    os.system('python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
-
-
-def Rule_Based():
-    global pieceType, numOfRuns
-    # os.system("")
-    print("GO --> Rule_Based ", pieceType)
-    os.system('python com/Agents/RuleBased.py ' + pieceType + " " + str(numOfRuns))
-
-
-def Rule_Based():
-    global pieceType, numOfRuns
-    print("GO --> Logic_Rule_Based ", pieceType)
+        root = tk.Tk()
+        showSidePanel(root, titoloGen, descrizioneGen)
+    gen_main(pieceType, mode, numOfRuns, plotTree)
     if gdSidePanel == 'yes':
-        sidePanel(titoloRB, descrizioneRB)
-    os.system('python com/Agents/LogicRuleBased.py ' + pieceType + ' ' + str(numOfRuns))
+        root.destroy()
+    main()
+
+
+def Rule_Based():
+    """
+    function to execute a Tetris run with Rule_Based AI
+    :return: None
+    """
+    global pieceType, numOfRuns
+    print("GO --> Rule_Based ", pieceType)
+    if gdSidePanel == 'yes':
+        root = tk.Tk()
+        showSidePanel(root, titoloRB, descrizioneRB)
+    rb_main(pieceType, numOfRuns)
+    if gdSidePanel == 'yes':
+        root.destroy()
+    main()
 
 
 def Monte_Carlo(x, mode):
-    global pieceType, numOfRuns
-    print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType)
+    """
+    function to execute a Tetris run with Monte_Carlo AI
+    :param x: not used
+    :param mode: execution modality 'RandScan' / 'FullScan'
+    :return: None
+    """
+    global pieceType, numOfRuns, plotTree
+    print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType, " ", plotTree)
     if gdSidePanel == 'yes':
-        sidePanel(titoloMCTS, descrizioneMCTS)
-    os.system('python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
+        root = tk.Tk()
+        showSidePanel(root, titoloMCTS, descrizioneMCTS)
+    bbmcts_main(pieceType, mode, numOfRuns, plotTree)
+    if gdSidePanel == 'yes':
+        root.destroy()
+    main()
+    # os.system(
+    #     'python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
 
 def Player():
+    """
+    function to execute a Tetris run with HI (Human Intelligence)    XD
+    :return: None
+    """
     global pieceType, numOfRuns
     print("GO --> Player ", pieceType, " ", numOfRuns)
-    os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
+    # os.system('python com/Agents/Player.py ' + pieceType + " " + str(numOfRuns))
+    pl_main(pieceType, numOfRuns)
+    main()
 
 
 def cat():
+    """
+    function to execute... meow ?????
+    :return: !!! let's play !!!
+    """
     # url = "https://www.youtube.com/watch?v=J---aiyznGQ"
     url = "https://www.youtube.com/watch?v=3AGqTbqhAU4"
     os.startfile(url)
 
 
 def CM():
+    """
+    function to open TetrAIs creators personal Page
+    :return: None
+    """
     url = "https://github.com/Chrism1c"
     os.startfile(url)
 
 
 def DP():
+    """
+    function to open TetrAIs creators personal Page
+    :return: None
+    """
     url = "https://github.com/W1l50n2208"
     os.startfile(url)
 
 
 def MP():
+    """
+    function to open TetrAIs creators personal Page
+    :return: None
+    """
     url = "https://github.com/m3ttiw"
     os.startfile(url)
 
@@ -216,9 +312,8 @@ def main(test=False):
     posX = SCREEN_WIDTH / 2
     posY = SCREEN_HEIGHT / 2
 
-    os.environ['SDL_VIDEO_WINDOW_POS'] = "%i,%i" % (posX, posY)
+    os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (posX, posY)
     os.environ['SDL_VIDEO_CENTERED'] = '0'
-
 
     # Create pygame screen and objects
     surface = pygame.display.set_mode(WINDOW_SIZE)
@@ -265,7 +360,8 @@ def main(test=False):
     AI_menu.add_selector('Deep First Search ',
                          [('LV1 Deep', 'LV1'), ('LV2 Deep', 'LV2')], onreturn=DFS)
     AI_menu.add_option('Local Search ', Local_Search)
-    AI_menu.add_option('SGD Q-Learning ', SDG_QL)
+    AI_menu.add_selector('SGD Q-Learning ',
+                         [('P0.5', '0.5'), ('P1', '1')], onreturn=SDG_QL)
     AI_menu.add_selector('Genetic ',
                          [('Perfect Chromosome', 'Perfect'), ('Training Run', 'Training')], onreturn=Genetic)
     AI_menu.add_option('Rule Based ', Rule_Based)

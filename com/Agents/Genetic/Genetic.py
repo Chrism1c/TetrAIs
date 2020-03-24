@@ -6,40 +6,70 @@ from operator import itemgetter
 from com.Core.BaseGame import *
 from com.Utils.Utils import *
 from com.Utils.fileManager import chromToStr, getPerfectChromosome
-
-
+from com.Menu import menu
 
 
 class Genetic(BaseGame, ABC):
+    """
+        Main class for Genetic algorithm (one object = one move), it implements abstract move() function of BaseGame
+        Attributes
+        ----------
+                        None
+        Methods
+        -------
+        get_expected_score(test_board)
+            Calculate score of test_board
+        get_move()
+            Execute
+        getGeneticMove(board, piece, NextPiece)
+            Execute the main move of the AI
+        getScore(board)
+            Calculate score of board
+        get_expected_score(test_board)
+            Calculate score of test_board
+        calculateWScore(board)
+            Calculate weighted score of board
+    """
 
-    def __init__(self, r_p, chromosome, timeKiller = False):
+    def __init__(self, r_p, chromosome, timeKiller=False):
+        """
+            Parameters
+            ----------
+            r_p : str
+                type of piece used ('r' = random, 'p' = pi)
+            chromosome : list
+                list of weights used to identify and alterates the score function
+            timeKiller : bool
+                useful to stop a very good random Chromosome
+        """
         super().__init__(r_p)
         self.timeKiller = timeKiller
-        #print('creazione cromosoma')
-        # self.chromosome = self.createGen0(numChrom)
-        # self.chromosome = self.getNewChromosome()
         self.chromosome = chromosome
-        #print('stampa cromosoma')
-        #print(self.chromosome)
-
 
     def get_move(self):
+        """
+            Return the main function to use (getGeneticMove)
+        """
         return self.getGeneticMove(self.board, self.falling_piece, self.next_piece)
 
     def getGeneticMove(self, board, piece, NextPiece):
-        ### Cerca la mossa migliore da effettuare sulla board, passando il vettore dei pesi
-        # start = time.perf_counter()  # salvo il tempo di partenza
-
+        """
+            Main Scanning function Deep LV2 based on DFS
+            Parameters
+            ----------
+            board : str
+                Matrix (lists of lists) of strings
+            piece : Object
+                conteining 'shape', 'rotation', 'x', 'y', 'color'
+            NextPiece : Object
+                conteining 'shape', 'rotation', 'x', 'y', 'color'
+        """
         best_rot = 0
         best_sideways = 0
         best_score = - 99
-
         NextScore = (0, 0, -99)  # rot,sideways, score
-        bestLines = -1
-        nextLines = -1
 
         # rot =  1-'O':    2-'I': 2-'Z':    4-'J': 4-'L': 4-'T'
-
         for rot in range(0, len(PIECES[piece['shape']])):  # per le rotazioni possibili su lpezzo corrente
             for sideways in range(-5, 6):  # per i drop possibili sulla board
                 move = [rot, sideways]  # salvo la coppia corrente
@@ -48,7 +78,7 @@ class Genetic(BaseGame, ABC):
                 test_board = simulate_board(test_board, test_piece, move)  # simulo il pezzo e la mossa sulla board test
                 # Check NEXT
                 if test_board is not None:  # se la simulazione è andata a buon fine
-                    ## Chose the best after next                                # effettuo il calcolo con il pezzo successivo
+                    # Chose the best after next,  effettuo il calcolo con il pezzo successivo
                     for rot2 in range(0, len(PIECES[NextPiece['shape']])):
                         for sideways2 in range(-5, 6):
                             move2 = [rot2, sideways2]
@@ -64,33 +94,31 @@ class Genetic(BaseGame, ABC):
                         best_sideways = sideways  # aggiorno il best sideway (LV1)
                         best_rot = rot  # aggiorno il best rot (LV1)
 
-        # finish = time.perf_counter()
-        # print(f'Finished in {round(finish - start, 2)} second(s) with full')
-
         return [best_rot, best_sideways]
-
-        # crea un nuovo cromooma con geni random
 
     # restituisce il vettore con le metriche calcolate
     def getScore(self, board):
+        """
+            Calculate score of board
+            # serve per calcolare lo score del tetramino che si sta piazzando in base ai valori assegnati al cromosoma
+            # restituisce il vettore con le metriche calcolate
+            Parameters
+            ----------
+                  board : Matrix (lists of lists) of strings
+        """
         fullLines, gaps, numTetraminoes, max_height, standardDvHeights, abs_diffCol, max_diffCol = get_parameters(
             board)
         score = [fullLines, gaps, numTetraminoes, max_height, standardDvHeights, abs_diffCol, max_diffCol]
         return score
 
-    # serve per calcolare lo score del tetramino che si sta piazzando in base ai valori assegnati al cromosoma
-
-    def get_expected_score_OLD(self, test_board):
-        ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
-        fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
-        test_score = float(
-            (fullLines * 2 * self.chromosome[0]) - (vHoles * self.chromosome[1]) - (vBlocks * self.chromosome[2]) -
-            ((maxHeight ** 1.5) * self.chromosome[3]) - (stdDY * self.chromosome[4]) - (absDy * self.chromosome[5]) -
-            (maxDy * self.chromosome[6]))
-        return test_score, fullLines
-
     def get_expected_score(self, test_board):
-        ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
+        """
+            Calculate score of test_board with fixed weights
+            # serve per calcolare lo score del tetramino che si sta piazzando in base ai valori assegnati al cromosoma
+            Parameters
+            ----------
+                  test_board : Matrix (lists of lists) of strings
+        """
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
         test_score = float(
             (fullLines * self.chromosome[0]) - (vHoles * self.chromosome[1]) - (vBlocks * self.chromosome[2]) -
@@ -98,9 +126,14 @@ class Genetic(BaseGame, ABC):
             (maxDy * self.chromosome[6]))
         return test_score, fullLines
 
-    # Funzione che calcola lo score pesato relativo alla board corrente
-
     def calculateWScore(self, board):
+        """
+            Calculate weighted score of board
+            # Funzione che calcola lo score pesato relativo alla board corrente
+            Parameters
+            ----------
+                  board : Matrix (lists of lists) of strings
+        """
         score = self.getScore(board)
         wscore = 0
         for x in range(len(score)):
@@ -109,16 +142,30 @@ class Genetic(BaseGame, ABC):
         print("Wscore = ", wscore)
         return wscore
 
+
 def perfectRun(pieceType):
-    perfectChromosome = getPerfectChromosome()     #import del chromosoma perfetto da file
+    """
+        Execute run of the Perfect Chromosome
+        Parameters
+        ----------
+        pieceType : str
+            type of piece used ('r' = random, 'p' = pi)
+    """
+    perfectChromosome = getPerfectChromosome()  # import del chromosoma perfetto da file
     r_p = pieceType
     if perfectChromosome is not None:
         gen = Genetic(r_p, perfectChromosome)
-        newScore, _ = gen.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = gen.run()
         print("Game achieved a score of: ", newScore)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_tetr)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", tetr_s)
     else:
         print("Needs to be Trained!")
         exit(0)
+
 
 if __name__ == "__main__":
     perfectRun(sys.argv[1])

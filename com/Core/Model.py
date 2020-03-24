@@ -6,30 +6,23 @@ import pyautogui
 pyautogui.PAUSE = 0.03
 pyautogui.FAILSAFE = True
 
-DeepLines = 0
+APPNAME = "TetrAIs"
+# DeepLines = 0
 pause = False
-APPNAME = "DiscoTetris"
-MEDIAPATH = "com/raw/"
-#MEDIAPATH = "C://Users/matti/PyCharmProjects/DiscoTetris/com/raw/"
-FPS = 50  ### framerate del gioco (PAL 50FPS)
+FPS = 60
 WINDOWWIDTH = 640
 WINDOWHEIGHT = 480
-BOXSIZE = 20  ### Dimensione singolo blocco
+BOXSIZE = 20
 BOARDWIDTH = 10
 BOARDHEIGHT = 20
 BLANK = '0'
-MOVESIDEWAYSFREQ = 0.075  ### frequenza di movimento laterale
-# MOVEDOWNFREQ = 0.05         ### frequenza di discesa
+MOVESIDEWAYSFREQ = 0.075
+# MOVEDOWNFREQ = 0.05
 MOVEDOWNFREQ = 1
 XMARGIN = int((WINDOWWIDTH - BOARDWIDTH * BOXSIZE) / 2)
 TOPMARGIN = WINDOWHEIGHT - (BOARDHEIGHT * BOXSIZE) - 5
 
-# Define learning parameters
-
 MAX_GAMES = 1
-
-# weights = [-1, -1, -1, -30]  # Initial weight vector
-# weights = [-0.0009, -0.0292, -0.7492, -99.2209]  # Best weight record
 
 weights = [1.8, 1.0, 0.5, 0.02, 0.01, 0.2, 0.3]
 
@@ -112,10 +105,6 @@ PIECES = {
     'T': T_SHAPE_TEMPLATE,
 }
 
-# PIECES = {
-#     'O': O_SHAPE_TEMPLATE
-# }
-
 PIECES_COLORS = {
     'S': 3,  # GREEN
     'Z': 4,  # RED
@@ -128,8 +117,13 @@ PIECES_COLORS = {
 
 
 def add_to_board(board, piece):
-    ### riempie nella board il tetramino nella locazione definita
+    """
+    # riempie nella board il tetramino nella locazione definita
     # fill in the board based on piece's location, shape, and rotation
+    :param board: Matrix (lists of lists) of strings
+    :param piece: Object with'shape', 'rotation', 'x', 'y', 'color' attributes
+    :return: None
+    """
     for x in range(TEMPLATEWIDTH):
         for y in range(TEMPLATEHEIGHT):
             if PIECES[piece['shape']][piece['rotation']][y][x] != BLANK and x + piece['x'] < 10 and y + piece['y'] < 20:
@@ -141,13 +135,26 @@ def add_to_board(board, piece):
 
 
 def is_on_board(x, y):
-    ### Verifica la presenza delle coordinate nella tupla (x,y) all'interno dei limiti dell board
-    return x >= 0 and x < BOARDWIDTH and y < BOARDHEIGHT
+    """
+    # Verifica la presenza delle coordinate nella tupla (x,y) all'interno dei limiti dell board
+    # Check if x and y ar in board limits
+    :param x: int value
+    :param y: int value
+    :return: x and y value
+    """
+    return 0 <= x < BOARDWIDTH and y < BOARDHEIGHT
 
 
 def is_valid_position(board, piece, adj_x=0, adj_y=0):
-    ### Verifica la validità della posizione che si vuole fornire al tetramino corrente (interno all board e senza collisioni)
+    """
+    # Verifica la validità della posizione che si vuole fornire al tetramino corrente (interno all board e senza collisioni)
     # Return True if the piece is within the board and not colliding
+    :param board: Matrix (lists of lists) of strings
+    :param piece: Object with'shape', 'rotation', 'x', 'y', 'color' attributes
+    :param adj_x: int value
+    :param adj_y: int value
+    :return: bool value
+    """
     for x in range(TEMPLATEWIDTH):
         for y in range(TEMPLATEHEIGHT):
             is_above_board = y + piece['y'] + adj_y < 0
@@ -161,7 +168,13 @@ def is_valid_position(board, piece, adj_x=0, adj_y=0):
 
 
 def is_complete_line(board, y):
-    ### Funzione booleana che restituisce True se la linea di altezza y è compleata, altrimenti restituisce false
+    """
+    Check if a line of blocks is compleate or not
+    :param board: Matrix (lists of lists) of strings
+    :param y: int value (coordinate)
+    :return: bool value
+    """
+    # Funzione booleana che restituisce True se la linea di altezza y è compleata, altrimenti restituisce false
     # Return True if the line filled with boxes with no gaps.
     for x in range(BOARDWIDTH):
         if board[x][y] == BLANK:
@@ -170,9 +183,13 @@ def is_complete_line(board, y):
 
 
 def get_level_and_fall_freq(score):
-    ### Calcola il livello del gioco in base a una funzione :  int(score / 10) + 1 e calcola quanti secondi passano per il drop
-    # Based on the score, return the level the player is on and
-    # how many seconds pass until a falling piece falls one space.
+    """
+    # Calcola il livello del gioco in base a una funzione :  int(score / 10) + 1 e calcola quanti secondi passano per il drop
+    # Based on the score, return the level the player is on and how many seconds pass until a falling piece falls one space.
+    # get currrent level and the fall frequency (Higher is the level, Higher is the drop frequency
+    :param score: float value
+    :return: level, fall_freq : float values
+    """
     level = int(score / 1000) + 1
     # fall_freq = 0.07 * math.exp((1 - level) / 3)  # 0.27 - (level * 0.02) default
     multiplier = level * 0.1
@@ -180,30 +197,19 @@ def get_level_and_fall_freq(score):
     # fall_freq =  0.27 - (level * 0.02)
     return level, fall_freq
 
-
-def get_new_piece():
-    ### restituisce un pezzo random con colorazione random
-    # return a random new piece in a random rotation and color
-    shape = random.choice(list(PIECES.keys()))
-    new_piece = {
-        'shape': shape,
-        'rotation': random.randint(0, len(PIECES[shape]) - 1),
-        'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
-        'y': -2,  # start it above the board (i.e. less than 0)
-        # 'color': random.randint(1,len(COLORS) - 1)
-        'color': PIECES_COLORS[shape]
-    }
-    return new_piece
-
-
 def get_score(lines, level):
+    """
+    function to calculate current score value
+    :param lines: int num of lines removed
+    :param level: current level value
+    :return: Score value based on originals multiplier values
+    """
     # setting the multiplier
     multiplier = 1
-    if level >= 25 and level < 50:
+    if 25 <= level < 50:
         multiplier = 2
     elif level >= 50:
         multiplier = 3
-
     # score per lines removed
     if lines == 0:
         return 0
@@ -218,8 +224,12 @@ def get_score(lines, level):
 
 
 def remove_complete_lines(board):
-    ### Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
+    """
+    # Rimuove ogni linea completata, sposta tutto in basso di una riga e restituisce il numero di linee completate
     # Remove any completed lines on the board, move everything above them down, and return the number of complete lines.
+    :param board:
+    :return:lines_removed, board
+    """
     lines_removed = 0
     y = BOARDHEIGHT - 1  # start y at the bottom of the board
     while y >= 0:
@@ -238,3 +248,22 @@ def remove_complete_lines(board):
         else:
             y -= 1  # move on to check next row up
     return lines_removed, board
+
+
+# def get_new_piece():
+#     """
+#     # restituisce un pezzo random con colorazione random
+#     # return a random new piece in a random rotation and color
+#     :return: a new_piece
+#     """
+#
+#     shape = random.choice(list(PIECES.keys()))
+#     new_piece = {
+#         'shape': shape,
+#         'rotation': random.randint(0, len(PIECES[shape]) - 1),
+#         'x': int(BOARDWIDTH / 2) - int(TEMPLATEWIDTH / 2),
+#         'y': -2,  # start it above the board (i.e. less than 0)
+#         # 'color': random.randint(1,len(COLORS) - 1)
+#         'color': PIECES_COLORS[shape]
+#     }
+#     return new_piece

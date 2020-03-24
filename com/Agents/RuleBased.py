@@ -4,26 +4,66 @@ import sys
 import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
+from com.Menu import menu
 import random
 from pyswip import Prolog
-prolog = Prolog()
-prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl");
 
+prolog = Prolog()
+#prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl")
+prolog.consult("com/Utils/Kb.pl")
 
 
 class RuleBased(BaseGame):
+    """
+    Main class for Rule Base algorithm, it implements abstarct get_move() function of BaseGame
+        Attributes
+        ----------
+                        None
+        Methods
+        -------
+        get_move()
+            abstract method of BaseGame
+        simulate_move(move, piece)
+            test the move of the piece in a test_board
+        get_expected_score(test_board)
+            return the score of the test_board
+        align(move, piece)
+            aling the move of the piece in the BaseGame.make_move() logic
+        get_move_by_rule(piece)
+            return the best move consulting the Knowledge Base
+        get_heights(board)
+            return the array of heights of the board
+        get_Pcrest()
+            return the set of parts of the crest
+        writePCrest(Pcrest)
+            write the set of parts of the crest in the Knowledge Base
+        encodeShadow(window)
+            encode the window in a prolog format
+        deletePCrest(self)
+            delete the deprecated set of parts of the crest in the Knowledge Base
+    """
     def __init__(self, r_p):
         super().__init__(r_p)
-        self.crest = [0]*BOARDWIDTH                 #cresta relativa
+        self.crest = [0] * BOARDWIDTH  # cresta relativa
 
     def get_move(self):
-        #self.update_crest(self.get_heights(self.board))
+        """
+        implementation of the abstract method of BaseGame
+        :return: move[rotation, sideways]
+        """
+        # self.update_crest(self.get_heights(self.board))
         self.crest = self.get_heights(self.board)
         self.writePCrest(self.get_Pcrest())
-        #return self.align(self.get_move_by_rule(self.falling_piece, self.get_Pcrest()), self.falling_piece)
+        # return self.align(self.get_move_by_rule(self.falling_piece, self.get_Pcrest()), self.falling_piece)
         return self.get_move_by_rule(self.falling_piece)
 
     def simulate_move(self, move, piece):
+        """
+        test the move of the piece in a test_board
+        :param move: [rotation, sideway]
+        :param piece: current falling piece
+        :return: score:int
+        """
         test_board = copy.deepcopy(self.board)
         test_piece = copy.deepcopy(piece)
         test_board = simulate_board(test_board, test_piece, move)
@@ -31,9 +71,14 @@ class RuleBased(BaseGame):
             test_score, _ = self.get_expected_score(test_board)
             return test_score
         else:
-            return -99          #con questo punteggio una mossa non valida non verrà considerata
+            return -99  # con questo punteggio una mossa non valida non verrà considerata
 
     def get_expected_score(self, test_board):
+        """
+        return the score of the test_board
+        :param test_board: a game board
+        :return: test_score: int, fullLines: int
+        """
         ### Calcola lo score sulla board di test passando il vettore dei pesi di ogni metrica
         fullLines, vHoles, vBlocks, maxHeight, stdDY, absDy, maxDy = get_parameters(test_board)
         test_score = float(
@@ -41,8 +86,13 @@ class RuleBased(BaseGame):
                     absDy * 0.2) - (maxDy * 0.3))
         return test_score, fullLines
 
-
     def align(self, move, piece):
+        """
+        aling the move of the piece in the BaseGame.make_move() logic
+        :param move: [rotation, sideway]
+        :param piece: current falling piece
+        :return: [aligned rotation, aligned sideways]
+        """
         rot = move[0]
         sideway = move[1]
         if piece['shape'] == 'S' or piece['shape'] == 'Z' or piece['shape'] == 'I':
@@ -81,17 +131,22 @@ class RuleBased(BaseGame):
         else:
             new_rot = 0
 
-        #new_rot = abs(rot - piece['rotation'])
+        # new_rot = abs(rot - piece['rotation'])
         if piece['shape'] == 'I':
             new_sideway = sideway - 5
-        elif piece['shape'] == 'O' or piece['shape'] == 'Z' or piece['shape'] == 'S' or piece['shape'] == 'T' or piece['shape'] == 'L' or piece['shape'] == 'J':
+        elif piece['shape'] == 'O' or piece['shape'] == 'Z' or piece['shape'] == 'S' or piece['shape'] == 'T' or piece[
+            'shape'] == 'L' or piece['shape'] == 'J':
             new_sideway = sideway - 4
         else:
             new_sideway = sideway - 6
-        return[new_rot, new_sideway]
-
+        return [new_rot, new_sideway]
 
     def get_move_by_rule(self, piece):
+        """
+        get the move using the bestFit prolog rule consulting the Knowledge Base
+        :param piece: current falling piece
+        :return: [best rotation, best sideways]
+        """
         iFlag = False
         query = list()
         if piece['shape'] == 'S':
@@ -122,7 +177,6 @@ class RuleBased(BaseGame):
             query.append('bestFit(t3, X3)')
 
         scores = list()
-        print('----------')
         for q in query:
             results = list(prolog.query(q))
             while len(results) > 0:
@@ -135,7 +189,6 @@ class RuleBased(BaseGame):
                 posX2 = False
                 posX3 = False
                 result = results.pop(len(results) - 1)
-                print(result)
                 try:
                     X0 = result['X0']
                     posX0 = True
@@ -161,55 +214,63 @@ class RuleBased(BaseGame):
                     pass
 
                 if posX0 != False:
-                    #simula con X0 e salva il risultato
+                    # simula con X0 e salva il risultato
                     move = self.align([0, X0], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X0]))
-                    print('altezza di ', str(X0), ' = ', str(self.crest[X0]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X0))
+                    print(' - rotazione: ', str(0))
                     iFlag = True
                 elif posX1 != False:
-                    #simula con X1
+                    # simula con X1
                     move = self.align([1, X1], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X1]))
-                    print('altezza di ', str(X1), ' = ', str(self.crest[X1]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X1))
+                    print(' - rotazione: ', str(1))
                 elif posX2 != False:
-                    #simula con X2
+                    # simula con X2
                     move = self.align([2, X2], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X2]))
-                    print('altezza di ', str(X2), ' = ', str(self.crest[X2]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X2))
+                    print(' - rotazione: ', str(2))
                 elif posX3 != False:
-                    #simula con X3
+                    # simula con X3
                     move = self.align([3, X3], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X3]))
-                    print('altezza di ', str(X3), ' = ', str(self.crest[X3]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X3))
+                    print(' - rotazione: ', str(3))
 
-        #if piece['shape'] == 'I' and iFlag:
-            #minh = 20
-            #for x in scores:
-                #move, score, h = x
-                # print(score)
-                #if h < minh:
-                    #minh = h
-                    #bestMove = move
-            #print(bestMove)
-            #return bestMove
+        # if piece['shape'] == 'I' and iFlag:
+        # minh = 20
+        # for x in scores:
+        # move, score, h = x
+        # print(score)
+        # if h < minh:
+        # minh = h
+        # bestMove = move
+        # print(bestMove)
+        # return bestMove
 
         if len(scores) == 0:
-            #return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
-            #print('dfs')
+            # return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
+            # print('dfs')
             return self.get_DFS_move()
+            print('fit non trovato nella base di conoscenza: mossa random')
         else:
-            #print('rule')
+            # print('rule')
             maxScore = -999
             minh = 20
-            print(scores)
             for x in scores:
                 move, score, h = x
-                #print(score)
+                # print(score)
                 if h < minh or maxScore < score:
                     minh = h
                     maxScore = score
                     bestMove = move
-            print(bestMove)
+            print('mossa migliore: ', str(bestMove), ' con uno score di: ', str(maxScore))
             return bestMove
 
     def get_DFS_move(self):
@@ -250,8 +311,12 @@ class RuleBased(BaseGame):
 
         return best_rot, best_sideways, best_score
 
-
     def get_heights(self, board):
+        """
+        return the array of heights of the board
+        :param board: board of the current game
+        :return: int[]
+        """
         heights = [0] * BOARDWIDTH
         # Calculate all tougether to optimize calculation
         for i in range(0, BOARDWIDTH):  # Select a column
@@ -261,10 +326,14 @@ class RuleBased(BaseGame):
                     if not Hflag:
                         heights[i] = BOARDHEIGHT - j  # Store the height value
                         Hflag = True
-        #print(heights)
+        # print(heights)
         return heights
 
     def get_Pcrest(self):
+        """
+        return the set of parts of the crest
+        :return: tuple[]
+        """
         Pcrest = list()
         for x in range(int(len(self.crest))):  # 1
             Pcrest.append((x, [0]))
@@ -277,27 +346,30 @@ class RuleBased(BaseGame):
                                self.crest[x + 3] - self.crest[x]]))
         return Pcrest
 
-    #get the aligned rotation
-    def get_rot(self, rotation):
-        pass
-
-    #get the aligned sideway
-    def get_sideway(self, x):
-        pass
-
-    #write assert on Kb for the crest encoding
+    # write assert on Kb for the crest encoding
     def writePCrest(self, Pcrest):
+        """
+        write the set of parts of the crest in the Knowledge Base
+        :param Pcrest: set of parts of the crest
+        :return: None
+        """
         self.deletePCrest()
         for elem in Pcrest:
             position, window = elem
-            pre ="inCrest(crest, "
+            pre = "inCrest(crest, "
             sequence = self.encodeShadow(window)
-            if sequence:            #memorizziamo solo le shadow che si possono incastrare con i pezzi
+            if sequence:  # memorizziamo solo le shadow che si possono incastrare con i pezzi
                 assertion = pre + sequence + "," + str(position) + ")"
                 prolog.assertz(assertion)
 
     def encodeShadow(self, window):
-        str_ = 's'  #in prolog le variabili cominciano per lettera maiuscola o per underscore
+        """
+        encode the window in a prolog format
+        ex [0,0,1] => s_0_0_1
+        :param window: the array to encode
+        :return: str
+        """
+        str_ = 's'  # in prolog le variabili cominciano per lettera maiuscola o per underscore
         for x in range(len(window)):
             if window[x] == 0:
                 str_ += '_0'
@@ -313,24 +385,26 @@ class RuleBased(BaseGame):
                 return False
         return str_
 
-    #delete the previus crest
+    # delete the previus crest
     def deletePCrest(self):
+        """
+        delete the deprecated set of parts of the crest in the Knowledge Base
+        :return: None
+        """
         prolog.retractall('inCrest(crest, S, X)')
 
 
-
-
-
-if __name__ == "__main__":
-    #r_p = sys.argv[1]
-    #numOfRun = int(sys.argv[2])
-    r_p = 'p'
-    numOfRun = 1
+def rb_main(r_p, numOfRun):
+    numOfRun = int(numOfRun)
     for x in range(numOfRun):
         rb = RuleBased(r_p)
-        newScore, weights = rb.run()
+        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = rb.run()
         print("Game achieved a score of: ", newScore)
-        print("weights ", weights)
+        print("weights: ", weights)
+        print("tot run time: ", tot_time)
+        print("#moves:  ", n_tetr)
+        print("avg time per move: ", avg_move_time)
+        print("moves/sec:  ", tetr_s)
 
-
-
+if __name__ == "__main__":
+    rb_main('r', 1)
