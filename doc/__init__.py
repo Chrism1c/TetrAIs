@@ -19,8 +19,4 @@
 "https://www.okpedia.it/ricerca_locale_greedy"
 "https://medium.com/cracking-the-data-science-interview/an-introduction-to-optimization-in-intelligent-systems-c1aa408d3ac2"
 
-# Genetico
-"https://pdfs.semanticscholar.org/3e40/a48f6fa2c17e933dd6b1c707fd43aae9d176.pdf"
-
-
 """
