@@ -56,7 +56,7 @@ class GeneticController:
         """
         print("start creation gen:0")
         # numGen0 = 2 ** self.numGen
-        self.numGen0 = 4
+        self.numGen0 = 8
         self.generation = self.createGen0(self.numGen0)
         # self.generation = self.createGen01(numGen0)
         game_index_array = []
@@ -224,10 +224,10 @@ class GeneticController:
         newchromosome = [0] * self.dimChromomsome  # new empty crhomosome
         for x in range(self.dimChromomsome):
             if random.randint(0, 9) == 1:  # 10% chromosome from parent 1
-                newchromosome[x] = a[x]
+                newchromosome[x] = self.mutation(a[x])
                 # print("Gene from Parent_1 =",a[x])
             elif random.randint(0, 9) == 2:  # 10% chromosome from parent 2
-                newchromosome[x] = b[x]
+                newchromosome[x] = self.mutation(b[x])
                 # print("Gene from Parent_2 =",b[x])
             else:
                 # 80% to avarage 2 Chromosome parents values
