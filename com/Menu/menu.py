@@ -175,12 +175,10 @@ def Genetic(x, mode):
     if gdSidePanel == 'yes':
         root = tk.Tk()
         showSidePanel(root, titoloGen, descrizioneGen)
-    gen_main(pieceType, mode, numOfRuns)
+    gen_main(pieceType, mode, numOfRuns, plotTree)
     if gdSidePanel == 'yes':
         root.destroy()
     main()
-    # os.system(
-    #     'python com/Agents/Genetic/__main__.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))
 
 
 def Rule_Based():
