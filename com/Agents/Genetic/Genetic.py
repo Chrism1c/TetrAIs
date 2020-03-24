@@ -162,7 +162,6 @@ def perfectRun(pieceType):
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-        menu.main()
     else:
         print("Needs to be Trained!")
         exit(0)

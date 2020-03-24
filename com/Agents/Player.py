@@ -1,6 +1,7 @@
 from abc import ABC
 from com.Core.BaseGame import BaseGame
 from com.Menu import menu
+import tkinter as tk
 import pygame
 import time
 
@@ -40,7 +41,8 @@ def pl_main(r_p, numOfRun):
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-    menu.main()
+
+
 
 if __name__ == "__main__":
     pl_main('r', 1)

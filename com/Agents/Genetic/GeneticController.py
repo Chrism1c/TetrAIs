@@ -104,7 +104,6 @@ class GeneticController:
         plot_learning_curve(scoreArray, game_index_array,
                             [gene0Array, gene1Array, gene2Array, gene3Array, gene4Array, gene5Array, gene6Array],
                             'gen')(self.numGen, self.numRun, self.numGen0)
-        menu.main()
         print('end training')
 
 
