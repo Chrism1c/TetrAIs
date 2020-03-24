@@ -40,7 +40,7 @@ class GeneticController:
         """
         self.r_p = r_p
         self.numGen = int(numGen)
-        self.numRun = 1
+        self.numRun = 3
         self.dimChromomsome = 7
         self.generation = list()
         self.population = list()
