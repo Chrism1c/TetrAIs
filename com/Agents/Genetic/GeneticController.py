@@ -37,7 +37,10 @@ class GeneticController:
         """
         self.r_p = r_p
         self.numGen = int(numGen)
-        self.numRun = 3
+        if self.r_p == 'p':
+            self.numRun = 1
+        else:
+            self.numRun = 3
         self.dimChromomsome = 7
         self.generation = list()
         self.population = list()
@@ -52,7 +55,7 @@ class GeneticController:
         """
         print("start creation gen:0")
         # numGen0 = 2 ** self.numGen
-        self.numGen0 = 8
+        self.numGen0 = 4
         self.generation = self.createGen0(self.numGen0)
         # self.generation = self.createGen01(numGen0)
         game_index_array = []

@@ -27,7 +27,7 @@ class BaseGame(metaclass=ABCMeta):
         self.r_p = r_p
         self.player = False
         self.timeKiller = False
-        self.minutes = 20
+        self.minutes = 1
         self.PIece = ""
         self.pause = False
         pygame.init()
