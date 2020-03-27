@@ -157,7 +157,7 @@ class DeepFirstSearch(BaseGame, ABC):
         return test_score, fullLines
 
 
-def dfs_main(r_p, lv, numOfRun, treePlot, gdSidePanel):
+def dfs_main(r_p, gdSidePanel, lv, numOfRun, treePlot):
     #  loop to run  the game with AI for numOfRun executions
     numOfRun = int(numOfRun)
     for x in range(numOfRun):
@@ -173,4 +173,4 @@ def dfs_main(r_p, lv, numOfRun, treePlot, gdSidePanel):
 
 
 if __name__ == "__main__":
-    dfs_main('r', 'LV1', 1, 'no')
+    dfs_main('r', 'no', 'LV1', 1, 'no')
