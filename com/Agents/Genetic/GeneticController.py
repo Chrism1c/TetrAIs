@@ -71,10 +71,10 @@ class GeneticController:
         i = 0
         n_run = 0
         while True:
-            n_run += 1
             print("start gen:", i)
             population = list()
             for x in range(len(self.generation)):
+                n_run += 1
                 avgScoreChromosome = self.AVGfitnesingSing(self.generation[x])
                 scoreArray.append(avgScoreChromosome)
                 population.append((self.generation[x], avgScoreChromosome))
