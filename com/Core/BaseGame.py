@@ -103,7 +103,8 @@ class BaseGame(metaclass=ABCMeta):
                 if not is_valid_position(self.board, self.falling_piece):
                     # can't fit a new piece on the board, so game over
                     tot_time = time.time() - start_tot_time
-                    self.panel.destroyPanel()
+                    if self.gdSidePanel=='yes':
+                        self.panel.destroyPanel()
                     return score, weights, round(tot_time, 2), num_tetr, round(avg_tetr_time/num_tetr, 2), round(num_tetr/(tot_time*10), 2)
                 # MOVE
                 start_tetr = time.time()
