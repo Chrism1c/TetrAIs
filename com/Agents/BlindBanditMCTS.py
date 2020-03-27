@@ -9,6 +9,7 @@ import time
 from operator import itemgetter
 import sys
 from com.Utils.NetworkX import TreePlot
+from com.Utils.sidePanel import *
 
 #  Create a new istance of TreePlot
 MonteCarloPlot = TreePlot()
@@ -35,7 +36,7 @@ class MonteCarlo(BaseGame, ABC):
             Calculate score of test_board
     """
 
-    def __init__(self, r_p, mode, treePlot):
+    def __init__(self, r_p, gdSidePanel, mode, treePlot):
         """
             Parameters
             ----------
@@ -46,7 +47,7 @@ class MonteCarlo(BaseGame, ABC):
             treePlot : TreePlot
                 instance of TreePlot object to print Tree Graphs
         """
-        super().__init__(r_p)
+        super().__init__(r_p, gdSidePanel, title=titleMCTS, description=descriptionMCTS)
         self.mode = mode
         self.action = ""
         self.deepLimit = 3
@@ -203,11 +204,11 @@ class MonteCarlo(BaseGame, ABC):
         return new_piece
 
 
-def bbmcts_main(r_p, mode, numOfRun, treePlot):
+def bbmcts_main(r_p, mode, numOfRun, treePlot, gdSidePanel):
     #  loop to run  the game with AI for numOfRun executions
     numOfRun = int(numOfRun)
     for x in range(numOfRun):
-        mc = MonteCarlo(r_p, mode, treePlot)
+        mc = MonteCarlo(r_p, gdSidePanel, mode, treePlot)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = mc.run()
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)

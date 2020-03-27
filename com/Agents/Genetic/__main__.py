@@ -9,14 +9,14 @@ from com.Menu import menu
 """
 
 
-def gen_main(r_p, mode, numGen, treePlot):
+def gen_main(r_p, mode, numGen, treePlot, gdSidePanel):
     sys.stdout = Logger()
     numGen = int(numGen)
     if mode == 'Training':
-        train = GeneticController(r_p, numGen, treePlot)
+        train = GeneticController(r_p, numGen, treePlot, gdSidePanel)
         train.workGenetic()
     else:
-        perfectRun(r_p)
+        perfectRun(r_p, gdSidePanel)
 
 # #  get arguments when AI file is executed by the menu
 # r_p = sys.argv[1]

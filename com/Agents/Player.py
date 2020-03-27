@@ -19,7 +19,7 @@ class Player(BaseGame):
         """
         :param r_p: type of piece used ('r' = random, 'p' = pi)
         """
-        super().__init__(r_p)
+        super().__init__(r_p, panelFlag='no', title=None, description=None)
         self.player = True
 
     def get_move(self):

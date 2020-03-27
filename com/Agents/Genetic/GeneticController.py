@@ -33,7 +33,7 @@ class GeneticController:
             Calculate weighted score of board
     """
 
-    def __init__(self, r_p, numGen, treePlot):
+    def __init__(self, r_p, numGen, treePlot, gdSidePanel):
         """
         :param r_p:  type of piece used ('r' = random, 'p' = pi)
         :param numGen:  number of Generation to create for Training
@@ -48,6 +48,7 @@ class GeneticController:
         self.generation = list()
         self.population = list()
         self.treePlot = treePlot
+        self.gdSidePanel = gdSidePanel
         # self.bello = np.array([1.8, 1, 0.5, 1.5, 0.01, 0.2, 0.3])
 
     def workGenetic(self):
@@ -148,7 +149,7 @@ class GeneticController:
         print("Chromosome: ")
         print(chromosome)
         for i in range(self.numRun):
-            g = Genetic(self.r_p, chromosome, True)
+            g = Genetic(self.r_p, self.gdSidePanel, chromosome, True)
             start = time.time()
             score, _, _, _, _, _ = g.run()
             finish = time.time()

@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from mpmath import mp
 from com.Core.Model import *
+from com.Utils.sidePanel import *
 
 import random
 import time
@@ -20,9 +21,12 @@ class BaseGame(metaclass=ABCMeta):
 
     """
 
-    def __init__(self, r_p):
+    def __init__(self, r_p, gdSidePanel, title, description):
         """
         :param r_p: str type of piece used ('r' = random, 'p' = pi)
+        gdSidePanel: bool value useful to understand if the side panel has to be shown or not
+        title: contains the name of the AI
+        description: contains the description of the AI
         """
         self.r_p = r_p
         self.player = False
@@ -38,6 +42,11 @@ class BaseGame(metaclass=ABCMeta):
         self.DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
         pygame.display.set_caption(APPNAME)
         self.show_text_screen(APPNAME)
+        self.gdSidePanel = gdSidePanel
+        if self.gdSidePanel == 'yes':
+            self.title = title
+            self.description = description
+            self.panel = SidePanel(self.title, self.description)
 
     def run(self):
         """
@@ -49,6 +58,10 @@ class BaseGame(metaclass=ABCMeta):
                     avg time per move : float
                     #tetramino per second (moves/s) : float
         """
+
+        if self.gdSidePanel == 'yes':
+            self.panel.showSidePanel()
+
         start_tot_time = time.time()
         avg_tetr_time = 0
         if self.timeKiller == True:
@@ -90,6 +103,7 @@ class BaseGame(metaclass=ABCMeta):
                 if not is_valid_position(self.board, self.falling_piece):
                     # can't fit a new piece on the board, so game over
                     tot_time = time.time() - start_tot_time
+                    self.panel.destroyPanel()
                     return score, weights, round(tot_time, 2), num_tetr, round(avg_tetr_time/num_tetr, 2), round(num_tetr/(tot_time*10), 2)
                 # MOVE
                 start_tetr = time.time()
@@ -333,6 +347,8 @@ class BaseGame(metaclass=ABCMeta):
         :return: None
         """
         try:
+            if self.gdSidePanel == 'yes':
+                self.panel.destroyPanel()
             pygame.quit()
         except:
             print("Ended")
