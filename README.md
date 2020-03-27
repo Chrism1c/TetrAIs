@@ -1,7 +1,8 @@
 # TetrAIs
-Tetris game clone based on different AI Algorithms
+### Six Tetris Artificial Intelligence Algorithms Showdown<br>
+_____________________![](doc/TetrAIsGif.gif)
 
-#### Index
+### Index
 
 1. [**What is TetrAIs?**](#what-is-tetrais)
 2. [**System Dependencies**](#requirements-and-dependencies)
