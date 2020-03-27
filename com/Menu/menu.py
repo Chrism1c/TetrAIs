@@ -286,8 +286,8 @@ def main(test=False):
     # Init pygame
     # -------------------------------------------------------------------------
     pygame.init()
-    WINDOWWIDTH = 400
-    WINDOWHEIGHT = 500
+    WINDOWWIDTH = 1
+    WINDOWHEIGHT = 1
     pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 
     posX = SCREEN_WIDTH / 2
