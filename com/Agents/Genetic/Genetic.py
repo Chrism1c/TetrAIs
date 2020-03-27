@@ -31,7 +31,7 @@ class Genetic(BaseGame, ABC):
             Calculate weighted score of board
     """
 
-    def __init__(self, r_p, chromosome, timeKiller=False):
+    def __init__(self, r_p, gdSidePanel, chromosome, timeKiller=False):
         """
             Parameters
             ----------
@@ -42,7 +42,7 @@ class Genetic(BaseGame, ABC):
             timeKiller : bool
                 useful to stop a very good random Chromosome
         """
-        super().__init__(r_p)
+        super().__init__(r_p, gdSidePanel, title=titleGen, description=descriptionGen)
         self.timeKiller = timeKiller
         self.chromosome = chromosome
 
@@ -143,7 +143,7 @@ class Genetic(BaseGame, ABC):
         return wscore
 
 
-def perfectRun(pieceType):
+def perfectRun(pieceType, gdSidePanel):
     """
         Execute run of the Perfect Chromosome
         Parameters
@@ -154,7 +154,7 @@ def perfectRun(pieceType):
     perfectChromosome = getPerfectChromosome()  # import del chromosoma perfetto da file
     r_p = pieceType
     if perfectChromosome is not None:
-        gen = Genetic(r_p, perfectChromosome)
+        gen = Genetic(r_p, gdSidePanel, perfectChromosome)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = gen.run()
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)

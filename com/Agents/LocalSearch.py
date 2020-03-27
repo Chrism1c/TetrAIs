@@ -4,6 +4,7 @@ import copy
 from com.Utils.Utils import simulate_board, get_parameters
 from com.Core.Model import PIECES
 from com.Menu import menu
+from com.Utils.sidePanel import *
 import sys
 
 
@@ -23,12 +24,12 @@ class LocalSearch(BaseGame, ABC):
             It calculates the score on the test board
     """
 
-    def __init__(self, r_p):
+    def __init__(self, r_p, gdSidePanel):
         """
         :param r_p: str
                 type of piece used ('r' = random, 'p' = pi)
         """
-        super().__init__(r_p)
+        super().__init__(r_p, gdSidePanel, title=titleLS, description=descriptionLS)
 
     def get_move(self):
         """
@@ -96,11 +97,11 @@ class LocalSearch(BaseGame, ABC):
         return test_score, fullLines
 
 
-def ls_main(r_p, numOfRun):
+def ls_main(r_p, numOfRun, gdSidePanel):
     #  loop to run  the game with AI for numOfRun executions
     numOfRun = int(numOfRun)
     for x in range(numOfRun):
-        ls = LocalSearch(r_p)
+        ls = LocalSearch(r_p, gdSidePanel)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = ls.run()
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)

@@ -13,50 +13,53 @@ posY = (SCREEN_HEIGHT / 2) - 260
 windTitle = 'Guide'
 
 
-def showSidePanel(root, titolo, tipoDescrizione):
-    """
-    This function creates a side panel in which it is printed the name and the description of the IA currently running
-    :param root: an object of the Tk class,responsible for the creation of the side panel
-    :param titolo: a string containing the name of the IA
-    :param tipoDescrizione: a string containing the descrpition of the IA
-    :return: None
-    """
-    root.title(windTitle)
-    label = tk.Label(root, bg='black', fg='white')
-    label['text'] = titolo
-    label.config(font=('freesansbold', 43))
-    label.pack(padx=4, pady=4)
+class SidePanel:
+    def __init__(self, title, description):
+        self.root = tk.Tk()
+        self.title = title
+        self.description = description
 
-    T = tk.Text(root, width=50, height=29)
-    T.configure(font='freesansbold 13')
-    T.insert(tk.END, tipoDescrizione)
-    T.config(bg='black', fg='white')
-    T.pack(padx=2, pady=2)
+    def showSidePanel(self):
+        """
+        This function creates a side panel in which it is printed the name and the description of the IA currently running
+        :param root: an object of the Tk class,responsible for the creation of the side panel
+        :param titolo: a string containing the name of the IA
+        :param tipoDescrizione: a string containing the descrpition of the IA
+        :return: None
+        """
+        self.root.title(windTitle)
+        label = tk.Label(self.root, bg='black', fg='white')
+        label['text'] = self.title
+        label.config(font=('freesansbold', 43))
+        label.pack(padx=4, pady=4)
 
-    # decommentando la riga 40 e commentando la riga 41 è possibile cambiare la posizione di spawn del sidepanel
-    # root.geometry("+{}+{}".format(int(posX), int(posY)))
-    root.geometry("+{}+{}".format(int(0), int(0)))
-    root.update()
+        T = tk.Text(self.root, width=50, height=29)
+        T.configure(font='freesansbold 13')
+        T.insert(tk.END, self.description)
+        T.config(bg='black', fg='white')
+        T.pack(padx=2, pady=2)
+
+        self.root.geometry("+{}+{}".format(int(0), int(0)))
+        self.root.update()
+
+    def destroyPanel(self):
+        self.root.destroy()
 
 
-titoloDFS = 'DFS Guide'
-descrizioneDFS = 'descrizione dfs'
+titleDFS = 'DFS Guide'
+descriptionDFS = 'descrizione dfs'
 
-titoloSDGQL = 'SDGQL Guide'
-descrizioneSDGQL = 'kkkkk'
+titleLS = 'LS Guide'
+descriptionLS = 'nvidsnvosdnvo'
 
-titoloGen = 'Genetic Guide'
-descrizioneGen = 'zzzzz'
+titleSDGQL = 'SDGQL Guide'
+descriptionSDQL = 'kkkkk'
 
-titoloMCTS = 'MCTS Guide'
-descrizioneMCTS = 'yyyyy'
+titleGen = 'Genetic Guide'
+descriptionGen = 'zzzzz'
 
-titoloRB = 'Rule Based Guide'
-descrizioneRB = 'xxxxxx'
+titleMCTS = 'MCTS Guide'
+descriptionMCTS = 'yyyyy'
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    print("prova1")
-    showSidePanel(root, titoloDFS, descrizioneDFS)
-    print("prova2")
-    #root.destroy()
+titleRB = 'Rule Based Guide'
+descriptionRB = 'xxxxxx'

@@ -127,13 +127,8 @@ def DFS(x, mode):
     """
     global pieceType, numOfRuns, plotTree
     print("GO --> DFS ", pieceType, " ", mode, " ", numOfRuns, " ", str(plotTree))
-    if gdSidePanel == 'yes':
-        root = tk.Tk()
-        showSidePanel(root, titoloDFS, descrizioneDFS)
-    dfs_main(pieceType, mode, numOfRuns, str(plotTree))
-    if gdSidePanel == 'yes':
-        root.destroy()
-        main()
+    dfs_main(pieceType, mode, numOfRuns, str(plotTree), gdSidePanel)
+
     # os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(
     # plotTree))
 
@@ -141,7 +136,7 @@ def DFS(x, mode):
 def Local_Search():
     global pieceType, numOfRuns
     print("GO --> LS ", pieceType, " ", numOfRuns)
-    ls_main(pieceType, numOfRuns)
+    ls_main(pieceType, numOfRuns, gdSidePanel)
     main()
     # os.system('python com/Agents/LocalSearch.py ' + pieceType + ' ' + str(numOfRuns))
 
@@ -153,12 +148,7 @@ def SDG_QL(x, mode):
     """
     global pieceType, numOfRuns
     print("GO --> SDG_QL ", pieceType, " ", mode, " ", numOfRuns)
-    if gdSidePanel == 'yes':
-        root = tk.Tk()
-        showSidePanel(root, titoloSDGQL, descrizioneSDGQL)
-    sdgql_main(pieceType, mode, numOfRuns)
-    if gdSidePanel == 'yes':
-        root.destroy()
+    sdgql_main(pieceType, mode, numOfRuns, gdSidePanel)
     main()
     # os.system('python com/Agents/SdgQL.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns))
 
@@ -172,12 +162,8 @@ def Genetic(x, mode):
     """
     global pieceType, numOfRuns, plotTree
     print("GO --> Genetic ", mode, " ", pieceType, " ", str(plotTree))
-    if gdSidePanel == 'yes':
-        root = tk.Tk()
-        showSidePanel(root, titoloGen, descrizioneGen)
-    gen_main(pieceType, mode, numOfRuns, plotTree)
-    if gdSidePanel == 'yes':
-        root.destroy()
+    gen_main(pieceType, mode, numOfRuns, plotTree, gdSidePanel)
+
     main()
 
 
@@ -188,12 +174,7 @@ def Rule_Based():
     """
     global pieceType, numOfRuns
     print("GO --> Rule_Based ", pieceType)
-    if gdSidePanel == 'yes':
-        root = tk.Tk()
-        showSidePanel(root, titoloRB, descrizioneRB)
-    rb_main(pieceType, numOfRuns)
-    if gdSidePanel == 'yes':
-        root.destroy()
+    rb_main(pieceType, numOfRuns, gdSidePanel)
     main()
 
 
@@ -206,12 +187,7 @@ def Monte_Carlo(x, mode):
     """
     global pieceType, numOfRuns, plotTree
     print("GO --> Blind_Bandit_Monte_Carlo ", mode, " ", pieceType, " ", plotTree)
-    if gdSidePanel == 'yes':
-        root = tk.Tk()
-        showSidePanel(root, titoloMCTS, descrizioneMCTS)
-    bbmcts_main(pieceType, mode, numOfRuns, plotTree)
-    if gdSidePanel == 'yes':
-        root.destroy()
+    bbmcts_main(pieceType, mode, numOfRuns, plotTree, gdSidePanel)
     main()
     # os.system(
     #     'python com/Agents/BlindBanditMCTS.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(plotTree))

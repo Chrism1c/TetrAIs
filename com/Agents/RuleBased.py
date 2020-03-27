@@ -7,6 +7,7 @@ from com.Core.Model import PIECES
 from com.Menu import menu
 import random
 from pyswip import Prolog
+from com.Utils.sidePanel import *
 
 prolog = Prolog()
 #prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl")
@@ -42,8 +43,8 @@ class RuleBased(BaseGame):
         deletePCrest(self)
             delete the deprecated set of parts of the crest in the Knowledge Base
     """
-    def __init__(self, r_p):
-        super().__init__(r_p)
+    def __init__(self, r_p, gdSidePanel):
+        super().__init__(r_p, gdSidePanel, title=titleRB, description=descriptionRB)
         self.crest = [0] * BOARDWIDTH  # cresta relativa
 
     def get_move(self):
@@ -394,10 +395,10 @@ class RuleBased(BaseGame):
         prolog.retractall('inCrest(crest, S, X)')
 
 
-def rb_main(r_p, numOfRun):
+def rb_main(r_p, numOfRun, gdSidePanel):
     numOfRun = int(numOfRun)
     for x in range(numOfRun):
-        rb = RuleBased(r_p)
+        rb = RuleBased(r_p, gdSidePanel)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = rb.run()
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
