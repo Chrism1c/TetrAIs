@@ -96,7 +96,7 @@ class GeneticController:
             i += 1
             # self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
             #self.generation = self.crossingFixedPopulation(self.generation, i)
-            self.generation = self.crossingGeneticBeamPopulation(self.generation, i)
+            self.generation = self.crossingGeneticBeamPopulation(population, i)
             # save
             for x in range(len(population)):
                 self.population.append(population[x])
@@ -258,8 +258,10 @@ class GeneticController:
             newPopulation.append(population[0])
         else:
             for x in range(0, int(k), 2):
-                newPopulation.append(self.crossingchromosome(population[x], population[x + 1]))
-                newPopulation.append(self.crossingchromosome(population[x + 1], population[x]))
+                chromosome_1, _ = population[x]
+                chromosome_2, _ = population[x + 1]
+                newPopulation.append(self.crossingchromosome(chromosome_1, chromosome_2))
+                newPopulation.append(self.crossingchromosome(chromosome_2, chromosome_1))
         return newPopulation
 
 
@@ -297,11 +299,13 @@ class GeneticController:
         newPopulation = list()
         orderedPopulation = sorted(population, key=itemgetter(1), reverse=True)
         if numGen == self.numGen:
-            newPopulation.append(orderedPopulation[0])
+            chromosome, _ = orderedPopulation[0]
+            newPopulation.append(chromosome)
         else:
             cross = self.crossingTournmentPopulation(orderedPopulation, round((len(orderedPopulation)) / 2))
             for x in range(round(len(orderedPopulation) / 2)):  # 1/2 best
-                newPopulation.append(orderedPopulation[x])
+                chromosome, _ = orderedPopulation[x]
+                newPopulation.append(chromosome)
             for x in range(round(len(cross))):                  # 1/2 crossed
                 newPopulation.append(cross[x])
         return newPopulation
