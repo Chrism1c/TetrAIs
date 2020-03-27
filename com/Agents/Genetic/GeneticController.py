@@ -5,10 +5,13 @@ import numpy as np
 import random
 import time
 from operator import itemgetter
+from com.Utils.NetworkX import *
 from com.Utils.Plot import plot_learning_curve
 
+GeneticTreePlot = TreePlot()
 
 class GeneticController:
+    global GeneticTreePlot
     """
         Main class for Genetic Algorithm on Training mode
         Attributes
@@ -30,7 +33,7 @@ class GeneticController:
             Calculate weighted score of board
     """
 
-    def __init__(self, r_p, numGen):
+    def __init__(self, r_p, numGen, treePlot):
         """
         :param r_p:  type of piece used ('r' = random, 'p' = pi)
         :param numGen:  number of Generation to create for Training
@@ -44,6 +47,7 @@ class GeneticController:
         self.dimChromomsome = 7
         self.generation = list()
         self.population = list()
+        self.treePlot = treePlot
         # self.bello = np.array([1.8, 1, 0.5, 1.5, 0.01, 0.2, 0.3])
 
     def workGenetic(self):
@@ -107,6 +111,9 @@ class GeneticController:
                 continue
         destroy(fileName)
         saveOnFile(fileName, self.generation)
+        if self.treePlot == 'yes':
+            GeneticTreePlot.plot()
+            GeneticTreePlot.Graph.clear()
         plot_learning_curve(scoreArray, game_index_array,
                             [gene0Array, gene1Array, gene2Array, gene3Array, gene4Array, gene5Array, gene6Array],
                             'gen')(self.numGen, self.numRun, self.numGen0)
@@ -157,7 +164,11 @@ class GeneticController:
         crate a new random list of int (Chromosome)
         :return: new list
         """
-        return np.random.uniform(low=0.0, high=1.0, size=7)
+        Chromosome = list()
+        for x in range(7):
+            Chromosome.append(round(random.uniform(0.0, 1.0), 3))
+        return Chromosome
+        # return np.random.uniform(low=0.0, high=1.0, size=7)
 
     # Create Gen0
     def createGen0(self, num):
@@ -171,8 +182,11 @@ class GeneticController:
         self.num = num
 
         for i in range(num):
-            gen0.append(self.getNewChromosome())
-
+            newChromo = self.getNewChromosome()
+            gen0.append(newChromo)
+            GeneticTreePlot.addedge("ROOT", str(newChromo))
+        if self.treePlot == 'yes':
+            GeneticTreePlot.plot()
         return gen0
 
     # Serch top k best Chromosome (based on score)
@@ -229,6 +243,8 @@ class GeneticController:
                 # print("Gene from Merged genes =",newchromosome[x])
             newchromosome[x] += self.mutation(newchromosome[x])
         # print("newchromosome = ",newchromosome)
+        GeneticTreePlot.addedge(str(a), str(newchromosome))
+        GeneticTreePlot.addedge(str(b), str(newchromosome))
         return newchromosome
 
     def crossingTournmentPopulation_half(self, population, k):

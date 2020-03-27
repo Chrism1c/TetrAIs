@@ -9,11 +9,11 @@ from com.Menu import menu
 """
 
 
-def gen_main(r_p, mode, numGen):
+def gen_main(r_p, mode, numGen, treePlot):
     sys.stdout = Logger()
     numGen = int(numGen)
     if mode == 'Training':
-        train = GeneticController(r_p, numGen)
+        train = GeneticController(r_p, numGen, treePlot)
         train.workGenetic()
     else:
         perfectRun(r_p)
