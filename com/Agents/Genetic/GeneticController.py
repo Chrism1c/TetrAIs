@@ -90,8 +90,6 @@ class GeneticController:
                 gene5Array.append(self.generation[x][5])
                 gene6Array.append(self.generation[x][6])
                 game_index_array.append(n_run)
-                print(scoreArray)
-                print(game_index_array)
                 print("Gen: ", i, " Run: ", x, " AvgScore: ", str(avgScoreChromosome))
             # k = round(len(self.generation)/2)
             k = len(self.generation)
