@@ -55,7 +55,7 @@ class GeneticController:
         """
         print("start creation gen:0")
         # numGen0 = 2 ** self.numGen
-        self.numGen0 = 4
+        self.numGen0 = 8
         self.generation = self.createGen0(self.numGen0)
         # self.generation = self.createGen01(numGen0)
         game_index_array = []
@@ -86,18 +86,21 @@ class GeneticController:
                 gene5Array.append(self.generation[x][5])
                 gene6Array.append(self.generation[x][6])
                 game_index_array.append(n_run)
-                print("Gen ", i, " Run ", x, " AvgScore ", str(avgScoreChromosome))
+                print(scoreArray)
+                print(game_index_array)
+                print("Gen: ", i, " Run: ", x, " AvgScore: ", str(avgScoreChromosome))
             # k = round(len(self.generation)/2)
             k = len(self.generation)
             print("Full Generation = ", self.generation)
             print("end gen:", i)
             i += 1
             # self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
-            self.generation = self.crossingFixedPopulation(self.generation, i)
+            #self.generation = self.crossingFixedPopulation(self.generation, i)
+            self.generation = self.crossingGeneticBeamPopulation(self.generation, i)
             # save
             for x in range(len(population)):
                 self.population.append(population[x])
-            print(len(self.generation))
+
             if len(self.generation) == 1:
                 break
             else:
@@ -137,6 +140,8 @@ class GeneticController:
                 list of weights
         """
         avgFitness = 0
+        print("Chromosome: ")
+        print(chromosome)
         for i in range(self.numRun):
             g = Genetic(self.r_p, chromosome, True)
             start = time.time()
@@ -144,7 +149,7 @@ class GeneticController:
             finish = time.time()
             tempo = round(finish - start)
             avgFitness += (score + tempo)
-            print(' - Match ' + str(i) + ' Score ' + str(score + tempo), " Chromosome = ", chromosome)
+            print(' - Match ' + str(i) + ' Score ' + str(score + tempo))
         return avgFitness / self.numRun
 
     def getNewChromosome(self):
@@ -226,6 +231,21 @@ class GeneticController:
         # print("newchromosome = ",newchromosome)
         return newchromosome
 
+    def crossingTournmentPopulation_half(self, population, k):
+        """
+         Cross Chromosome in tournament mode
+        :param population:
+        :param k:
+        :return: newPopulation
+        """
+        newPopulation = list()
+        if len(population) == 2:
+            newPopulation.append(population[0])
+        else:
+            for x in range(0, int(k), 2):
+                newPopulation.append(self.crossingchromosome(population[x], population[x + 1]))
+        return newPopulation
+
     def crossingTournmentPopulation(self, population, k):
         """
          Cross Chromosome in tournament mode
@@ -239,6 +259,7 @@ class GeneticController:
         else:
             for x in range(0, int(k), 2):
                 newPopulation.append(self.crossingchromosome(population[x], population[x + 1]))
+                newPopulation.append(self.crossingchromosome(population[x + 1], population[x]))
         return newPopulation
 
 
@@ -255,7 +276,7 @@ class GeneticController:
         if numGen == self.numGen:
             newPopulation.append(orderedPopulation[0])
         else:
-            cross = self.crossingTournmentPopulation(orderedPopulation, round((len(orderedPopulation)) / 2))
+            cross = self.crossingTournmentPopulation_half(orderedPopulation, round((len(orderedPopulation)) / 2))
             for x in range(round(len(orderedPopulation) / 2)):  # 1/2 best
                 newPopulation.append(orderedPopulation[x])
             for x in range(round(len(cross))):                  # 1/4 crossed
@@ -263,6 +284,26 @@ class GeneticController:
             new = round(len(population) - len(newPopulation))
             for x in range(new):                                # 1/4 new
                 newPopulation.append(self.getNewChromosome())
+        return newPopulation
+
+    def crossingGeneticBeamPopulation(self, population, numGen):
+        """
+        # fixed number of Chromosomes
+        # 1/2 best + 1/4 crossed of best + 1/4 new
+        :param population:
+        :param numGen:
+        :return: newPopulation
+        """
+        newPopulation = list()
+        orderedPopulation = sorted(population, key=itemgetter(1), reverse=True)
+        if numGen == self.numGen:
+            newPopulation.append(orderedPopulation[0])
+        else:
+            cross = self.crossingTournmentPopulation(orderedPopulation, round((len(orderedPopulation)) / 2))
+            for x in range(round(len(orderedPopulation) / 2)):  # 1/2 best
+                newPopulation.append(orderedPopulation[x])
+            for x in range(round(len(cross))):                  # 1/2 crossed
+                newPopulation.append(cross[x])
         return newPopulation
 
 
