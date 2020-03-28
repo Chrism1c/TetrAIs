@@ -128,6 +128,7 @@ def DFS(x, mode):
     global pieceType, numOfRuns, plotTree
     print("GO --> DFS ", pieceType, " ", mode, " ", numOfRuns, " ", str(plotTree))
     dfs_main(pieceType, gdSidePanel, mode, numOfRuns, str(plotTree))
+    main()
 
     # os.system('python com/Agents/DeepFirstSearch.py ' + pieceType + ' ' + mode + ' ' + str(numOfRuns) + ' ' + str(
     # plotTree))
