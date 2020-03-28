@@ -156,7 +156,7 @@ class MonteCarlo(BaseGame, ABC):
         # if mode is random, BBMCTS remove a random number of sideways from the Tree Search
         if self.mode == 'random':
             if deep > 2:
-                toRemove = random.randint(0, 8)
+                toRemove = random.randint(0, 5)
                 # print("------------------- toKill ", toRemove)
                 for z in range(toRemove):
                     deathindex = random.randint(0, len(sidewaysIndex) - 1)
