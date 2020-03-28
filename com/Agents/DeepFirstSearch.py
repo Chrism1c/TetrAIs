@@ -163,15 +163,16 @@ def dfs_main(r_p, gdSidePanel, lv, numOfRun, treePlot):
     for x in range(numOfRun):
         dfs = DeepFirstSearch(r_p, gdSidePanel, lv, treePlot)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = dfs.run()
-        AVG_runs = + newScore
+        AVG_runs = AVG_runs + newScore
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-    AVG_runs = AVG_runs/numOfRun
-    print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
+    AVG_runs = AVG_runs / numOfRun
+    if numOfRun > 1:
+        print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
 
 
 if __name__ == "__main__":

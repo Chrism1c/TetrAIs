@@ -106,7 +106,7 @@ def ls_main(r_p, numOfRun, gdSidePanel):
     for x in range(numOfRun):
         ls = LocalSearch(r_p, gdSidePanel)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = ls.run()
-        AVG_runs = + newScore
+        AVG_runs = AVG_runs + newScore
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
@@ -114,7 +114,8 @@ def ls_main(r_p, numOfRun, gdSidePanel):
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
     AVG_runs = AVG_runs / numOfRun
-    print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
+    if numOfRun > 1:
+        print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
 
 
 if __name__ == "__main__":

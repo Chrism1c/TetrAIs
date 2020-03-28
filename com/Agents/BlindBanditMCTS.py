@@ -211,7 +211,7 @@ def bbmcts_main(r_p, mode, numOfRun, treePlot, gdSidePanel):
     for x in range(numOfRun):
         mc = MonteCarlo(r_p, gdSidePanel, mode, treePlot)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = mc.run()
-        AVG_runs = + newScore
+        AVG_runs = AVG_runs + newScore
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
@@ -219,7 +219,8 @@ def bbmcts_main(r_p, mode, numOfRun, treePlot, gdSidePanel):
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
     AVG_runs = AVG_runs / numOfRun
-    print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
+    if numOfRun > 1:
+        print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
 
 
 if __name__ == "__main__":
