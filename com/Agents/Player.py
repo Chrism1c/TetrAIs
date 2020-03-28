@@ -31,17 +31,20 @@ def pl_main(r_p, numOfRun):
     caption = "Game {game}".format(game=1)
     pygame.display.set_caption(caption)
     numOfRun = int(numOfRun)
+    AVG_runs = 0
     #  loop to run  the game with AI for numOfRun executions
     for x in range(numOfRun):
         p = Player(r_p)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = p.run()
+        AVG_runs = + newScore
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-
+    AVG_runs = AVG_runs / numOfRun
+    print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
 
 
 if __name__ == "__main__":

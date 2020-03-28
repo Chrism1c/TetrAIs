@@ -58,7 +58,8 @@ class LocalSearch(BaseGame, ABC):
                 test_board = simulate_board(test_board, test_piece, move)
                 if test_board is not None:
                     test_score, fullLines = self.get_expected_score(test_board)
-                    print("Tested branch : LV1 [ rot= ", rot, "/sideway=", sideways, "] : scored = ", round(test_score, 3))
+                    print("Tested branch : LV1 [ rot= ", rot, "/sideway=", sideways, "] : scored = ",
+                          round(test_score, 3))
                     if not strategy or strategy[2] < test_score:
                         print("updated new max LV1")
                         strategy = (rot, sideways, test_score)
@@ -75,7 +76,8 @@ class LocalSearch(BaseGame, ABC):
                 test_board2 = simulate_board(test_board2, test_piece2, move2)
                 if test_board2 is not None:
                     test_score2, fullLines2 = self.get_expected_score(test_board2)
-                    print("Tested branch : LV2 [ rot= ", rot, "/sideway=", sideways, "] : scored = ", round(test_score2, 3))
+                    print("Tested branch : LV2 [ rot= ", rot, "/sideway=", sideways, "] : scored = ",
+                          round(test_score2, 3))
                     if not strategy2 or strategy2[2] < test_score2:
                         print("updated = new max LV2")
                         strategy2 = (rot, sideways, test_score2)
@@ -100,15 +102,20 @@ class LocalSearch(BaseGame, ABC):
 def ls_main(r_p, numOfRun, gdSidePanel):
     #  loop to run  the game with AI for numOfRun executions
     numOfRun = int(numOfRun)
+    AVG_runs = 0
     for x in range(numOfRun):
         ls = LocalSearch(r_p, gdSidePanel)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = ls.run()
+        AVG_runs = + newScore
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
+    AVG_runs = AVG_runs / numOfRun
+    print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
+
 
 if __name__ == "__main__":
     ls_main('r', 1)

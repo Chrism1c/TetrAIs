@@ -11,6 +11,7 @@ import sys
 #  Create a new istance of TreePlot
 DFSTreePlot = TreePlot()
 
+
 class DeepFirstSearch(BaseGame, ABC):
     global DFSTreePlot
     """
@@ -57,7 +58,6 @@ class DeepFirstSearch(BaseGame, ABC):
         else:
             return self.DFS_full(self.board, self.falling_piece, self.next_piece)
 
-
     def DFS_full(self, board, piece, NextPiece):
         """
             Execute DFS at level 2 of depth
@@ -97,7 +97,7 @@ class DeepFirstSearch(BaseGame, ABC):
                                 test_score2, nextLines = self.get_expected_score(test_board2)
                                 print("Tested branch : LV1[ rot= ", rot, "/sideway=", sideways, "] : LV2[ rot2= ",
                                       rot2, "/sideway2=", sideways2, "] : scored = ",
-                                      round(test_score2,3))
+                                      round(test_score2, 3))
                                 if NextScore[2] < test_score2:
                                     NextScore = [rot2, sideways2, test_score2]  # aggiorno il best local score (LV2)
                     if best_score < NextScore[2]:  # confronto
@@ -112,7 +112,6 @@ class DeepFirstSearch(BaseGame, ABC):
         print("-- Winner Strategy = <", best_rot, "/", best_sideways, ">\n")
         return [best_rot, best_sideways]
 
-
     def DFS_LV1Only(self, board, piece):
         """
             Execute DFS at level 1 of depth
@@ -121,7 +120,7 @@ class DeepFirstSearch(BaseGame, ABC):
                   board : Matrix (lists of lists) of strings
                   piece : Object containing: 'shape', 'rotation', 'x', 'y', 'color'
         """
-        print("Shape: ",piece['shape'])
+        print("Shape: ", piece['shape'])
         strategy = None
         for rot in range(0, len(PIECES[piece['shape']])):
             for sideways in range(-5, 6):
@@ -132,7 +131,7 @@ class DeepFirstSearch(BaseGame, ABC):
                 DFSTreePlot.addedge(DFSTreePlot.ROOTZERO, str(piece['shape'] + ":" + str(sideways) + ":" + str(0)))
                 if test_board is not None:
                     test_score, _ = self.get_expected_score(test_board)
-                    print("Tested branch : [ rot= ",rot ,"/sideway=",sideways,"] : scored = ",round(test_score,3))
+                    print("Tested branch : [ rot= ", rot, "/sideway=", sideways, "] : scored = ", round(test_score, 3))
                     if not strategy or strategy[2] < test_score:
                         strategy = (rot, sideways, test_score)
 
@@ -160,16 +159,19 @@ class DeepFirstSearch(BaseGame, ABC):
 def dfs_main(r_p, gdSidePanel, lv, numOfRun, treePlot):
     #  loop to run  the game with AI for numOfRun executions
     numOfRun = int(numOfRun)
+    AVG_runs = 0
     for x in range(numOfRun):
         dfs = DeepFirstSearch(r_p, gdSidePanel, lv, treePlot)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = dfs.run()
+        AVG_runs = + newScore
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-
+    AVG_runs = AVG_runs/numOfRun
+    print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
 
 
 if __name__ == "__main__":
