@@ -120,6 +120,7 @@ descriptionMCTS = 'MCTS (Monte Carlo Tree Search) is a heuristic search strategy
                   '\n\t- Simulation​' \
                   '\n\t- Backpropagation​'
 
+
 titleRB = 'Rule Based Guide'
 descriptionRB = 'For "Rule Based" Agent, we mean an Ai who uses a knowledge ' \
                 'base to find the best move with a tetromino, in an instance of ' \
