@@ -8,12 +8,13 @@ _____________________![](doc/TetrAIsGif.gif)
 2. [**System Dependencies**](#requirements-and-dependencies)
 3. [**Quick Start**](#quick-start)
 4. [**Artificial Intelligences Explained**](#artificial-intelligences-explained)
-3. [**Credits**](#credits)
+5. [**Evaluation & Conclusions**](#evaluation-conclusions)
+6. [**Credits**](#credits)
 
 <ul>
 
 
-### What is TetrAIs?
+## What is TetrAIs?
 
 **TetrAIs** is an application developed for a knowledge engineering exam 
 at **Univeristy Aldo Moro** of Bari Italy. <br>
@@ -23,7 +24,7 @@ like **"Q-learning"**, or based on randomness like **"Blind Bandit Monte Carlo"*
 based on a KB and logical rules like **"Logic Rule Based"**, or finally based 
 on the complete visit of the research space as **"Deep First Search"** does .
 
-#### Extra Functionalities
+### Extra Functionalities
 <ul>
 
 <li>
@@ -47,7 +48,7 @@ on the complete visit of the research space as **"Deep First Search"** does .
 
 <li>
 
-### Requirements and Dependencies
+## Requirements and Dependencies
 ```
 Python 3.4 or higher (tested on 3.7)
 networkx
@@ -72,7 +73,7 @@ Pyautogui: [**github.com/asweigart/pyautogui**](https://github.com/asweigart/pya
 </li>
 <li>
 
-### Quick Start
+## Quick Start
 
 1 - Clone this repository <br> 
 2 - Install all dependencies (N.B.: Rule Based needs SWI-Prolog installed) <br> 
@@ -82,9 +83,11 @@ Pyautogui: [**github.com/asweigart/pyautogui**](https://github.com/asweigart/pya
 </li>
 <li>
 
-### Artificial intelligences Explained
+## Artificial intelligences Explained
 Full documentation inside "/doc/Documentazione TetrAIs.pdf" <br>
 Full presentation inside "/doc/Presentazione TetrAIs.pptx" <br>
+___
+
 #### 1) Deep First Search (DFS) <br>
 A generic search algorithm is independent of any search strategy. The idea is that given a graph, the paths are incrementally explored starting from the starting nodes and then reaching the target nodes.
 
@@ -93,6 +96,7 @@ DFS is an uninformed search algorithm on graphs, in which the system reasons on 
 - In the state space, a way is sought to go from the current state to a goal.
 
 In in-depth research (DFS), the border is organized as a stack (LIFO) in which the elements are added one at a time and the one selected and taken will be the last added.
+___
 
 #### 2) Stochastic Gradient Descent with Q-Learning (SDG_QL) <br>
 The SDG_QL algorithm is based on the Stochastic Gradient Ascent algorithm as an optimization of Q-Learning
@@ -108,6 +112,7 @@ The TD-Update rule of the Q-learning algorithm returns the "Q-value" as well as 
 The policy is ε probability of extracting the not highest Q-value move. 
 
 The proposed AI update its weights and converge towards values ​​sufficient to obtain very high scores in relatively few “training runs”.
+___
 
 #### 3) Genetic-Beam (Gen) <br>
 Mashup:
@@ -125,6 +130,7 @@ Mashup:
 - 80% chance that the gene is an average of the two parents' respective genes
 
 At this stage there is also a 10% chance of a slight gene mutation.
+___
 
 #### 4) Blind Bandit Monte Carlo Tree Search (BBMCTS) <br>
 MCTS (Monte Carlo Tree Search) is a heuristic search strategy adopted in some types of decision-making processes, such as those decision-making processes that are typically adopted in games.
@@ -137,6 +143,7 @@ The goal of the MCTS is to analyze the most promising playouts, expanding the se
 - Expansion
 - Simulation
 - Backpropagation
+___
 
 #### 5) Logic Rule Based (RB) <br>
 For "Rule Based" Agent, we mean an Ai who uses a knowledge base to find the best move with a tetromino, in an instance of the board.
@@ -144,16 +151,22 @@ For "Rule Based" Agent, we mean an Ai who uses a knowledge base to find the best
 Coding all the possibilities present in the sheet, as well as being expensive, made it an unintelligent agent, since when it talks about AI it is only necessary to describe the solution to the problem, not how to reach it.
 
 So we took into consideration the "shadows" of the tetramines: each tetromino, in every rotation, casts a different shadow on the crest of the card
+___
 
 #### 6) Local Search Greedy Ascent <br>
 The Local Search AI scans the first level of the tree search, selecting the node representing the move that during the simulation would have returned the highest score obtaining an excellent local state. Subsequently, the algorithm searches for the next state using the "next tetramino" in the node-states obtained from the previous state. In this way, the algorithm significantly reduces the number of total simulations and therefore reaches an excellent room.
 
 Since Local Search does not guarantee the achievement of an excellent overall and its use is often used in situations where the individual paths are very long, in our use it proves to be particularly inefficient and not very productive. 
 Often the executions of the game that use it, end with a score of zero, this occurs because the paths of the graph are very short and the excellent location achieved does not guarantee the permanence in the game and the achievement of results even only comparable with those of the other algorithms implemented.
-
+___
 
 </li>
 
+<li>
+
+## Evaluation & Conclusions
+
+</li>
 
 <li>
 	
