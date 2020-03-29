@@ -11,7 +11,8 @@
 3. [**Quick Start**](#quick-start)
 4. [**Artificial Intelligences Explained**](#artificial-intelligences-explained)
 5. [**Evaluation and Results**](#evaluation-and-results)
-6. [**Credits**](#credits)
+6. [**Conclusions**](#conclusions)
+7. [**Credits**](#credits)
 
 <ul>
 
@@ -182,11 +183,36 @@ ___
 <li>
 
 ## Conclusions
-XXXXX
 
 </li>
 
+**With this experiment we want to highlight that:**
+- Not all approaches regarding artificial intelligence perform in any application domain;
+- The SDG Q-Learning technique and population-based research methods (Genetic Beam-Search) are considerably better performing than the others given their nature of "past experience learning" at the expense of a considerably higher training time;
+<br>
 
+**- Analysis of Genetic - Beam training:**
+The algorithm performance are directly proportional to the number of generations with a high number of chromosomes eatch. But consequently considerably increases the necessary training time.
+<br>
+
+**- Analysis of SDG Q-Learning training:**
+The algorithm performs considerably better when the algorithm learns on a deterministic path and labyrinth rather than on a random path, that is, different for each iteration.
+<br>
+
+**Analysis of the Blind Bandit Monte Carlo:**
+The algorithm would prove much more efficient in other domains where moves can be demoted in the event of an error, while in the Tetris a wrong move causes a domino effect which in most cases leads to a rapid conclusion. In our case, he remains "attracted" to imaginary moves that are difficult to materialize.
+<br>
+
+**- Deep First Search analysis:**
+Statistically it appears to be balanced both from the temporal point of view and from the results achieved. It could be improved with deeper analyzes, for example by implementing the height of the search tree, keeping an eye on performance.
+<br>
+
+**- Analysis of Local Search Greedy Ascent:**
+Given the poor results, the algorithm could be improved by integrating alternative methods such as the "random restart" for the scan of the search tree in order to reach the global optimum rather than the local optimum.
+<br>
+
+**- Logic Rule Based Analysis:**
+In order to improve the performance of this algorithm, it would be useful to consider clauses and rules of different nature, to evaluate more aspects of the pitch, rather than evaluate the next move based only on the shadow of the tetramini. Doing so would extend the unkempt knowledge from the knowledge base.
 
 
 
@@ -199,6 +225,13 @@ XXXXX
 [**Chrism1c**](https://github.com/Chrism1c)**,**
 [**m3ttiw**](https://github.com/m3ttiw) **and**
 [**W1l50n2208**](https://github.com/W1l50n2208)
+
+**TetrAIs group scores:**
+- **Chrism1c :**
+- **m3ttiw :**
+- **W1l50n2208 :**
+
+**_Are you able to beat us ?_**
 
 </li>
 </ul>
