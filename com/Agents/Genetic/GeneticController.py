@@ -108,8 +108,8 @@ class GeneticController:
                 break
             else:
                 continue
-        destroy(fileName)
-        saveOnFile(fileName, self.generation)
+        destroy(filePerfect)
+        saveOnFile(filePerfect, self.generation)
         if self.treePlot == 'yes':
             GeneticTreePlot.plot()
             GeneticTreePlot.Graph.clear()
