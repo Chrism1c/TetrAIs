@@ -224,4 +224,4 @@ def bbmcts_main(r_p, mode, numOfRun, treePlot, gdSidePanel):
 
 
 if __name__ == "__main__":
-    bbmcts_main('r', 'full', 1, 'no')
+    bbmcts_main('r', 'full', 1,'no')

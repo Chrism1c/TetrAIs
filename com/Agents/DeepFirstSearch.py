@@ -12,6 +12,7 @@ import sys
 DFSTreePlot = TreePlot()
 
 
+
 class DeepFirstSearch(BaseGame, ABC):
     global DFSTreePlot
     """
@@ -173,7 +174,6 @@ def dfs_main(r_p, gdSidePanel, lv, numOfRun, treePlot):
     AVG_runs = AVG_runs / numOfRun
     if numOfRun > 1:
         print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
-
 
 if __name__ == "__main__":
     dfs_main('r', 'no', 'LV1', 1, 'no')
