@@ -7,6 +7,7 @@ import sys
 import random
 import math
 from com.Menu import menu
+from com.Utils.sidePanel import *
 from com.Utils.Plot import plot_learning_curve
 
 wx = [-1, -1, -1, -30]  # Initial weight vector
@@ -43,7 +44,7 @@ class SDG_QL(BaseGame, ABC):
             tetramino
     """
 
-    def __init__(self, r_p):
+    def __init__(self, r_p, gdSidePanel):
         """
                Parameters
                ----------
@@ -57,7 +58,7 @@ class SDG_QL(BaseGame, ABC):
                     constant used in the formula to get the score in sdg
         """
 
-        super().__init__(r_p)
+        super().__init__(r_p, gdSidePanel, title=titleSDGQL, description=descriptionSDQL)
         self.alpha = 0.01
         self.gamma = 0.9
 
@@ -291,7 +292,7 @@ class SDG_QL(BaseGame, ABC):
         return move
 
 
-def sdgql_main(r_p, mode, numOfRun):
+def sdgql_main(r_p, mode, numOfRun, gdSidePanel):
     global explore_change
     explore_change = float(mode)
     numOfRun = int(numOfRun)
@@ -311,7 +312,7 @@ def sdgql_main(r_p, mode, numOfRun):
         weight1Array.append(-wx[1])
         weight2Array.append(-wx[2])
         weight3Array.append(-wx[3])
-        SdgQL = SDG_QL(r_p)
+        SdgQL = SDG_QL(r_p, gdSidePanel)
         newScore, _, tot_time, n_tetr, avg_move_time, tetr_s = SdgQL.run()
         game_index_array.append(games_completed)
         print("Game achieved a score of: ", newScore)
@@ -327,7 +328,6 @@ def sdgql_main(r_p, mode, numOfRun):
     weightsMatrix.append(weight3Array)
     # plot_ql(scoreArray, game_index_array, weightsMatrix, 0.01, 0.9, 0.5)
     plot_learning_curve(scoreArray, game_index_array, weightsMatrix, 'ql')(SdgQL.alpha, SdgQL.gamma, float(mode))
-    menu.main()
 
 
 if __name__ == "__main__":
