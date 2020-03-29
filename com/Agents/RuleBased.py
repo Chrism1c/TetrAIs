@@ -7,6 +7,7 @@ from com.Core.Model import PIECES
 from com.Menu import menu
 import random
 from pyswip import Prolog
+from com.Utils.sidePanel import *
 
 prolog = Prolog()
 #prolog.consult("C:/Users/matti/PyCharmProjects/DiscoTetris/com/Utils/Kb.pl")
@@ -42,8 +43,8 @@ class RuleBased(BaseGame):
         deletePCrest(self)
             delete the deprecated set of parts of the crest in the Knowledge Base
     """
-    def __init__(self, r_p):
-        super().__init__(r_p)
+    def __init__(self, r_p, gdSidePanel):
+        super().__init__(r_p, gdSidePanel, title=titleRB, description=descriptionRB)
         self.crest = [0] * BOARDWIDTH  # cresta relativa
 
     def get_move(self):
@@ -217,19 +218,31 @@ class RuleBased(BaseGame):
                     # simula con X0 e salva il risultato
                     move = self.align([0, X0], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X0]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X0))
+                    print(' - rotazione: ', str(0))
                     iFlag = True
                 elif posX1 != False:
                     # simula con X1
                     move = self.align([1, X1], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X1]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X1))
+                    print(' - rotazione: ', str(1))
                 elif posX2 != False:
                     # simula con X2
                     move = self.align([2, X2], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X2]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X2))
+                    print(' - rotazione: ', str(2))
                 elif posX3 != False:
                     # simula con X3
                     move = self.align([3, X3], piece)
                     scores.append((move, self.simulate_move(move, piece), self.crest[X3]))
+                    print('Trovato fit per pezzo:', str(piece['shape']))
+                    print(' - posizione: ', str(X3))
+                    print(' - rotazione: ', str(3))
 
         # if piece['shape'] == 'I' and iFlag:
         # minh = 20
@@ -246,6 +259,7 @@ class RuleBased(BaseGame):
             # return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
             # print('dfs')
             return self.get_DFS_move()
+            print('fit non trovato nella base di conoscenza: mossa random')
         else:
             # print('rule')
             maxScore = -999
@@ -257,6 +271,7 @@ class RuleBased(BaseGame):
                     minh = h
                     maxScore = score
                     bestMove = move
+            print('mossa migliore: ', str(bestMove), ' con uno score di: ', str(maxScore))
             return bestMove
 
     def get_DFS_move(self):
@@ -380,18 +395,22 @@ class RuleBased(BaseGame):
         prolog.retractall('inCrest(crest, S, X)')
 
 
-def rb_main(r_p, numOfRun):
+def rb_main(r_p, numOfRun, gdSidePanel):
     numOfRun = int(numOfRun)
+    AVG_runs = 0
     for x in range(numOfRun):
-        rb = RuleBased(r_p)
+        rb = RuleBased(r_p, gdSidePanel)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = rb.run()
+        AVG_runs = AVG_runs + newScore
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-    menu.main()
+    AVG_runs = AVG_runs / numOfRun
+    if numOfRun > 1:
+        print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
 
 if __name__ == "__main__":
     rb_main('r', 1)

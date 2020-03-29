@@ -5,11 +5,12 @@ from com.Utils.Utils import simulate_board, get_parameters
 from com.Utils.NetworkX import *
 from com.Core.Model import PIECES
 from com.Menu import menu
+from com.Utils.sidePanel import *
 import sys
 
 #  Create a new istance of TreePlot
 DFSTreePlot = TreePlot()
-ROOTZERO = "ROOT"
+
 
 
 class DeepFirstSearch(BaseGame, ABC):
@@ -31,7 +32,7 @@ class DeepFirstSearch(BaseGame, ABC):
             Calculate score of test_board
     """
 
-    def __init__(self, r_p, lv, treePlot):
+    def __init__(self, r_p, gdSidePanel, lv, treePlot):
         """
             Parameters
             ----------
@@ -42,7 +43,7 @@ class DeepFirstSearch(BaseGame, ABC):
             treePlot : TreePlot
                 instance of TreePlot object to print Tree Graphs
         """
-        super().__init__(r_p)
+        super().__init__(r_p, gdSidePanel, title=titleDFS, description=descriptionDFS)
         self.lv = lv
         self.treePlot = treePlot
 
@@ -156,20 +157,23 @@ class DeepFirstSearch(BaseGame, ABC):
         return test_score, fullLines
 
 
-def dfs_main(r_p, lv, numOfRun, treePlot):
+def dfs_main(r_p, gdSidePanel, lv, numOfRun, treePlot):
     #  loop to run  the game with AI for numOfRun executions
     numOfRun = int(numOfRun)
+    AVG_runs = 0
     for x in range(numOfRun):
-        dfs = DeepFirstSearch(r_p, lv, treePlot)
+        dfs = DeepFirstSearch(r_p, gdSidePanel, lv, treePlot)
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = dfs.run()
+        AVG_runs = AVG_runs + newScore
         print("Game achieved a score of: ", newScore)
         print("weights: ", weights)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
         print("moves/sec:  ", tetr_s)
-    menu.main()
-
+    AVG_runs = AVG_runs / numOfRun
+    if numOfRun > 1:
+        print("AVGScore after ", numOfRun, " Runs : ", AVG_runs)
 
 if __name__ == "__main__":
-    dfs_main('r', 'LV1', 1, 'no')
+    dfs_main('r', 'no', 'LV1', 1, 'no')
