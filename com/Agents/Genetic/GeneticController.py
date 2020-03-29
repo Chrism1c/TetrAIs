@@ -58,7 +58,7 @@ class GeneticController:
             ----------
                 None
         """
-        print("start creation gen:0")
+        print("start creation of first generation")
         # numGen0 = 2 ** self.numGen
         self.numGen0 = 8
         self.generation = self.createGen0(self.numGen0)
@@ -72,15 +72,15 @@ class GeneticController:
         gene4Array = list()
         gene5Array = list()
         gene6Array = list()
-        print("end creation gen0")
+        print("end creation of first generation")
         i = 0
         n_run = 0
         while True:
-            print("start gen:", i)
+            print("start gen:", i + 1)
             population = list()
             for x in range(len(self.generation)):
                 n_run += 1
-                avgScoreChromosome = self.AVGfitnesingSing(self.generation[x])
+                avgScoreChromosome = self.AVGfitnesingSing(self.generation[x], i, x)
                 scoreArray.append(avgScoreChromosome)
                 population.append((self.generation[x], avgScoreChromosome))
                 gene0Array.append(self.generation[x][0])
@@ -95,7 +95,7 @@ class GeneticController:
             # k = round(len(self.generation)/2)
             k = len(self.generation)
             print("Full Generation = ", self.generation)
-            print("end gen:", i)
+            print("end gen:", i + 1)
             i += 1
             # self.generation = self.crossingFixedPopulation(self.bestChromosomeSearch(population, k), k, i)
             #self.generation = self.crossingFixedPopulation(self.generation, i)
@@ -135,7 +135,7 @@ class GeneticController:
         return Newscore
 
 
-    def AVGfitnesingSing(self, chromosome):
+    def AVGfitnesingSing(self, chromosome, gen, num):
         """
             Average of fitness scores by a chromosome
             # somma i valori contenuti nel vettore vFitness, che sostanzialmente contiene i valori fitness
@@ -149,13 +149,14 @@ class GeneticController:
         print("Chromosome: ")
         print(chromosome)
         for i in range(self.numRun):
-            g = Genetic(self.r_p, self.gdSidePanel, chromosome, True)
+            titleRun = "Training: gen "+ str(gen + 1)+ " - #sample "+ str(num + 1)+ " - run "+ str(i + 1)
+            g = Genetic(self.r_p, self.gdSidePanel, chromosome,  titleRun, True)
             start = time.time()
             score, _, _, _, _, _ = g.run()
             finish = time.time()
             tempo = round(finish - start)
             avgFitness += (score + tempo)
-            print(' - Match ' + str(i) + ' Score ' + str(score + tempo))
+            print(' - Match ' + str(i + 1) + ' Score ' + str(score + tempo))
         return avgFitness / self.numRun
 
     def getNewChromosome(self):

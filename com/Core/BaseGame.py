@@ -21,7 +21,7 @@ class BaseGame(metaclass=ABCMeta):
 
     """
 
-    def __init__(self, r_p, gdSidePanel, title, description):
+    def __init__(self, r_p, gdSidePanel, title, description, titleRun: str = None):
         """
         :param r_p: str type of piece used ('r' = random, 'p' = pi)
         gdSidePanel: bool value useful to understand if the side panel has to be shown or not
@@ -40,7 +40,10 @@ class BaseGame(metaclass=ABCMeta):
         self.BIGFONT = pygame.font.Font('freesansbold.ttf', 100)
         self.FPSCLOCK = pygame.time.Clock()
         self.DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
-        pygame.display.set_caption(APPNAME)
+        if titleRun == None:
+            pygame.display.set_caption(APPNAME)
+        else:
+            pygame.display.set_caption(titleRun)
         self.show_text_screen(APPNAME)
         self.gdSidePanel = gdSidePanel
         if self.gdSidePanel == 'yes':

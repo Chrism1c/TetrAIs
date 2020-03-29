@@ -16,7 +16,8 @@ def gen_main(r_p, mode, numGen, treePlot, gdSidePanel):
         train = GeneticController(r_p, numGen, treePlot, gdSidePanel)
         train.workGenetic()
     else:
-        perfectRun(r_p, gdSidePanel)
+        for i in range(numGen):
+            perfectRun(r_p, gdSidePanel, i)
 
 # #  get arguments when AI file is executed by the menu
 # r_p = sys.argv[1]

@@ -31,7 +31,7 @@ class Genetic(BaseGame, ABC):
             Calculate weighted score of board
     """
 
-    def __init__(self, r_p, gdSidePanel, chromosome, timeKiller=False):
+    def __init__(self, r_p, gdSidePanel, chromosome, titleRun_gen: str, timeKiller=False):
         """
             Parameters
             ----------
@@ -41,8 +41,10 @@ class Genetic(BaseGame, ABC):
                 list of weights used to identify and alterates the score function
             timeKiller : bool
                 useful to stop a very good random Chromosome
+            titleRun_gen: str
+                run title
         """
-        super().__init__(r_p, gdSidePanel, title=titleGen, description=descriptionGen)
+        super().__init__(r_p, gdSidePanel, title=titleGen, description=descriptionGen, titleRun=titleRun_gen)
         self.timeKiller = timeKiller
         self.chromosome = chromosome
 
@@ -143,7 +145,7 @@ class Genetic(BaseGame, ABC):
         return wscore
 
 
-def perfectRun(pieceType, gdSidePanel):
+def perfectRun(pieceType, gdSidePanel, nrun):
     """
         Execute run of the Perfect Chromosome
         Parameters
@@ -154,10 +156,11 @@ def perfectRun(pieceType, gdSidePanel):
     perfectChromosome = getPerfectChromosome()  # import del chromosoma perfetto da file
     r_p = pieceType
     if perfectChromosome is not None:
-        gen = Genetic(r_p, gdSidePanel, perfectChromosome)
-        newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = gen.run()
+        title = "Perfect Run n: " + str(nrun)
+        gen = Genetic(r_p, gdSidePanel, perfectChromosome, title)
+        newScore, _, tot_time, n_tetr, avg_move_time, tetr_s = gen.run()
         print("Game achieved a score of: ", newScore)
-        print("weights: ", weights)
+        print("chromosome: ", perfectChromosome)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
