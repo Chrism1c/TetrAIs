@@ -24,7 +24,7 @@ class SidePanel:
         label.config(font=('freesansbold', 43))
         label.pack(padx=4, pady=4)
 
-        T = tk.Text(self.root, width=59, height=29)
+        T = tk.Text(self.root, width=51, height=26)
         T.configure(font='freesansbold 13')
         T.insert(tk.END, self.description)
         T.config(bg='black', fg='white')
