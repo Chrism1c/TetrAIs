@@ -167,13 +167,25 @@ ___
 ## Evaluation and Results
 
 #### TetrAIs group results
-![](doc/AIsResults.png)
+![](doc/Results_Images/AIsResults.png)
 
+#### TetrAIs AIs ranking on "PI greek" pieces
+![](doc/Results_Images/RankPIgreek.png)
 
-
-## Conclusions
+#### TetrAIs AIs ranking on "random" pieces
+![](doc/Results_Images/RankRandom.png)
 
 </li>
+
+<li>
+
+## Conclusions
+XXXXX
+
+</li>
+
+
+
 
 
 <li>
