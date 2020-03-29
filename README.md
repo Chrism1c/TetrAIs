@@ -8,7 +8,7 @@ _____________________![](doc/TetrAIsGif.gif)
 2. [**System Dependencies**](#requirements-and-dependencies)
 3. [**Quick Start**](#quick-start)
 4. [**Artificial Intelligences Explained**](#artificial-intelligences-explained)
-5. [**Evaluation & Conclusions**](#evaluation-conclusions)
+5. [**Evaluation and Conclusions**](#evaluation-and-conclusions)
 6. [**Credits**](#credits)
 
 <ul>
@@ -119,13 +119,13 @@ Mashup:
 - Reproductive trait of Genetic
 - Efficiency of Beam Search
 
-Each gene represents the weight of one of the heuristics used by the system.
+Each gene represents the weight of one of the heuristics used by the system.
 
-New generation composed of: <br>
+New generation composed of: <br>
 - ½ better chromosomes of the previous generation
 - ½ one point crossing between the best chromosomes of the previous generation
 
-In the crossing phase we select two of the best chromosomes and we couple them. For each chromosome gene that is the child of two parent chromosomes:
+In the crossing phase we select two of the best chromosomes and we couple them. For each chromosome gene that is the child of two parent chromosomes:
 - 20% chance that the gene is from one of the two parents
 - 80% chance that the gene is an average of the two parents' respective genes
 
@@ -164,9 +164,11 @@ ___
 
 <li>
 
-## Evaluation & Conclusions
+## Evaluation and Conclusions
 
 </li>
+
+![](doc/AIsResults.png)
 
 <li>
 	
