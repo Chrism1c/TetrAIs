@@ -1,6 +1,8 @@
 # TetrAIs
 ### Six Tetris Artificial Intelligence Algorithms Showdown<br>
-_____________________![](doc/TetrAIsGif.gif)
+<p align="center">
+  <img src="doc/TetrAIsGif.gif">
+</p>
 
 ### Index
 
