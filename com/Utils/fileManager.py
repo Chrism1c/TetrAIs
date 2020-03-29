@@ -86,7 +86,7 @@ def getPerfectChromosome():
     # salva il chromosoma perfetto in un altro file dedicato
     :return: None
     """
-    population = loadFromFile(fileName)
+    population = loadFromFile(filePerfect)
     if len(population) == 1:
         return population[0]
     else:
