@@ -8,7 +8,7 @@ _____________________![](doc/TetrAIsGif.gif)
 2. [**System Dependencies**](#requirements-and-dependencies)
 3. [**Quick Start**](#quick-start)
 4. [**Artificial Intelligences Explained**](#artificial-intelligences-explained)
-5. [**Evaluation and Conclusions**](#evaluation-and-conclusions)
+5. [**Evaluation and Results**](#evaluation-and-results)
 6. [**Credits**](#credits)
 
 <ul>
@@ -164,11 +164,17 @@ ___
 
 <li>
 
-## Evaluation and Conclusions
+## Evaluation and Results
+
+#### TetrAIs group results
+![](doc/AIsResults.png)
+
+
+
+## Conclusions
 
 </li>
 
-![](doc/AIsResults.png)
 
 <li>
 	
