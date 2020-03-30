@@ -79,7 +79,7 @@ Pyautogui: [**github.com/asweigart/pyautogui**](https://github.com/asweigart/pya
 ## Quick Start
 
 1 - Clone this repository <br> 
-2 - Install all dependencies (N.B.: Rule Based needs SWI-Prolog installed) <br> 
+2 - Install all dependencies with "pip3 install -r requirements.txt" (N.B.: Rule Based needs SWI-Prolog installed) <br> 
 3 - Execute "main.py" <br>
 4 - Enjoy with **TetrAIs** <br>
 
@@ -107,7 +107,7 @@ It uses a "weights vector" representing the importance that each metric has with
 It choose the best move to play given a game scheme (State), the algorithm compares the possible moves (Action) concerning only the current tetramino simulating a "drop ” of the tetramino on the board.
 
 The AI ​​calculates the Reward relating to the Action on the current State. 
-<br> The **Reward = 5 * (linesRemvd * lineRemvd) - (Hsum - oldHsum)**
+<br> The **Reward = 5 * (linesRemvd * linesRemvd) - (Hsum - oldHsum)**
 
 The TD-Update rule of the Q-learning algorithm returns the "Q-value" as well as the new weight in the vector :
 <br> **wx [i] = wx [i] + alpha * wx [i] * (Reward - oldPar[i] + gamma * newPar[i])**
@@ -227,7 +227,7 @@ In order to improve the performance of this algorithm, it would be useful to con
 [**W1l50n2208**](https://github.com/W1l50n2208)
 
 **TetrAIs group scores:**
-- **Chrism1c :**
+- **Chrism1c :** 4760
 - **m3ttiw :** 5740
 - **W1l50n2208 :**
 

@@ -38,7 +38,6 @@ def pl_main(r_p, numOfRun):
         newScore, weights, tot_time, n_tetr, avg_move_time, tetr_s = p.run()
         AVG_runs = AVG_runs + newScore
         print("Game achieved a score of: ", newScore)
-        print("weights: ", weights)
         print("tot run time: ", tot_time)
         print("#moves:  ", n_tetr)
         print("avg time per move: ", avg_move_time)
