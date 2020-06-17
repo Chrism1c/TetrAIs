@@ -227,9 +227,9 @@ In order to improve the performance of this algorithm, it would be useful to con
 [**W1l50n2208**](https://github.com/W1l50n2208)
 
 **TetrAIs group scores:**
-- **Chrism1c :** 4760
+- **Chrism1c :** 10860
 - **m3ttiw :** 5740
-- **W1l50n2208 :**
+- **W1l50n2208 :** 6830
 
 **_Are you able to beat us ?_**
 
