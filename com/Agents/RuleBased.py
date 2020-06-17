@@ -258,7 +258,7 @@ class RuleBased(BaseGame):
         if len(scores) == 0:
             # return [random.randint(0, 1), random.randint(-5, 5)]        #mossa casuale
             # print('dfs')
-            return self.get_DFS_move()
+            return self.get_rand_move()
             print('fit non trovato nella base di conoscenza: mossa random')
         else:
             # print('rule')
@@ -274,10 +274,10 @@ class RuleBased(BaseGame):
             print('mossa migliore: ', str(bestMove), ' con uno score di: ', str(maxScore))
             return bestMove
 
-    def get_DFS_move(self):
-        best_rot = 0
-        best_sideways = 0
-        best_score = - 99
+    def get_rand_move(self):
+        rand_rot = 0
+        rand_sideways = 0
+        rand_score = - 99
 
         NextScore = (0, 0, -99)  # rot,sideways, score
 
@@ -302,15 +302,15 @@ class RuleBased(BaseGame):
                                 test_score2, nextLines = self.get_expected_score(test_board2)
                                 if NextScore[2] < test_score2:
                                     NextScore = [rot2, sideways2, test_score2]  # aggiorno il best local score (LV2)
-                    if best_score < NextScore[2]:  # confronto
-                        best_score = NextScore[2]  # aggiorno il best local score (LV1+LV2)
-                        best_sideways = sideways  # aggiorno il best sideway (LV1)
-                        best_rot = rot  # aggiorno il best rot (LV1)
+                    if rand_score < NextScore[2]:  # confronto
+                        rand_score = NextScore[2]  # aggiorno il best local score (LV1+LV2)
+                        rand_sideways = sideways  # aggiorno il best sideway (LV1)
+                        rand_rot = rot  # aggiorno il best rot (LV1)
 
         # finish = time.perf_counter()
         # print(f'Finished in {round(finish - start, 2)} second(s) with full')
 
-        return best_rot, best_sideways, best_score
+        return rand_rot, rand_sideways, rand_score
 
     def get_heights(self, board):
         """
